@@ -1,1 +1,38 @@
 venv
+
+.env
+
+
+# Byte-compiled / binary files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env
+*.env  # Exclude all .env files
+
+# Django-related
+db.sqlite3
+media/
+staticfiles/
+static/
+
+# Logs and debug files
+*.log
+*.pot
+local_settings.py
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# MacOS-related
+.DS_Store
+
+# Docker
+docker-compose.override.yml
+postgres_data/
