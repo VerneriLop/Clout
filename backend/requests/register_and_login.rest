@@ -2,11 +2,10 @@ POST http://localhost:8000/api/auth/register/
 Content-Type: application/json
 
 {
-  "username": "testa46456456aja2",
-  "first_name": "Pekka2",
-  "last_name": "Testaaja2",
-  "email": "pekka.testaaja2@test.com",
-  "password": "salainen"
+  "username": "moi123",
+  "first_name": "Pekka23",
+  "last_name": "Testaaja32",
+  "password": "6456456"
 }
 
 ###
