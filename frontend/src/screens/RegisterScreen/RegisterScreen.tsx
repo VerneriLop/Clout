@@ -15,24 +15,22 @@ export const RegisterScreen = ({navigation}: any) => {
 
   const handleRegister = async () => {
     if (!email || !password || !confirmPassword) {
-      Alert.alert('Virhe', 'Täytä kaikki kentät');
+      Alert.alert('Error', 'Fill all the fields.');
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Virhe', 'Salasanat eivät täsmää');
+      Alert.alert('Error', 'Passwords must match.');
       return;
     }
 
     const data = await register(username, email, password);
 
     if (data) {
-      // Rekisteröinti onnistui, siirrytään kirjautumissivulle
-      Alert.alert('Onnistui', 'Käyttäjä luotu');
+      Alert.alert('Success', 'New account created.');
       navigation.navigate(Routes.Login);
     } else {
-      // Virhe rekisteröinnissä
-      Alert.alert('Error with registering');
+      Alert.alert('Error with registeration.');
     }
   };
 
