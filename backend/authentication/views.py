@@ -1,5 +1,6 @@
 from rest_framework import generics, permissions
 from django.contrib.auth import get_user_model
+from authentication.serializers import CustomTokenObtainPairSerializer
 from users.serializers import UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -16,3 +17,4 @@ class RegisterView(generics.CreateAPIView):
 # Kirjautuminen (JWT-tunnukset)
 class LoginView(TokenObtainPairView):
     permission_classes = [permissions.AllowAny]
+    serializer_class = CustomTokenObtainPairSerializer

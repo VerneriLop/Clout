@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8000/api/users/';
 
-type User = {
+export type User = {
   id: number;
   username: string;
   email: string;

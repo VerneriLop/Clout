@@ -1,9 +1,11 @@
 import axios from 'axios';
 import {API_URL, ErrorResponse} from './utils';
+import {User} from '../user/users';
 
 type AuthResponse = {
   access: string;
   refresh: string;
+  user: User;
 };
 
 export const login = async (

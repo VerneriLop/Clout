@@ -1,23 +1,23 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 type User = {
-  id: string;
+  id: number;
   username: string;
   email: string;
-  bio: string | null;
+  bio?: string | null;
 };
 
 type AuthState = {
   user: User | null;
-  accessToken: string | null;
-  refreshToken: string | null;
+  access: string | null;
+  refresh: string | null;
   isAuthenticated: boolean;
 };
 
 const initialState: AuthState = {
   user: null,
-  accessToken: null,
-  refreshToken: null,
+  access: null,
+  refresh: null,
   isAuthenticated: false,
 };
 
@@ -29,25 +29,25 @@ const userSlice = createSlice({
       state,
       action: PayloadAction<{
         user: User;
-        accessToken: string;
-        refreshToken: string;
+        access: string;
+        refresh: string;
       }>,
     ) => {
       state.user = action.payload.user;
-      state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refreshToken;
+      state.access = action.payload.access;
+      state.refresh = action.payload.refresh;
       state.isAuthenticated = true;
     },
 
     logoutUser: state => {
       state.user = null;
-      state.accessToken = null;
-      state.refreshToken = null;
+      state.access = null;
+      state.refresh = null;
       state.isAuthenticated = false;
     },
 
     updateAccessToken: (state, action: PayloadAction<string>) => {
-      state.accessToken = action.payload;
+      state.access = action.payload;
     },
   },
 });
