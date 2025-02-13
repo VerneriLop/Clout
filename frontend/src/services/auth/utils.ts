@@ -1,4 +1,12 @@
-export const API_URL = 'http://localhost:8000/api/auth/';
+//export const API_URL = 'http://localhost:8000/api/auth/';
+
+import {Platform} from 'react-native';
+import {HOST} from '../../../localVariables';
+
+export const API_URL =
+  Platform.OS === 'ios'
+    ? 'http://localhost:8000/api/auth/'
+    : `http://${HOST}:8000/api/auth/`;
 
 export type ErrorResponse = {
   detail?: string;
