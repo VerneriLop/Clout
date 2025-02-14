@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const errorHandler = (error: unknown, errorText: string) => {
+export const loginErrorHandler = (error: unknown, errorText: string): void => {
   console.warn(errorText);
   if (axios.isAxiosError(error)) {
     console.warn('Axios Error:', error.response?.data);

@@ -4,7 +4,7 @@ import {AppDispatch} from '../../../redux/store/store';
 import {refreshAccessToken} from '../refreshToken';
 import {logoutUser} from '../../../redux/slices/userSlice';
 import axios from 'axios';
-import {errorHandler} from './errorHandler';
+import {errorHandler} from './errorHandlers/loginErrorHandler';
 
 const refreshTokenHandler = async (dispatch: AppDispatch): Promise<void> => {
   try {

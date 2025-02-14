@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import {View, Text, Alert, SafeAreaView} from 'react-native';
+import {View, Text, SafeAreaView} from 'react-native';
 import Input from '../../components/Input/Input'; // Oletan että käytät omaa Input-komponenttia
 import Button from '../../components/Button/Button'; // Oletan että käytät omaa Button-komponenttia
 import style from './style';
 import globalStyle from '../../assets/styles/globalStyle';
 import {Routes} from '../../navigation/Routes';
-import {register} from '../../services/auth/register';
+import {registerHandler} from '../../services/auth/handlers/registerHandler';
 
 export const RegisterScreen = ({navigation}: any) => {
   const [username, setUsername] = useState('');
@@ -14,23 +14,14 @@ export const RegisterScreen = ({navigation}: any) => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleRegister = async () => {
-    if (!email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Fill all the fields.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords must match.');
-      return;
-    }
-
-    const data = await register(username, email, password);
-
-    if (data) {
-      Alert.alert('Success', 'New account created.');
+    const success = await registerHandler(
+      email,
+      password,
+      confirmPassword,
+      username,
+    );
+    if (success === 0) {
       navigation.navigate(Routes.Login);
-    } else {
-      Alert.alert('Error with registeration.');
     }
   };
 
