@@ -5,7 +5,7 @@ User = get_user_model()
 
 
 class Image(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="images")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="images")
     image_url = models.URLField()
     thumbnail_url = models.URLField(blank=True, null=True)
     caption = models.TextField(blank=True, null=True)

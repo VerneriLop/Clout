@@ -2,10 +2,9 @@ POST http://localhost:8000/api/auth/register/
 Content-Type: application/json
 
 {
-  "username": "moi123",
-  "first_name": "Pekka23",
-  "last_name": "Testaaja32",
-  "password": "6456456"
+  "username": "Johtaja",
+  "password": "johtaja",
+  "email": "johtajapoika@johtaja.johtaja"
 }
 
 ###
@@ -13,17 +12,18 @@ POST http://localhost:8000/api/auth/login/
 Content-Type: application/json
 
 {
-  "username": "admin",
-  "password": "0000"
+  "username": "Johtaja",
+  "password": "johtaja"
 }
 
 ###
-GET http://localhost:8000/api/images/1/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM5MzY2OTYwLCJpYXQiOjE3MzkzNjUxNjAsImp0aSI6ImZiNjFhOWViNzY0NjRmMGY4NTU0MGM1MDM1Njg3MGJlIiwidXNlcl9pZCI6Mn0.b16QouwjeJLm8DIchsiJdTYMecyKZsqmhWuyFk_eJ-U
+PATCH http://localhost:8000/api/images/2/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQyMzg0NTYxLCJpYXQiOjE3Mzk3OTI1NjEsImp0aSI6IjdjZWI0ZWRiMjgzMTQ3NDM4ZmJiNGI5YTIwNGFjNTk2IiwidXNlcl9pZCI6MX0.2Q_vSF9sqGOf7PoyJiebnoeSU2mRrHnMuRJcM-xomoc
 Content-Type: application/json
 
 {
-  "image_url": "https://www.paramountshop.com/cdn/shop/files/spongebob-squarepants-life-sized-cardboard-cutout-standee-725187.jpg?v=1718292084"
+  
+  "caption": "moi"
 }
 
 #user should not be able to delete other user
