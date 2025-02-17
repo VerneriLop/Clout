@@ -38,7 +38,6 @@ describe('Image api integration', () => {
 
   it('should get all images for logged in user', async () => {
     const data = await imageService.getAll();
-    console.log(data);
     expect(data).toContainEqual(img);
   });
 
@@ -48,6 +47,43 @@ describe('Image api integration', () => {
     const testImage = imageList[idx];
     const imageById = await imageService.getById(testImage.id);
     expect(imageById).toEqual(testImage);
+  });
+
+  it('should edit existing image PATCH', async () => {
+    const caption = 'caption';
+    const imageList = await imageService.getAll();
+    const testImage = imageList.find(x => x.user.id === user_id);
+    expect(testImage).toBeDefined();
+    if (!testImage) {
+      fail('Could not find image by user id');
+    }
+    const imageById = await imageService.getById(testImage.id);
+    expect(imageById).toEqual(testImage);
+    const editedImage = await imageService.updateImageCaption(imageById.id, {
+      caption,
+    });
+    expect(editedImage.caption).toEqual(caption);
+  });
+
+  it('should replace existing image PUT', async () => {
+    const imageList = await imageService.getAll();
+    const testImage = imageList.find(x => x.user.id === user_id);
+    expect(testImage).toBeDefined();
+    if (!testImage) {
+      fail('Could not find image by user id');
+    }
+    const imageById = await imageService.getById(testImage.id);
+    expect(imageById).toEqual(testImage);
+
+    const updatedImage = {
+      ...imageById,
+      caption: 'new caption',
+      image_url:
+        'https://m.media-amazon.com/images/M/MV5BNDUwNjBkMmUtZjM2My00NmM4LTlmOWQtNWE5YTdmN2Y2MTgxXkEyXkFqcGdeQXRyYW5zY29kZS13b3JrZmxvdw@@._V1_QL75_UX500_CR0,0,500,281_.jpg',
+    };
+    const editedImage = await imageService.updateImage(updatedImage);
+    expect(editedImage.caption).toEqual('new caption');
+    expect(editedImage.image_url).toEqual(updatedImage.image_url);
   });
 
   it('should delete own image by image id', async () => {
@@ -60,7 +96,6 @@ describe('Image api integration', () => {
     }
     const imageById = await imageService.getById(testImage.id);
     expect(imageById).toEqual(testImage);
-    console.log(imageById, user_id);
     const response = await imageService.deleteImage(imageById.id);
     expect(response.status).toBe(204);
   });

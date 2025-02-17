@@ -10,7 +10,7 @@ export const API_URL =
     ? 'http://localhost:8000/api/images/'
     : `http://${HOST}:8000/api/images/`;
 
-export interface CustomImage {
+export type CustomImage = {
   id: number;
   user: User;
   image_url: string;
@@ -18,7 +18,11 @@ export interface CustomImage {
   caption: string | null;
   created_at: string;
   is_visible: boolean;
-}
+};
+
+type ImageUpdateObject = {
+  caption: string | null;
+};
 
 const instance = axios.create({
   baseURL: API_URL,
@@ -53,4 +57,27 @@ const deleteImage = async (id: number): Promise<AxiosResponse> => {
   return response;
 };
 
-export default {getAll, getById, create, deleteImage};
+const updateImageCaption = async (
+  id: number,
+  updatedObject: ImageUpdateObject,
+): Promise<CustomImage> => {
+  const response = await instance.patch(`${API_URL}${id}/`, updatedObject);
+  return response.data;
+};
+
+const updateImage = async (updatedImage: CustomImage): Promise<CustomImage> => {
+  const response = await instance.put(
+    `${API_URL}${updatedImage.id}/`,
+    updatedImage,
+  );
+  return response.data;
+};
+
+export default {
+  getAll,
+  getById,
+  create,
+  deleteImage,
+  updateImage,
+  updateImageCaption,
+};

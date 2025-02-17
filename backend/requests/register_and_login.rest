@@ -17,12 +17,12 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:8000/api/images/2/
+PATCH http://localhost:8000/api/images/2/
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQyMzg0NTYxLCJpYXQiOjE3Mzk3OTI1NjEsImp0aSI6IjdjZWI0ZWRiMjgzMTQ3NDM4ZmJiNGI5YTIwNGFjNTk2IiwidXNlcl9pZCI6MX0.2Q_vSF9sqGOf7PoyJiebnoeSU2mRrHnMuRJcM-xomoc
 Content-Type: application/json
 
 {
-  "image_url": "https://www.paramountshop.com/cdn/shop/files/spongebob-squarepants-life-sized-cardboard-cutout-standee-725187.jpg?v=1718292084",
+  
   "caption": "moi"
 }
 
