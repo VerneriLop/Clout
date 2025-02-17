@@ -1,8 +1,9 @@
 import {Platform} from 'react-native';
 import {HOST} from '../../../localVariables';
 
-import axios from 'axios';
+import axios, {AxiosResponse} from 'axios';
 import {getAccessToken} from '../utils';
+import {User} from '../user/users';
 
 export const API_URL =
   Platform.OS === 'ios'
@@ -11,7 +12,7 @@ export const API_URL =
 
 export interface CustomImage {
   id: number;
-  user_id: number;
+  user: User;
   image_url: string;
   thumbnail_url: string | null;
   caption: string | null;
@@ -37,9 +38,19 @@ const getAll = async (): Promise<CustomImage[]> => {
   return response.data;
 };
 
+const getById = async (id: number): Promise<CustomImage> => {
+  const response = await instance.get<CustomImage>(`${API_URL}${id}/`);
+  return response.data;
+};
+
 const create = async (image_url: string): Promise<CustomImage> => {
   const response = await instance.post<CustomImage>(API_URL, {image_url});
   return response.data;
 };
 
-export default {getAll, create};
+const deleteImage = async (id: number): Promise<AxiosResponse> => {
+  const response = await instance.delete(`${API_URL}${id}/`);
+  return response;
+};
+
+export default {getAll, getById, create, deleteImage};

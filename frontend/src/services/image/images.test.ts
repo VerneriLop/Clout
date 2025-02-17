@@ -13,7 +13,7 @@ describe('Image api integration', () => {
     password: 'testpassword123',
   };
 
-  let id: number;
+  let user_id: number;
   let img: CustomImage;
   const image_url =
     'https://www.paramountshop.com/cdn/shop/files/spongebob-squarepants-life-sized-cardboard-cutout-standee-725187.jpg?v=1718292084';
@@ -24,7 +24,7 @@ describe('Image api integration', () => {
       testUser.email,
       testUser.password,
     );
-    id = response.id;
+    user_id = response.id;
     const data = await loginService.login(testUser.username, testUser.password);
     await setAccessToken(data.accessToken);
   });
@@ -32,7 +32,7 @@ describe('Image api integration', () => {
   it('should add a new image for user', async () => {
     const data = await imageService.create(image_url);
     expect(data.image_url).toBe(image_url);
-    expect(data.user_id).toBe(id);
+    expect(data.user.id).toBe(user_id);
     img = data;
   });
 
@@ -42,12 +42,35 @@ describe('Image api integration', () => {
     expect(data).toContainEqual(img);
   });
 
+  it('should get image by image id', async () => {
+    const imageList = await imageService.getAll();
+    const idx = Math.floor(Math.random() * imageList.length);
+    const testImage = imageList[idx];
+    const imageById = await imageService.getById(testImage.id);
+    expect(imageById).toEqual(testImage);
+  });
+
+  it('should delete own image by image id', async () => {
+    const imageList = await imageService.getAll();
+    // TODO: edit user service to get images of user
+    const testImage = imageList.find(x => x.user.id === user_id);
+    expect(testImage).toBeDefined();
+    if (!testImage) {
+      fail('Could not find image by user id');
+    }
+    const imageById = await imageService.getById(testImage.id);
+    expect(imageById).toEqual(testImage);
+    console.log(imageById, user_id);
+    const response = await imageService.deleteImage(imageById.id);
+    expect(response.status).toBe(204);
+  });
+
   afterAll(async () => {
-    if (id) {
+    if (user_id) {
       try {
         const accessToken = await getAccessToken();
         if (accessToken) {
-          await deleteUser(id, accessToken);
+          await deleteUser(user_id, accessToken);
         }
       } catch (error: any) {
         console.error(error.response?.data || error.message);
