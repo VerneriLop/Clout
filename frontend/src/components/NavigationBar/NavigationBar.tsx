@@ -7,6 +7,7 @@ import {
   faUser,
   faHandPointer,
   faAward,
+  faImages,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const NavigationBar = (): JSX.Element => {
@@ -16,6 +17,7 @@ export const NavigationBar = (): JSX.Element => {
     {id: 'awards', icon: faAward},
     {id: 'vote', icon: faHandPointer},
     {id: 'camera', icon: faCamera},
+    {id: 'feed', icon: faImages},
     {id: 'profile', icon: faUser},
   ];
 

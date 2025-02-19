@@ -14,7 +14,7 @@ export const Style = StyleSheet.create({
   },
   inactiveButton: {
     backgroundColor: 'transparent',
-    borderRadius: 20,
+    borderRadius: horizontalScale(20),
     paddingHorizontal: horizontalScale(12),
     paddingVertical: verticalScale(12),
   },
