@@ -1,5 +1,12 @@
-import React, {useState, useRef, useCallback} from 'react';
-import {View, TouchableOpacity, Image, Text, SafeAreaView} from 'react-native';
+import React, {useState, useRef, useCallback, useEffect} from 'react';
+import {
+  View,
+  TouchableOpacity,
+  Image,
+  Text,
+  SafeAreaView,
+  Alert,
+} from 'react-native';
 import {
   useCameraDevices,
   useCameraPermission,
@@ -53,11 +60,17 @@ export const CameraScreen = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
+      if (!frontCamera && !backCamera) {
+        dispatch(setCameraActive(false));
+        navigation.goBack();
+        Alert.alert('Camera not found');
+        return;
+      }
       dispatch(setCameraActive(true));
       return () => {
         dispatch(setCameraActive(false));
       };
-    }, [dispatch]),
+    }, [dispatch, navigation, frontCamera, backCamera]),
   );
 
   const cameraRef = useRef<Camera>(null);
@@ -69,19 +82,11 @@ export const CameraScreen = (): JSX.Element => {
   }
 
   if (!frontCamera && !backCamera) {
-    return (
-      <SafeAreaView>
-        <Text>No camera found</Text>
-      </SafeAreaView>
-    );
+    return <></>;
   }
 
-  if (!activeDevice) {
-    return <Text>No active camera found</Text>;
-  }
-
-  const minZoom = activeDevice.minZoom ?? 1;
-  const maxZoom = Math.min(activeDevice.maxZoom ?? 10, 10);
+  const minZoom = activeDevice?.minZoom ?? 1;
+  const maxZoom = Math.min(activeDevice?.maxZoom ?? 10, 10);
 
   const pinchGesture = Gesture.Pinch()
     .onBegin(() => {
