@@ -66,15 +66,12 @@ export const CameraScreen = (): JSX.Element => {
     return <Text>No active camera found</Text>;
   }
 
-  // 🔹 Määritetään neutralZoom oikeaan paikkaan
   const neutralZoom = activeDevice.neutralZoom ?? 1;
   const minZoom = activeDevice.minZoom ?? 1;
   const maxZoom = activeDevice.maxZoom ?? 10;
 
-  // 🔹 Haetaan ultrawide-formaatti, jos sellainen löytyy
   const ultraWideFormat = activeDevice.formats.find(f => f.fieldOfView > 100);
 
-  // 🔹 Nipistyszoomaus toimii nyt oikein
   const pinchGesture = Gesture.Pinch().onUpdate(e => {
     zoom.value = withSpring(
       Math.max(minZoom, Math.min(e.scale * neutralZoom, maxZoom)),
