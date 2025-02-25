@@ -19,16 +19,28 @@ import {Style} from './style';
 import {useDispatch} from 'react-redux';
 import {setCameraActive} from '../../redux/slices/cameraSlice';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {useSharedValue, withSpring} from 'react-native-reanimated';
+import Reanimated, {
+  useSharedValue,
+  useAnimatedProps,
+  interpolate,
+  Extrapolation,
+} from 'react-native-reanimated';
+
+Reanimated.addWhitelistedNativeProps({zoom: true});
+const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 
 export const CameraScreen = (): JSX.Element => {
   const zoom = useSharedValue(1);
+  const zoomOffset = useSharedValue(0);
 
   const [cameraType, setCameraType] = useState<'back' | 'front'>('back');
   const [photo, setPhoto] = useState<string | null>(null);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const animatedProps = useAnimatedProps(() => ({
+    zoom: zoom.value,
+  }));
 
   useFocusEffect(
     useCallback(() => {
@@ -66,17 +78,22 @@ export const CameraScreen = (): JSX.Element => {
     return <Text>No active camera found</Text>;
   }
 
-  const neutralZoom = activeDevice.neutralZoom ?? 1;
   const minZoom = activeDevice.minZoom ?? 1;
-  const maxZoom = activeDevice.maxZoom ?? 10;
+  const maxZoom = Math.min(activeDevice.maxZoom ?? 10, 10);
 
-  const ultraWideFormat = activeDevice.formats.find(f => f.fieldOfView > 100);
-
-  const pinchGesture = Gesture.Pinch().onUpdate(e => {
-    zoom.value = withSpring(
-      Math.max(minZoom, Math.min(e.scale * neutralZoom, maxZoom)),
-    );
-  });
+  const pinchGesture = Gesture.Pinch()
+    .onBegin(() => {
+      zoomOffset.value = zoom.value;
+    })
+    .onUpdate(e => {
+      const newZoom = zoomOffset.value * e.scale;
+      zoom.value = interpolate(
+        newZoom,
+        [minZoom, maxZoom],
+        [minZoom, maxZoom],
+        Extrapolation.CLAMP,
+      );
+    });
 
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -108,16 +125,13 @@ export const CameraScreen = (): JSX.Element => {
       {!photo ? (
         <>
           <GestureDetector gesture={pinchGesture}>
-            <Camera
+            <ReanimatedCamera
               ref={cameraRef}
               style={Style.camera}
               device={activeDevice}
               isActive
               photo
-              zoom={zoom.value}
-              format={
-                zoom.value < 1 && ultraWideFormat ? ultraWideFormat : undefined
-              }
+              animatedProps={animatedProps}
             />
           </GestureDetector>
 

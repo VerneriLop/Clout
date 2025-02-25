@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import {horizontalScale, verticalScale} from '../../assets/styles/scaling';
 
 export const Style = StyleSheet.create({
   container: {
@@ -10,21 +11,21 @@ export const Style = StyleSheet.create({
   },
   controls: {
     position: 'absolute',
-    bottom: 50,
+    bottom: verticalScale(50),
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-around',
     alignItems: 'center',
   },
   button: {
-    padding: 10,
+    padding: horizontalScale(10),
     backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 50,
+    borderRadius: horizontalScale(50),
   },
   captureButton: {
     padding: 20,
     backgroundColor: 'white',
-    borderRadius: 50,
+    borderRadius: horizontalScale(50),
   },
   previewContainer: {
     flex: 1,
@@ -34,32 +35,32 @@ export const Style = StyleSheet.create({
   },
   previewImage: {
     width: '90%',
-    height: '80%',
-    borderRadius: 10,
+    height: '70%',
+    borderRadius: horizontalScale(10),
   },
   previewControls: {
     flexDirection: 'row',
     position: 'absolute',
-    bottom: 50,
+    bottom: verticalScale(40),
     width: '100%',
     justifyContent: 'space-evenly',
   },
   cancelButton: {
-    padding: 15,
+    padding: horizontalScale(15),
     backgroundColor: 'red',
-    borderRadius: 50,
+    borderRadius: horizontalScale(50),
   },
   confirmButton: {
-    padding: 15,
+    padding: horizontalScale(15),
     backgroundColor: 'green',
-    borderRadius: 50,
+    borderRadius: horizontalScale(50),
   },
   backButton: {
     position: 'absolute',
-    top: 50,
-    left: 20,
+    top: verticalScale(50),
+    left: horizontalScale(20),
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 20,
-    padding: 10,
+    borderRadius: horizontalScale(20),
+    padding: horizontalScale(10),
   },
 });
