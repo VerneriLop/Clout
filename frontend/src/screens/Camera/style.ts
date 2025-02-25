@@ -54,4 +54,12 @@ export const Style = StyleSheet.create({
     backgroundColor: 'green',
     borderRadius: 50,
   },
+  backButton: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 20,
+    padding: 10,
+  },
 });

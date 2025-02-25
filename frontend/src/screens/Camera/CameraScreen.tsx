@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useCallback} from 'react';
 import {View, TouchableOpacity, Image, Text, SafeAreaView} from 'react-native';
 import {
   useCameraDevices,
@@ -6,24 +6,40 @@ import {
   Camera,
   CameraDevice,
 } from 'react-native-vision-camera';
-//import {useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
   faCamera,
   faSync,
   faCheck,
   faTimes,
+  faArrowLeft,
 } from '@fortawesome/free-solid-svg-icons';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import {Style} from './style';
+import {useDispatch} from 'react-redux';
+import {setCameraActive} from '../../redux/slices/cameraSlice';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useSharedValue, withSpring} from 'react-native-reanimated';
 
 export const CameraScreen = (): JSX.Element => {
+  const zoom = useSharedValue(1);
+
   const [cameraType, setCameraType] = useState<'back' | 'front'>('back');
   const [photo, setPhoto] = useState<string | null>(null);
-  const [zoom, setZoom] = useState(1);
+
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setCameraActive(true));
+      return () => {
+        dispatch(setCameraActive(false));
+      };
+    }, [dispatch]),
+  );
 
   const devices = useCameraDevices();
-  //const navigation = useNavigation();
   const cameraRef = useRef<Camera>(null);
   const {hasPermission, requestPermission} = useCameraPermission();
 
@@ -50,16 +66,19 @@ export const CameraScreen = (): JSX.Element => {
     return <Text>No active camera found</Text>;
   }
 
-  // Get ultrawide format
-  const ultraWideFormat = activeDevice.formats.find(f => f.fieldOfView > 100);
-
+  // 🔹 Määritetään neutralZoom oikeaan paikkaan
+  const neutralZoom = activeDevice.neutralZoom ?? 1;
   const minZoom = activeDevice.minZoom ?? 1;
   const maxZoom = activeDevice.maxZoom ?? 10;
 
-  // Zoom pinching
+  // 🔹 Haetaan ultrawide-formaatti, jos sellainen löytyy
+  const ultraWideFormat = activeDevice.formats.find(f => f.fieldOfView > 100);
+
+  // 🔹 Nipistyszoomaus toimii nyt oikein
   const pinchGesture = Gesture.Pinch().onUpdate(e => {
-    let newZoom = Math.max(minZoom, Math.min(e.scale, maxZoom));
-    setZoom(newZoom);
+    zoom.value = withSpring(
+      Math.max(minZoom, Math.min(e.scale * neutralZoom, maxZoom)),
+    );
   });
 
   const takePicture = async () => {
@@ -82,6 +101,11 @@ export const CameraScreen = (): JSX.Element => {
     setPhoto(null);
   };
 
+  const handleBack = () => {
+    dispatch(setCameraActive(false));
+    navigation.goBack();
+  };
+
   return (
     <View style={Style.container}>
       {!photo ? (
@@ -93,11 +117,16 @@ export const CameraScreen = (): JSX.Element => {
               device={activeDevice}
               isActive
               photo
-              zoom={zoom}
-              format={zoom < 1 && ultraWideFormat ? ultraWideFormat : undefined}
+              zoom={zoom.value}
+              format={
+                zoom.value < 1 && ultraWideFormat ? ultraWideFormat : undefined
+              }
             />
           </GestureDetector>
 
+          <TouchableOpacity onPress={handleBack} style={Style.backButton}>
+            <FontAwesomeIcon icon={faArrowLeft} size={30} color="white" />
+          </TouchableOpacity>
           <View style={Style.controls}>
             <TouchableOpacity onPress={toggleCamera} style={Style.button}>
               <FontAwesomeIcon icon={faSync} size={30} color="white" />

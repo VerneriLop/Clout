@@ -30,6 +30,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+# TODO: REMEMBER TO CHANGE OF WHILE PRODUCTION
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 # Application definition
 
