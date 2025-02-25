@@ -1,10 +1,13 @@
 import {Dimensions, StyleSheet} from 'react-native';
-import {horizontalScale} from '../../assets/styles/scaling';
+import {horizontalScale, scaleFontSize} from '../../assets/styles/scaling';
 import globalStyle from '../../assets/styles/globalStyle';
 
 const {width, height} = Dimensions.get('window');
-
-const imageWidth = Math.floor(width / 3);
+console.log(height);
+const imageWidth = Math.ceil(width / 3);
+console.log(imageWidth % 3);
+const buttonTextSize = scaleFontSize(17);
+console.log(buttonTextSize);
 const imageHeight = imageWidth * (4 / 3);
 
 const style = StyleSheet.create({
@@ -34,6 +37,7 @@ const style = StyleSheet.create({
   boxNumber: {
     textAlign: 'center',
     fontWeight: 'bold',
+    fontSize: scaleFontSize(17),
   },
   boxText: {
     textAlign: 'center',
@@ -52,12 +56,14 @@ const style = StyleSheet.create({
     width: horizontalScale(150),
     borderRadius: 6,
     alignSelf: 'center',
+    borderWidth: StyleSheet.hairlineWidth * 5,
+    borderColor: 'black',
     //backgroundColor: 'lightgray',
   },
   imageBox: {
     width: imageWidth,
     height: imageHeight,
-    borderWidth: StyleSheet.hairlineWidth * 3,
+    borderWidth: StyleSheet.hairlineWidth * 1,
     borderColor: 'white',
   },
 });
