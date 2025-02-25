@@ -140,15 +140,16 @@ export const CameraScreen = (): JSX.Element => {
           <TouchableOpacity onPress={handleBack} style={Style.backButton}>
             <FontAwesomeIcon icon={faArrowLeft} size={30} color="white" />
           </TouchableOpacity>
-          <View style={Style.controls}>
-            <TouchableOpacity onPress={toggleCamera} style={Style.button}>
-              <FontAwesomeIcon icon={faSync} size={30} color="white" />
-            </TouchableOpacity>
 
-            <TouchableOpacity onPress={takePicture} style={Style.captureButton}>
-              <FontAwesomeIcon icon={faCamera} size={40} color="white" />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            onPress={toggleCamera}
+            style={Style.changeCameraButton}>
+            <FontAwesomeIcon icon={faSync} size={30} color="white" />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={takePicture} style={Style.captureButton}>
+            <FontAwesomeIcon icon={faCamera} size={40} color="white" />
+          </TouchableOpacity>
         </>
       ) : (
         <View style={Style.previewContainer}>

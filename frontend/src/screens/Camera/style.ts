@@ -9,20 +9,18 @@ export const Style = StyleSheet.create({
   camera: {
     flex: 1,
   },
-  controls: {
+  changeCameraButton: {
     position: 'absolute',
+    left: horizontalScale(20),
     bottom: verticalScale(50),
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  button: {
     padding: horizontalScale(10),
     backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: horizontalScale(50),
   },
   captureButton: {
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: verticalScale(40),
     padding: 20,
     backgroundColor: 'white',
     borderRadius: horizontalScale(50),
