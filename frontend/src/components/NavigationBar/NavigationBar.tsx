@@ -9,11 +9,13 @@ import {
   faImages,
   IconDefinition,
   faUser,
+  faHouse,
 } from '@fortawesome/free-solid-svg-icons';
 import {useNavigation} from '@react-navigation/native';
 //import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList, Routes} from '../../navigation/Routes';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {horizontalScale} from '../../assets/styles/scaling';
 
 export const NavigationBar = (): JSX.Element => {
   const [activeButton, setActiveButton] = useState<keyof typeof Routes>('Vote');
@@ -22,10 +24,10 @@ export const NavigationBar = (): JSX.Element => {
     useNavigation<BottomTabNavigationProp<RootStackParamList>>();
 
   const buttons: {id: keyof RootStackParamList; icon: IconDefinition}[] = [
-    {id: Routes.Leaderboard, icon: faAward},
-    {id: Routes.Vote, icon: faHandPointer},
-    {id: Routes.Camera, icon: faCamera},
+    {id: Routes.Vote, icon: faHouse},
     {id: Routes.Feed, icon: faImages},
+    {id: Routes.Camera, icon: faCamera},
+    {id: Routes.Leaderboard, icon: faAward},
     {id: Routes.Profile, icon: faUser},
   ];
 
@@ -40,9 +42,9 @@ export const NavigationBar = (): JSX.Element => {
         <NavigationButton
           key={id}
           icon={icon}
-          isActive={activeButton === id}
-          color={activeButton === id ? 'white' : 'black'}
-          size={30}
+          //isActive={activeButton === id}
+          color={activeButton === id ? 'black' : '#757575'}
+          size={horizontalScale(21)}
           onPress={() => handlePress(id)}
         />
       ))}

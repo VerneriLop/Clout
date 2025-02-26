@@ -4,6 +4,9 @@ import {CustomImage} from '../../services/image/images';
 import style from './style';
 import {ProfileInfoSection} from './ProfileInfoSection';
 import {mockUser} from './mocks';
+import {Text} from 'react-native-gesture-handler';
+import {horizontalScale, verticalScale} from '../../assets/styles/scaling';
+import globalStyle from '../../assets/styles/globalStyle';
 
 type ImageBoxProps = {
   image: CustomImage;
@@ -24,6 +27,13 @@ const ImageBox = ({image, onPress}: ImageBoxProps): JSX.Element => (
   </>
 );
 
+const ListFooter = ({numPosts}: {numPosts: number}): JSX.Element => (
+  <View>
+    <Text style={style.boxText}>{`${numPosts} images`}</Text>
+  </View>
+);
+
+// investigate do we need to order the list by date, or backend handles it
 export const ImageGrid = ({data}: {data: CustomImage[]}): JSX.Element => {
   const [refreshing, setRefreshing] = useState(false);
 
@@ -44,9 +54,10 @@ export const ImageGrid = ({data}: {data: CustomImage[]}): JSX.Element => {
   };
 
   return (
-    <View>
+    <View style={globalStyle.flex}>
       <FlatList
         ListHeaderComponent={<ProfileInfoSection user={mockUser} />}
+        ListFooterComponent={<ListFooter numPosts={mockUser.num_posts} />}
         data={data}
         renderItem={renderItem}
         keyExtractor={item => String(item.id)}

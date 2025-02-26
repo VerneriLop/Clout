@@ -12,6 +12,7 @@ const imageHeight = imageWidth * (4 / 3);
 
 const style = StyleSheet.create({
   container: {
+    flex: 1,
     marginTop: horizontalScale(8),
     flexDirection: 'column',
     paddingHorizontal: globalStyle.defaultPadding.paddingHorizontal,

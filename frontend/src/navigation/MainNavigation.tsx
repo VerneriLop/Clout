@@ -11,6 +11,8 @@ import {VoteScreen} from '../screens/Vote/VoteScreen';
 import {CameraScreen} from '../screens/Camera/CameraScreen';
 import {FeedScreen} from '../screens/Feed/FeedScreen';
 import {ProfileScreen} from '../screens/Profile/ProfileScreen';
+import {View} from 'react-native';
+import globalStyle from '../assets/styles/globalStyle';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -46,7 +48,7 @@ export const NonAuthenticated = (): JSX.Element => {
 // Screens for authenticated users
 export const Authenticated = (): JSX.Element => {
   return (
-    <>
+    <View style={[globalStyle.backgroundWhite, globalStyle.flex]}>
       <Stack.Navigator screenOptions={{header: () => null, headerShown: false}}>
         <Stack.Screen
           name="BottomTabNavigator"
@@ -54,6 +56,6 @@ export const Authenticated = (): JSX.Element => {
         />
       </Stack.Navigator>
       <NavigationBar />
-    </>
+    </View>
   );
 };

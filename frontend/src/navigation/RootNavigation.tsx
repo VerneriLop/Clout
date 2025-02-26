@@ -8,5 +8,5 @@ export const RootNavigation = () => {
   const user = useSelector((state: RootState) => state.user);
 
   // Jos käyttäjä on kirjautunut, näytetään Authenticated näkymä, muuten NonAuthenticated
-  return user.isAuthenticated ? <Authenticated /> : <NonAuthenticated />;
+  return <Authenticated />; //user.isAuthenticated ? <Authenticated /> : <NonAuthenticated />;
 };

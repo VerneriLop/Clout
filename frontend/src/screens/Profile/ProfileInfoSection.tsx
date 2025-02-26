@@ -1,7 +1,8 @@
 import React from 'react';
-import {View, Text, Image, Pressable} from 'react-native';
-import {scaleFontSize} from '../../assets/styles/scaling';
+import {View, Text, Image, Pressable, StyleSheet} from 'react-native';
+import {scaleFontSize, verticalScale} from '../../assets/styles/scaling';
 import style from './style';
+import globalStyle from '../../assets/styles/globalStyle';
 
 const UserInfoBox = ({
   count,
@@ -37,6 +38,27 @@ const UserInfoBar = ({user}: {user: CustomUser}): JSX.Element => {
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginVertical: verticalScale(10),
+    flexDirection: 'column',
+    paddingHorizontal: globalStyle.defaultPadding.paddingHorizontal,
+  },
+  buttonText: {
+    textAlign: 'center',
+    fontSize: scaleFontSize(15),
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  defaultMargin: {
+    marginVertical: verticalScale(10),
+  },
+});
+
 const ProfileActionButton = ({text}: {text: string}): JSX.Element => {
   return (
     <View>
@@ -48,14 +70,7 @@ const ProfileActionButton = ({text}: {text: string}): JSX.Element => {
           style.button,
         ]}
         onPress={() => console.log('press profileactionbutton')}>
-        <Text
-          style={{
-            textAlign: 'center',
-            fontSize: scaleFontSize(15),
-            fontWeight: 'bold',
-          }}>
-          {text}
-        </Text>
+        <Text style={styles.buttonText}>{text}</Text>
       </Pressable>
     </View>
   );
@@ -73,18 +88,13 @@ export type CustomUser = {
 };
 
 export const ProfileInfoSection = ({user}: {user: CustomUser}): JSX.Element => (
-  <View style={style.container}>
+  <View style={styles.container}>
     <UserInfoBar user={user} />
-    <View style={{paddingBottom: 10}}>
+    <View style={styles.defaultMargin}>
       <Text style={style.name}>{user.username}</Text>
       <Text>{user.bio}</Text>
     </View>
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        paddingVertical: 6,
-      }}>
+    <View style={styles.buttonContainer}>
       <ProfileActionButton text="Edit profile" />
       <ProfileActionButton text="Share profile" />
     </View>
