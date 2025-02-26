@@ -10,6 +10,8 @@ import {LeaderboardScreen} from '../screens/LeaderboardScreen/LeaderboardScreen'
 import {VoteScreen} from '../screens/Vote/VoteScreen';
 import {CameraScreen} from '../screens/Camera/CameraScreen';
 import {FeedScreen} from '../screens/Feed/FeedScreen';
+import {useSelector} from 'react-redux';
+import {RootState} from '../redux/store/store';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -43,6 +45,10 @@ export const NonAuthenticated = (): JSX.Element => {
 
 // Screens for authenticated users
 export const Authenticated = (): JSX.Element => {
+  const isCameraActive = useSelector(
+    (state: RootState) => state.camera.isCameraActive,
+  );
+
   return (
     <>
       <Stack.Navigator screenOptions={{header: () => null, headerShown: false}}>
@@ -51,7 +57,7 @@ export const Authenticated = (): JSX.Element => {
           component={BottomTabNavigator}
         />
       </Stack.Navigator>
-      <NavigationBar />
+      {!isCameraActive && <NavigationBar />}
     </>
   );
 };
