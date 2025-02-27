@@ -4,7 +4,6 @@ import {View} from 'react-native';
 import {NavigationButton} from '../NavigationButton/NavigationButton';
 import {
   faCamera,
-  faHandPointer,
   faAward,
   faImages,
   IconDefinition,
@@ -16,9 +15,11 @@ import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList, Routes} from '../../navigation/Routes';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {horizontalScale} from '../../assets/styles/scaling';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 export const NavigationBar = (): JSX.Element => {
   const [activeButton, setActiveButton] = useState<keyof typeof Routes>('Vote');
+  const insets = useSafeAreaInsets();
 
   const navigation =
     useNavigation<BottomTabNavigationProp<RootStackParamList>>();
@@ -37,7 +38,7 @@ export const NavigationBar = (): JSX.Element => {
   };
 
   return (
-    <View style={Style.container}>
+    <View style={[Style.container, {paddingBottom: insets.bottom}]}>
       {buttons.map(({id, icon}) => (
         <NavigationButton
           key={id}

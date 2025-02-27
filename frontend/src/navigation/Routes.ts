@@ -8,6 +8,9 @@ export type RootStackParamList = {
   Feed: undefined;
   Profile: undefined;
   BottomTabNavigator: undefined;
+  Settings: undefined;
+  Followers: undefined;
+  EditProfile: undefined;
 };
 
 export const Routes = {
@@ -20,4 +23,7 @@ export const Routes = {
   Feed: 'Feed',
   Profile: 'Profile',
   BottomTabNavigator: 'BottomTabNavigator',
+  Settings: 'Settings',
+  Followers: 'Followers',
+  EditProfile: 'EditProfile',
 } as const;

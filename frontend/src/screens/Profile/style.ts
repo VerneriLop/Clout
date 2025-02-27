@@ -26,7 +26,8 @@ const style = StyleSheet.create({
   infoBar: {
     paddingBottom: horizontalScale(7),
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   image: {
     width: horizontalScale(75),

@@ -1,5 +1,5 @@
 import {CustomImage} from '../../services/image/images';
-import {CustomUser} from './ProfileInfoSection';
+import {CustomUser} from './components/ProfileInfoSection';
 
 const IMAGELIST_LENGTH = 50;
 

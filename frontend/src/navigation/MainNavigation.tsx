@@ -11,8 +11,11 @@ import {VoteScreen} from '../screens/Vote/VoteScreen';
 import {CameraScreen} from '../screens/Camera/CameraScreen';
 import {FeedScreen} from '../screens/Feed/FeedScreen';
 import {ProfileScreen} from '../screens/Profile/ProfileScreen';
-import {View} from 'react-native';
+import {SettingsScreen} from '../screens/Settings/SettingsScreen';
+import {StyleSheet, View} from 'react-native';
 import globalStyle from '../assets/styles/globalStyle';
+import {FollowersScreen} from '../screens/Profile/FollowersScreen';
+import {EditProfileScreen} from '../screens/Profile/EditProfileScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -38,24 +41,48 @@ export const NonAuthenticated = (): JSX.Element => {
   return (
     <Stack.Navigator
       initialRouteName={Routes.Profile}
-      screenOptions={{header: () => null, headerShown: false}}>
-      <Stack.Screen name={Routes.Profile} component={ProfileScreen} />
+      screenOptions={{
+        header: () => null,
+        headerShown: false,
+      }}>
+      <Stack.Screen name={Routes.Login} component={LoginScreen} />
       <Stack.Screen name={Routes.Register} component={RegisterScreen} />
     </Stack.Navigator>
   );
 };
-
+//screenOptions={{header: () => null, headerShown: false}}>
 // Screens for authenticated users
 export const Authenticated = (): JSX.Element => {
   return (
     <View style={[globalStyle.backgroundWhite, globalStyle.flex]}>
-      <Stack.Navigator screenOptions={{header: () => null, headerShown: false}}>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: styles.headerStyle,
+          headerShadowVisible: false,
+          headerTitleAlign: 'center',
+        }}>
         <Stack.Screen
           name="BottomTabNavigator"
           component={BottomTabNavigator}
+          options={{header: () => null, headerShown: false}}
+        />
+        <Stack.Screen name={Routes.Settings} component={SettingsScreen} />
+        <Stack.Screen name={Routes.Followers} component={FollowersScreen} />
+        <Stack.Screen
+          name={Routes.EditProfile}
+          component={EditProfileScreen}
+          options={{title: 'Edit profile'}}
         />
       </Stack.Navigator>
       <NavigationBar />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  headerStyle: {
+    backgroundColor: '#fff',
+    //elevation: 0,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+});
