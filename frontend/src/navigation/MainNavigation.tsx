@@ -10,6 +10,8 @@ import {LeaderboardScreen} from '../screens/LeaderboardScreen/LeaderboardScreen'
 import {VoteScreen} from '../screens/Vote/VoteScreen';
 import {CameraScreen} from '../screens/Camera/CameraScreen';
 import {FeedScreen} from '../screens/Feed/FeedScreen';
+import {useSelector} from 'react-redux';
+import {RootState} from '../redux/store/store';
 import {ProfileScreen} from '../screens/Profile/ProfileScreen';
 import {SettingsScreen} from '../screens/Settings/SettingsScreen';
 import {StyleSheet, View} from 'react-native';
@@ -82,6 +84,10 @@ export const NonAuthenticated = (): JSX.Element => {
 //screenOptions={{header: () => null, headerShown: false}}>
 // Screens for authenticated users
 export const Authenticated = (): JSX.Element => {
+  const isCameraActive = useSelector(
+    (state: RootState) => state.camera.isCameraActive,
+  );
+
   return (
     <View style={[globalStyle.backgroundWhite, globalStyle.flex]}>
       <Stack.Navigator
@@ -96,8 +102,8 @@ export const Authenticated = (): JSX.Element => {
           options={{header: () => null, headerShown: false}}
         />
       </Stack.Navigator>
-      <NavigationBar />
-    </View>
+      {!isCameraActive && <NavigationBar />}
+    </>
   );
 };
 

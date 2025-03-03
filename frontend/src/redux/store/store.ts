@@ -1,9 +1,11 @@
 import {configureStore} from '@reduxjs/toolkit';
 import userReducer from '../slices/userSlice';
+import cameraReducer from '../slices/cameraSlice';
 
 const store = configureStore({
   reducer: {
     user: userReducer,
+    camera: cameraReducer,
   },
 });
 
