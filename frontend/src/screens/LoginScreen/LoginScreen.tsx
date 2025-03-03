@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, SafeAreaView} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import {useDispatch} from 'react-redux';
 import Input from '../../components/Input/Input'; // Omat Input-komponentit
 import Button from '../../components/Button/Button'; // Omat Button-komponentit
@@ -8,6 +8,7 @@ import globalStyle from '../../assets/styles/globalStyle';
 import {RootStackParamList, Routes} from '../../navigation/Routes';
 import {loginHandler} from '../../services/auth/handlers/loginHandler';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -16,13 +17,18 @@ export const LoginScreen = ({navigation}: LoginScreenProps): JSX.Element => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-
+  const insets = useSafeAreaInsets();
   const handleLogin = async () => {
     await loginHandler(username, password, dispatch, setLoading);
   };
 
   return (
-    <SafeAreaView style={[globalStyle.backgroundWhite, globalStyle.flex]}>
+    <View
+      style={[
+        globalStyle.backgroundWhite,
+        globalStyle.flex,
+        {paddingTop: insets.top},
+      ]}>
       <View style={style.container}>
         <Text style={style.title}>Log in</Text>
 
@@ -55,6 +61,6 @@ export const LoginScreen = ({navigation}: LoginScreenProps): JSX.Element => {
           </Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };

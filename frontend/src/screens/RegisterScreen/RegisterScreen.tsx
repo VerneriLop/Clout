@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, SafeAreaView, Alert} from 'react-native';
+import {View, Text, Alert} from 'react-native';
 import {Formik, FormikProps} from 'formik';
 import * as Yup from 'yup';
 import Input from '../../components/Input/Input';
@@ -9,6 +9,7 @@ import globalStyle from '../../assets/styles/globalStyle';
 import {RootStackParamList, Routes} from '../../navigation/Routes';
 import {registerHandler} from '../../services/auth/handlers/registerHandler';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type RegisterScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -20,6 +21,49 @@ type FormValues = {
   email: string;
   password: string;
   confirmPassword: string;
+};
+
+export const RegisterScreen = ({navigation}: RegisterScreenProps) => {
+  const insets = useSafeAreaInsets();
+  return (
+    <View
+      style={[
+        globalStyle.backgroundWhite,
+        globalStyle.flex,
+        {paddingTop: insets.top},
+      ]}>
+      <Formik
+        initialValues={{
+          username: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+        }}
+        validationSchema={RegisterSchema}
+        onSubmit={async (values, {setSubmitting}) => {
+          try {
+            const success = await registerHandler(
+              values.email,
+              values.password,
+              values.confirmPassword,
+              values.username,
+            );
+            if (success === 0) {
+              navigation.navigate(Routes.Login);
+            }
+          } catch (error: any) {
+            Alert.alert(
+              'Registration Failed',
+              error.message || 'Something went wrong.',
+            );
+          } finally {
+            setSubmitting(false);
+          }
+        }}>
+        {formikProps => <RenderForm {...formikProps} />}
+      </Formik>
+    </View>
+  );
 };
 
 const RegisterSchema = Yup.object().shape({
@@ -126,40 +170,3 @@ const RenderForm = ({
     />
   </View>
 );
-
-export const RegisterScreen = ({navigation}: RegisterScreenProps) => {
-  return (
-    <SafeAreaView style={[globalStyle.backgroundWhite, globalStyle.flex]}>
-      <Formik
-        initialValues={{
-          username: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-        }}
-        validationSchema={RegisterSchema}
-        onSubmit={async (values, {setSubmitting}) => {
-          try {
-            const success = await registerHandler(
-              values.email,
-              values.password,
-              values.confirmPassword,
-              values.username,
-            );
-            if (success === 0) {
-              navigation.navigate(Routes.Login);
-            }
-          } catch (error: any) {
-            Alert.alert(
-              'Registration Failed',
-              error.message || 'Something went wrong.',
-            );
-          } finally {
-            setSubmitting(false);
-          }
-        }}>
-        {formikProps => <RenderForm {...formikProps} />}
-      </Formik>
-    </SafeAreaView>
-  );
-};

@@ -103,7 +103,7 @@ export const Authenticated = (): JSX.Element => {
         />
       </Stack.Navigator>
       {!isCameraActive && <NavigationBar />}
-    </>
+    </View>
   );
 };
 
