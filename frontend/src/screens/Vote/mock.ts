@@ -78,13 +78,27 @@ export const mockImageList: CustomImage[] = [
 type TupleType = [CustomImage, CustomImage];
 
 let extendedMockImageList: TupleType[] = [];
+let uri_idx: number;
+let uri_idx2: number;
 
+/*
 for (let i = 0; i < IMAGELIST_LENGTH; ++i) {
   extendedMockImageList.push([
     {...baseImageMock, id: i},
     {...baseImageMock, id: i + 1},
   ]);
   ++i;
+}
+  */
+
+for (let i = 0; i < IMAGELIST_LENGTH; i += 2) {
+  uri_idx = Math.floor(Math.random() * mockImageList.length);
+  uri_idx2 = Math.floor(Math.random() * mockImageList.length);
+
+  extendedMockImageList.push([
+    {...baseImageMock, id: i, image_url: mockImageList[uri_idx].image_url},
+    {...baseImageMock, id: i + 1, image_url: mockImageList[uri_idx2].image_url},
+  ]);
 }
 
 export default extendedMockImageList;

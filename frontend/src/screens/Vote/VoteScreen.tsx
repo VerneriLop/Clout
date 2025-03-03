@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {View, Dimensions} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
@@ -12,23 +12,15 @@ import Animated, {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import globalStyle from '../../assets/styles/globalStyle';
 import {styles} from './style';
-import {useDispatch, useSelector} from 'react-redux';
-import {updateNewVoteImages} from '../../redux/slices/voteImageSlice';
-import extendedMockImageList from './mock';
+import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store/store';
 
 export const VoteScreen = (): JSX.Element => {
-  const dispatch = useDispatch();
-  const [voteImageCount, setVoteImageCount] = useState<number>(0);
-
-  useEffect(() => {
-    dispatch(updateNewVoteImages({imageTupleList: extendedMockImageList}));
-  }, [dispatch]);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const translateX = useSharedValue(0);
   const leftTranslateY = useSharedValue(0);
   const rightTranslateY = useSharedValue(0);
-
   const swipeStart = useSharedValue(0);
 
   const {width, height} = Dimensions.get('window');
@@ -36,11 +28,27 @@ export const VoteScreen = (): JSX.Element => {
   const MAX_TRANSLATE_X = width * 0.6;
   const VOTE_THRESHOLD = -height * 0.2;
 
+  const leftOpacity = useSharedValue(1);
+  const rightOpacity = useSharedValue(1);
+
   const voteImage = (side: 'left' | 'right') => {
-    console.log(`🔥 Voted: ${side} image!`);
+    console.log(`Voted: ${side} image!`);
+
+    setCurrentIndex(prevIndex => (prevIndex + 1) % voteImages.length);
+
+    setTimeout(() => {
+      leftTranslateY.value = 0;
+      rightTranslateY.value = 0;
+      leftOpacity.value = 1;
+      rightOpacity.value = 1;
+    }, 300);
   };
 
-  const createImageGesture = (translateY: any, side: 'left' | 'right') =>
+  const createImageGesture = (
+    translateY: any,
+    opacity: any,
+    side: 'left' | 'right',
+  ) =>
     Gesture.Pan()
       .onBegin(() => {
         swipeStart.value = translateX.value;
@@ -63,22 +71,32 @@ export const VoteScreen = (): JSX.Element => {
             damping: 100,
           });
         } else {
-          translateX.value = withSpring(0, {
-            stiffness: 100, // Stiffness (higher value = faster)
-            damping: 100, // Damping (higher value = less oscillation)
-          });
+          translateX.value = withSpring(0, {stiffness: 100, damping: 100});
         }
 
         if (translateY.value < VOTE_THRESHOLD) {
           runOnJS(voteImage)(side);
+          translateY.value = withSpring(-height, {stiffness: 20, damping: 500});
+          translateX.value = withSpring(0, {stiffness: 100, damping: 100});
+          opacity.value = withSpring(0);
+        } else {
+          translateY.value = withSpring(0);
         }
-        translateY.value = withSpring(0);
       });
 
-  const leftImageGesture = createImageGesture(leftTranslateY, 'left');
-  const rightImageGesture = createImageGesture(rightTranslateY, 'right');
+  const leftImageGesture = createImageGesture(
+    leftTranslateY,
+    leftOpacity,
+    'left',
+  );
+  const rightImageGesture = createImageGesture(
+    rightTranslateY,
+    rightOpacity,
+    'right',
+  );
 
   const leftImageStyle = useAnimatedStyle(() => ({
+    opacity: leftOpacity.value, // 🔥 Häivytys
     transform: [
       {
         translateX: interpolate(
@@ -101,6 +119,7 @@ export const VoteScreen = (): JSX.Element => {
   }));
 
   const rightImageStyle = useAnimatedStyle(() => ({
+    opacity: rightOpacity.value,
     transform: [
       {
         translateX: interpolate(
@@ -126,29 +145,33 @@ export const VoteScreen = (): JSX.Element => {
     (state: RootState) => state.voteImage.imageTupleList,
   );
 
+  const currentImages = useMemo(() => {
+    return voteImages.length > 0
+      ? voteImages[currentIndex % voteImages.length]
+      : null;
+  }, [currentIndex, voteImages]);
+
   return (
     <SafeAreaView style={[globalStyle.flex, globalStyle.backgroundWhite]}>
-      <View style={styles.container}>
-        <GestureDetector gesture={leftImageGesture}>
-          <Animated.Image
-            source={{
-              uri: 'https://www.spongebobshop.com/cdn/shop/products/SB-Standees-Spong-3_800x.jpg?v=1603744568',
-            }}
-            style={[styles.image, leftImageStyle]}
-            resizeMode={'cover'}
-          />
-        </GestureDetector>
+      {currentImages && (
+        <View style={styles.container}>
+          <GestureDetector gesture={leftImageGesture}>
+            <Animated.Image
+              source={{uri: currentImages[0].image_url}}
+              style={[styles.image, leftImageStyle]}
+              resizeMode={'cover'}
+            />
+          </GestureDetector>
 
-        <GestureDetector gesture={rightImageGesture}>
-          <Animated.Image
-            source={{
-              uri: 'https://www.spongebobshop.com/cdn/shop/products/SB-Standees-Spong-3_800x.jpg?v=1603744568',
-            }}
-            style={[styles.image, rightImageStyle]}
-            resizeMode={'cover'}
-          />
-        </GestureDetector>
-      </View>
+          <GestureDetector gesture={rightImageGesture}>
+            <Animated.Image
+              source={{uri: currentImages[1].image_url}}
+              style={[styles.image, rightImageStyle]}
+              resizeMode={'cover'}
+            />
+          </GestureDetector>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
