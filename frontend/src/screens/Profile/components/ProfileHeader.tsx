@@ -10,21 +10,6 @@ import {ProfileStackParamList} from '../../../navigation/Routes';
 import {CustomPressable} from '../CustomPressable';
 import {CustomUser} from './ProfileInfoCard';
 
-const headerstyle = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: globalStyle.defaultPadding.paddingHorizontal,
-    paddingVertical: globalStyle.defaultPadding.paddingVertical,
-  },
-  text: {
-    fontWeight: 'bold',
-    fontSize: scaleFontSize(20),
-    textAlignVertical: 'bottom',
-  },
-});
-
 export const ProfileHeader = ({user}: {user: CustomUser}): JSX.Element => {
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
@@ -40,3 +25,18 @@ export const ProfileHeader = ({user}: {user: CustomUser}): JSX.Element => {
     </View>
   );
 };
+
+const headerstyle = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: globalStyle.defaultPadding.paddingHorizontal,
+    paddingVertical: globalStyle.defaultPadding.paddingVertical,
+  },
+  text: {
+    fontWeight: 'bold',
+    fontSize: scaleFontSize(20),
+    textAlignVertical: 'bottom',
+  },
+});

@@ -7,7 +7,7 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {ProfileStackParamList} from '../../../navigation/Routes';
 import {ButtonRow} from './ButtonRow';
-import {UserInfoBar} from './UserInfoBar';
+import {ProfileStatsRow} from './ProfileStatsRow';
 
 export type CustomUser = {
   id: number;
@@ -42,7 +42,7 @@ export const ProfileInfoCard = ({user}: {user: CustomUser}): JSX.Element => {
 
   return (
     <View style={styles.container}>
-      <UserInfoBar user={user} />
+      <ProfileStatsRow user={user} />
       <View style={styles.defaultMargin}>
         <Text style={style.name}>{user.username}</Text>
         <Text>{user.bio}</Text>

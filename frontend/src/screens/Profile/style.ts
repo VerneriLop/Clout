@@ -17,32 +17,12 @@ export const style = StyleSheet.create({
     flexDirection: 'column',
     paddingHorizontal: globalStyle.defaultPadding.paddingHorizontal,
   },
-  box: {
-    height: horizontalScale(75),
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-  infoBar: {
-    paddingBottom: horizontalScale(7),
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
   image: {
     width: horizontalScale(75),
     height: horizontalScale(75),
     borderRadius: horizontalScale(75),
     borderWidth: StyleSheet.hairlineWidth * 3,
     borderColor: '#dedede',
-  },
-  boxNumber: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: scaleFontSize(17),
-  },
-  boxText: {
-    textAlign: 'center',
   },
   name: {
     fontWeight: 'bold',

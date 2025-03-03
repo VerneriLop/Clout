@@ -7,7 +7,7 @@ type CustomPressableProps = {
   children: React.ReactNode;
   pressedStyle?: (pressed: boolean) => StyleProp<ViewStyle>;
 };
-/* Custom wrapper for making pressables of child components*/
+
 export const CustomPressable = ({
   onPress,
   style,
