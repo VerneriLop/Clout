@@ -23,22 +23,21 @@ export const ThemedSafeAreaView = ({
   style,
 }: ThemedViewProps): JSX.Element => {
   const insets = useSafeAreaInsets();
-  //const theme = useTheme();
+  const theme = useTheme();
   return (
-    <ThemedView>
-      <View
-        style={[
-          {
-            paddingBottom: insets.bottom,
-            paddingTop: insets.top,
-            paddingLeft: insets.left,
-            paddingRight: insets.right,
-          },
-          style,
-        ]}>
-        {children}
-      </View>
-    </ThemedView>
+    <View
+      style={[
+        {
+          paddingBottom: insets.bottom,
+          paddingTop: insets.top,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+          backgroundColor: theme.colors.background,
+        },
+        style,
+      ]}>
+      {children}
+    </View>
   );
 };
 

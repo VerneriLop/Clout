@@ -11,7 +11,6 @@ import Animated, {
   SharedValue,
 } from 'react-native-reanimated';
 import FastImage from 'react-native-fast-image';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import globalStyle from '../../assets/styles/globalStyle';
 import {styles} from './style';
 import {shallowEqual, useDispatch, useSelector} from 'react-redux';
@@ -19,7 +18,7 @@ import {RootState} from '../../redux/store/store';
 import {updateNewVoteImages} from '../../redux/slices/voteImageSlice';
 import extendedMockImageList from './mock';
 import {CustomImage} from '../../services/image/images';
-import {useTheme} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
 
@@ -38,7 +37,6 @@ export const VoteScreen = (): JSX.Element => {
   const rightOpacity = useSharedValue(1);
 
   const dispatch = useDispatch();
-  const theme = useTheme();
 
   useEffect(() => {
     dispatch(updateNewVoteImages({imageTupleList: extendedMockImageList}));
@@ -176,8 +174,7 @@ export const VoteScreen = (): JSX.Element => {
   }));
 
   return (
-    <SafeAreaView
-      style={[globalStyle.flex, {backgroundColor: theme.colors.background}]}>
+    <SafeAreaView style={globalStyle.flex}>
       {currentImages ? (
         <View style={styles.container}>
           <GestureDetector gesture={leftImageGesture}>
