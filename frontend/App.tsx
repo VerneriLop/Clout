@@ -13,21 +13,23 @@ import {Platform, StatusBar, useColorScheme} from 'react-native';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 
 const App = (): React.JSX.Element => {
+  const scheme = useColorScheme();
   useEffect(() => {
     if (Platform.OS === 'android') {
       SystemNavigationBar.setNavigationColor('transparent');
-      StatusBar.setBackgroundColor('transparent');
-      StatusBar.setTranslucent(true);
-      StatusBar.setBarStyle('dark-content');
     }
   }, []);
-  const scheme = useColorScheme();
 
   return (
     <SafeAreaProvider>
       <Provider store={store}>
         <NavigationContainer
           theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <StatusBar
+            translucent
+            backgroundColor="transparent"
+            barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'}
+          />
           <RootNavigation />
         </NavigationContainer>
       </Provider>

@@ -9,7 +9,7 @@ type DefaultTextProps = {
   style?: StyleProp<TextStyle>;
 };
 
-export const DefaultText = ({
+export const ThemedText = ({
   children,
   style,
 }: DefaultTextProps): JSX.Element => {
@@ -35,7 +35,7 @@ export const ThemedIcon = ({
   return (
     <View style={containerStyle}>
       <FontAwesomeIcon icon={icon} size={size} color={theme.colors.text} />
-      {children && <DefaultText style={style}>{children}</DefaultText>}
+      {children && <ThemedText style={style}>{children}</ThemedText>}
     </View>
   );
 };

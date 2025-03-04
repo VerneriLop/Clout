@@ -29,6 +29,7 @@ import {
   faUser,
   faHouse,
 } from '@fortawesome/free-solid-svg-icons';
+import {ThemedView} from '../components/ui/themed-view';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const ProfileStack = createStackNavigator<ProfileStackParamList>();
@@ -149,15 +150,17 @@ const BottomTabNavigator = () => {
 // Screens for unauthenticated users
 export const NonAuthenticated = (): JSX.Element => {
   return (
-    <Stack.Navigator
-      initialRouteName={Routes.Login}
-      screenOptions={{
-        header: () => null,
-        headerShown: false,
-      }}>
-      <Stack.Screen name={Routes.Login} component={LoginScreen} />
-      <Stack.Screen name={Routes.Register} component={RegisterScreen} />
-    </Stack.Navigator>
+    <ThemedView style={globalStyle.flex}>
+      <Stack.Navigator
+        initialRouteName={Routes.Login}
+        screenOptions={{
+          header: () => null,
+          headerShown: false,
+        }}>
+        <Stack.Screen name={Routes.Login} component={LoginScreen} />
+        <Stack.Screen name={Routes.Register} component={RegisterScreen} />
+      </Stack.Navigator>
+    </ThemedView>
   );
 };
 //screenOptions={{header: () => null, headerShown: false}}>

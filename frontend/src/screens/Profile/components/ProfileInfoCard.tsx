@@ -9,7 +9,7 @@ import {ProfileStackParamList} from '../../../navigation/Routes';
 import {ButtonRow} from './ButtonRow';
 import {ProfileStatsRow} from './ProfileStatsRow';
 import {ThemedView} from '../../../components/ui/themed-view';
-import {DefaultText} from '../../../components/ui/typography';
+import {ThemedText} from '../../../components/ui/typography';
 
 export type CustomUser = {
   id: number;
@@ -26,7 +26,7 @@ export const ProfileInfoCard = ({user}: {user: CustomUser}): JSX.Element => {
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
   const renderButton = (text: string) => (
-    <DefaultText style={styles.buttonText}>{text}</DefaultText>
+    <ThemedText style={styles.buttonText}>{text}</ThemedText>
   );
 
   const profileActionButtons = [
@@ -46,8 +46,8 @@ export const ProfileInfoCard = ({user}: {user: CustomUser}): JSX.Element => {
     <ThemedView style={styles.container}>
       <ProfileStatsRow user={user} />
       <View style={styles.defaultMargin}>
-        <DefaultText style={style.name}>{user.username}</DefaultText>
-        <DefaultText>{user.bio}</DefaultText>
+        <ThemedText style={style.name}>{user.username}</ThemedText>
+        <ThemedText>{user.bio}</ThemedText>
       </View>
       <ButtonRow
         buttons={profileActionButtons}

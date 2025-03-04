@@ -6,7 +6,7 @@ import {ProfileStackParamList} from '../../../navigation/Routes';
 import {CustomPressable} from '../CustomPressable';
 import {CustomUser} from './ProfileInfoCard';
 import {ProfilePicture} from './ProfilePicture';
-import {DefaultText} from '../../../components/ui/typography';
+import {ThemedText} from '../../../components/ui/typography';
 
 export const ProfileStatsRow = ({user}: {user: CustomUser}): JSX.Element => {
   const navigation =
@@ -37,8 +37,8 @@ const ProfileStatItem = ({
 }): JSX.Element => {
   return (
     <View style={styles.statItem}>
-      <DefaultText style={styles.statValue}>{value}</DefaultText>
-      <DefaultText style={styles.statText}>{label}</DefaultText>
+      <ThemedText style={styles.statValue}>{value}</ThemedText>
+      <ThemedText style={styles.statText}>{label}</ThemedText>
     </View>
   );
 };

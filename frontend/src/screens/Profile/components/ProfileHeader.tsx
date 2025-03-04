@@ -8,7 +8,7 @@ import globalStyle from '../../../assets/styles/globalStyle';
 import {ProfileStackParamList} from '../../../navigation/Routes';
 import {CustomPressable} from '../CustomPressable';
 import {CustomUser} from './ProfileInfoCard';
-import {DefaultText} from '../../../components/ui/typography';
+import {ThemedText} from '../../../components/ui/typography';
 
 export const ProfileHeader = ({user}: {user: CustomUser}): JSX.Element => {
   const {colors} = useTheme();
@@ -19,7 +19,7 @@ export const ProfileHeader = ({user}: {user: CustomUser}): JSX.Element => {
   };
   return (
     <View style={headerstyle.container}>
-      <DefaultText style={headerstyle.text}>{user.username}</DefaultText>
+      <ThemedText style={headerstyle.text}>{user.username}</ThemedText>
       <CustomPressable onPress={onPress}>
         <FontAwesomeIcon icon={faBars} size={20} color={colors.text} />
       </CustomPressable>
