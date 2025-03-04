@@ -8,6 +8,7 @@ import Animated, {
   interpolate,
   Extrapolation,
   runOnJS,
+  SharedValue,
 } from 'react-native-reanimated';
 import FastImage from 'react-native-fast-image';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -17,8 +18,13 @@ import {shallowEqual, useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store/store';
 import {updateNewVoteImages} from '../../redux/slices/voteImageSlice';
 import extendedMockImageList from './mock';
+import {CustomImage} from '../../services/image/images';
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
+
+type ImageTuple = [CustomImage, CustomImage];
+
+type VoteSide = 'left' | 'right';
 
 export const VoteScreen = (): JSX.Element => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -41,12 +47,12 @@ export const VoteScreen = (): JSX.Element => {
   const MAX_TRANSLATE_X = width * 0.6;
   const VOTE_THRESHOLD = -height * 0.2;
 
-  const voteImages = useSelector(
+  const voteImages: ImageTuple[] = useSelector(
     (state: RootState) => state.voteImage.imageTupleList,
     shallowEqual,
   );
 
-  const currentImages = useMemo(() => {
+  const currentImages: ImageTuple | null = useMemo(() => {
     if (voteImages.length === 0) {
       return null;
     }
@@ -61,10 +67,10 @@ export const VoteScreen = (): JSX.Element => {
       ]);
     }
 
-    return voteImages[currentIndex];
+    return voteImages[currentIndex] ?? null;
   }, [currentIndex, voteImages]);
 
-  const voteImage = (side: 'left' | 'right') => {
+  const voteImage = (side: VoteSide) => {
     console.log(`Voted: ${side} image!`);
 
     setTimeout(() => {
@@ -77,9 +83,9 @@ export const VoteScreen = (): JSX.Element => {
   };
 
   const createImageGesture = (
-    translateY: any,
-    opacity: any,
-    side: 'left' | 'right',
+    translateY: SharedValue<number>,
+    opacity: SharedValue<number>,
+    side: VoteSide,
   ) =>
     Gesture.Pan()
       .onBegin(() => {
@@ -102,7 +108,7 @@ export const VoteScreen = (): JSX.Element => {
 
         if (translateY.value < VOTE_THRESHOLD) {
           runOnJS(voteImage)(side);
-          translateY.value = withSpring(-height, {stiffness: 40, damping: 500});
+          translateY.value = withSpring(-height, {stiffness: 40, damping: 50});
           translateX.value = withSpring(0);
           opacity.value = withSpring(0);
         } else {
