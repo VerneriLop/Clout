@@ -5,7 +5,7 @@ import {IconDefinition} from '@fortawesome/fontawesome-svg-core';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 
 type DefaultTextProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   style?: StyleProp<TextStyle>;
 };
 

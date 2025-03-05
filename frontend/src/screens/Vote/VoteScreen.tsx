@@ -1,14 +1,17 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {View, Dimensions, Text} from 'react-native';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {View, Dimensions} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  interpolate,
-  Extrapolation,
   runOnJS,
   SharedValue,
+  Extrapolation,
+  interpolate,
+  withRepeat,
+  Easing,
+  withTiming,
 } from 'react-native-reanimated';
 import FastImage from 'react-native-fast-image';
 import globalStyle from '../../assets/styles/globalStyle';
@@ -19,6 +22,8 @@ import {updateNewVoteImages} from '../../redux/slices/voteImageSlice';
 import extendedMockImageList from './mock';
 import {CustomImage} from '../../services/image/images';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {ThemedIcon, ThemedText} from '../../components/ui/typography';
+import {faArrowUp} from '@fortawesome/free-solid-svg-icons';
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
 
@@ -28,6 +33,8 @@ type VoteSide = 'left' | 'right';
 
 export const VoteScreen = (): JSX.Element => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [hasVoted, setHasVoted] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const translateX = useSharedValue(0);
   const leftTranslateY = useSharedValue(0);
@@ -36,11 +43,29 @@ export const VoteScreen = (): JSX.Element => {
   const leftOpacity = useSharedValue(1);
   const rightOpacity = useSharedValue(1);
 
+  const arrowTranslateY = useSharedValue(0);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(updateNewVoteImages({imageTupleList: extendedMockImageList}));
   }, [dispatch]);
+
+  useEffect(() => {
+    arrowTranslateY.value = withRepeat(
+      withTiming(-10, {duration: 800, easing: Easing.inOut(Easing.ease)}),
+      -1,
+      true,
+    );
+  }, [arrowTranslateY]);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const {width, height} = Dimensions.get('window');
   const MAX_ROTATION = 60;
@@ -72,6 +97,15 @@ export const VoteScreen = (): JSX.Element => {
 
   const voteImage = (side: VoteSide) => {
     console.log(`Voted: ${side} image!`);
+    setHasVoted(true);
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      setHasVoted(false);
+    }, 15000);
 
     setTimeout(() => {
       setCurrentIndex(prevIndex => prevIndex + 1);
@@ -173,6 +207,16 @@ export const VoteScreen = (): JSX.Element => {
     ],
   }));
 
+  const arrowStyle = useAnimatedStyle(() => ({
+    transform: [{translateY: arrowTranslateY.value}],
+    opacity: interpolate(
+      arrowTranslateY.value,
+      [-10, 0],
+      [1, 0.5],
+      Extrapolation.CLAMP,
+    ),
+  }));
+
   return (
     <SafeAreaView style={globalStyle.flex}>
       {currentImages ? (
@@ -192,10 +236,17 @@ export const VoteScreen = (): JSX.Element => {
               resizeMode={FastImage.resizeMode.cover}
             />
           </GestureDetector>
+
+          {!hasVoted && (
+            <Animated.View style={[arrowStyle, styles.arrowContainer]}>
+              <ThemedIcon icon={faArrowUp} size={30} />
+              <ThemedText>Swipe up to vote!</ThemedText>
+            </Animated.View>
+          )}
         </View>
       ) : (
         <View style={styles.container}>
-          <Text>No more pictures</Text>
+          <ThemedText>No more pictures</ThemedText>
         </View>
       )}
     </SafeAreaView>
