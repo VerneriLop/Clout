@@ -18,7 +18,11 @@ import globalStyle from '../../assets/styles/globalStyle';
 import {styles} from './style';
 import {shallowEqual, useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store/store';
-import {updateNewVoteImages} from '../../redux/slices/voteImageSlice';
+import {
+  setActiveVoteImages,
+  setNextVoteImages,
+  swapVoteImages,
+} from '../../redux/slices/voteImageSlice';
 import extendedMockImageList from './mock';
 import {CustomImage} from '../../services/image/images';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -50,11 +54,14 @@ export const VoteScreen = (): JSX.Element => {
   const MAX_ROTATION = 60;
   const MAX_TRANSLATE_X = width * 0.6;
   const VOTE_THRESHOLD = -height * 0.2;
+  const imagePairs: number = 10;
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(updateNewVoteImages({imageTupleList: extendedMockImageList}));
+    //TODO: Replace mockDatas with the api response
+    dispatch(setActiveVoteImages(extendedMockImageList));
+    dispatch(setNextVoteImages(extendedMockImageList));
   }, [dispatch]);
 
   useEffect(() => {
@@ -84,18 +91,26 @@ export const VoteScreen = (): JSX.Element => {
     }
   }, [MAX_TRANSLATE_X, isFirstVisit, translateX]);
 
-  const voteImages: ImageTuple[] = useSelector(
-    (state: RootState) => state.voteImage.imageTupleList,
+  const activeVoteImages: ImageTuple[] = useSelector(
+    (state: RootState) => state.voteImage.activeVoteImages,
     shallowEqual,
   );
 
+  //TODO: switch if statement number depending on how many image pairs coming from api response
+  if (currentIndex === imagePairs) {
+    dispatch(swapVoteImages());
+    //TODO: Replace mockData with the api response
+    dispatch(setNextVoteImages(extendedMockImageList));
+    setCurrentIndex(0);
+  }
+
   const currentImages: ImageTuple | null = useMemo(() => {
-    if (voteImages.length === 0) {
+    if (activeVoteImages.length === 0) {
       return null;
     }
 
     const nextIndex = currentIndex + 1;
-    const nextImages = voteImages[nextIndex];
+    const nextImages = activeVoteImages[nextIndex];
 
     if (nextImages) {
       FastImage.preload([
@@ -104,12 +119,14 @@ export const VoteScreen = (): JSX.Element => {
       ]);
     }
 
-    return voteImages[currentIndex] ?? null;
-  }, [currentIndex, voteImages]);
+    return activeVoteImages[currentIndex] ?? null;
+  }, [currentIndex, activeVoteImages]);
 
   const voteImage = (side: VoteSide) => {
     console.log(`Voted: ${side} image!`);
     setHasVoted(true);
+
+    //TODO: API call for voting the image
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);

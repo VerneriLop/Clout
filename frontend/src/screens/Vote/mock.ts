@@ -1,6 +1,6 @@
 import {CustomImage} from '../../services/image/images';
 
-const IMAGELIST_LENGTH = 50;
+const IMAGELIST_LENGTH = 10;
 
 export type CustomUser = {
   id: number;
@@ -81,23 +81,32 @@ let extendedMockImageList: TupleType[] = [];
 let uri_idx: number;
 let uri_idx2: number;
 
-/*
-for (let i = 0; i < IMAGELIST_LENGTH; ++i) {
-  extendedMockImageList.push([
-    {...baseImageMock, id: i},
-    {...baseImageMock, id: i + 1},
-  ]);
-  ++i;
-}
-  */
-
-for (let i = 0; i < IMAGELIST_LENGTH; i += 2) {
+for (let i = 0; i < IMAGELIST_LENGTH; i += 1) {
   uri_idx = Math.floor(Math.random() * mockImageList.length);
   uri_idx2 = Math.floor(Math.random() * mockImageList.length);
 
   extendedMockImageList.push([
     {...baseImageMock, id: i, image_url: mockImageList[uri_idx].image_url},
     {...baseImageMock, id: i + 1, image_url: mockImageList[uri_idx2].image_url},
+  ]);
+}
+
+export const extendedMockImageList2: TupleType[] = [];
+
+for (let i = 0; i < IMAGELIST_LENGTH; i += 1) {
+  extendedMockImageList2.push([
+    {
+      ...baseImageMock,
+      id: i,
+      image_url:
+        'https://ultimateguard.com/media/8a/19/c9/1728480928/SQR-050001-277-011-00_dark_0001.jpg?1728480928',
+    },
+    {
+      ...baseImageMock,
+      id: i + 1,
+      image_url:
+        'https://spinnaker-watches.com/cdn/shop/articles/pizza_delivery_106.jpg?v=1721710885',
+    },
   ]);
 }
 
