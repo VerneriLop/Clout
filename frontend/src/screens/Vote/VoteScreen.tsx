@@ -28,6 +28,7 @@ import {CustomImage} from '../../services/image/images';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ThemedIcon, ThemedText} from '../../components/ui/typography';
 import {faArrowUp} from '@fortawesome/free-solid-svg-icons';
+import {horizontalScale, verticalScale} from '../../assets/styles/scaling';
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
 
@@ -190,6 +191,10 @@ export const VoteScreen = (): JSX.Element => {
     'right',
   );
 
+  //scaled values describing how much image can move horizontally
+  const scaledTranslateX = horizontalScale(285);
+  const scaledTranslateX2 = horizontalScale(10);
+
   const leftImageStyle = useAnimatedStyle(() => ({
     opacity: leftOpacity.value,
     transform: [
@@ -197,7 +202,7 @@ export const VoteScreen = (): JSX.Element => {
         translateX: interpolate(
           translateX.value,
           [-MAX_TRANSLATE_X, MAX_TRANSLATE_X],
-          [-10, 320],
+          [-scaledTranslateX2, scaledTranslateX],
           Extrapolation.CLAMP,
         ),
       },
@@ -220,7 +225,7 @@ export const VoteScreen = (): JSX.Element => {
         translateX: interpolate(
           translateX.value,
           [-MAX_TRANSLATE_X, MAX_TRANSLATE_X],
-          [-320, 10],
+          [-scaledTranslateX, scaledTranslateX2],
           Extrapolation.CLAMP,
         ),
       },
@@ -236,11 +241,14 @@ export const VoteScreen = (): JSX.Element => {
     ],
   }));
 
+  const scaledArrowTranslateY = verticalScale(10);
+  const scaledArrowTranslateY2 = verticalScale(0);
+
   const arrowStyle = useAnimatedStyle(() => ({
     transform: [{translateY: arrowTranslateY.value}],
     opacity: interpolate(
       arrowTranslateY.value,
-      [-10, 0],
+      [-scaledArrowTranslateY, scaledArrowTranslateY2],
       [1, 0.5],
       Extrapolation.CLAMP,
     ),

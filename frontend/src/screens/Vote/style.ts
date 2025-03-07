@@ -1,5 +1,9 @@
 import {Dimensions, StyleSheet} from 'react-native';
-import {horizontalScale, scaleFontSize} from '../../assets/styles/scaling';
+import {
+  horizontalScale,
+  scaleFontSize,
+  verticalScale,
+} from '../../assets/styles/scaling';
 
 const {width} = Dimensions.get('window');
 const IMAGE_WIDTH = width * 0.95;
@@ -17,11 +21,10 @@ export const styles = StyleSheet.create({
     height: IMAGE_HEIGHT,
     marginHorizontal: horizontalScale(120),
     borderRadius: horizontalScale(15),
-    backgroundColor: 'black',
   },
   arrowContainer: {
     position: 'absolute',
-    bottom: horizontalScale(15),
+    bottom: verticalScale(2),
     alignSelf: 'center',
     fontSize: scaleFontSize(24),
     alignItems: 'center',
