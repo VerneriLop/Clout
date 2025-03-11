@@ -34,8 +34,6 @@ const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
 
 type ImageTuple = [CustomImage, CustomImage];
 
-type VoteSide = 'left' | 'right';
-
 export const VoteScreen = (): JSX.Element => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [hasVoted, setHasVoted] = useState(false);
@@ -97,7 +95,7 @@ export const VoteScreen = (): JSX.Element => {
     shallowEqual,
   );
 
-  //TODO: switch if statement number depending on how many image pairs coming from api response
+  //TODO: switch if statement number (imagePairs) depending on how many image pairs coming from api response
   if (currentIndex === imagePairs) {
     dispatch(swapVoteImages());
     //TODO: Replace mockData with the api response
@@ -123,8 +121,8 @@ export const VoteScreen = (): JSX.Element => {
     return activeVoteImages[currentIndex] ?? null;
   }, [currentIndex, activeVoteImages]);
 
-  const voteImage = (side: VoteSide) => {
-    console.log(`Voted: ${side} image!`);
+  const voteImage = (image: CustomImage) => {
+    console.log(`Voted: ${image.id} image!`);
     setHasVoted(true);
 
     //TODO: API call for voting the image
@@ -149,7 +147,7 @@ export const VoteScreen = (): JSX.Element => {
   const createImageGesture = (
     translateY: SharedValue<number>,
     opacity: SharedValue<number>,
-    side: VoteSide,
+    image: CustomImage,
   ) =>
     Gesture.Pan()
       .onBegin(() => {
@@ -180,7 +178,7 @@ export const VoteScreen = (): JSX.Element => {
         }
 
         if (translateY.value < VOTE_THRESHOLD) {
-          runOnJS(voteImage)(side);
+          runOnJS(voteImage)(image);
           translateY.value = withSpring(-height, {stiffness: 40, damping: 50});
           translateX.value = withSpring(0);
           opacity.value = withSpring(0);
@@ -189,16 +187,40 @@ export const VoteScreen = (): JSX.Element => {
         }
       });
 
-  const leftImageGesture = createImageGesture(
-    leftTranslateY,
-    leftOpacity,
-    'left',
-  );
-  const rightImageGesture = createImageGesture(
-    rightTranslateY,
-    rightOpacity,
-    'right',
-  );
+  const leftImageGesture = currentImages
+    ? createImageGesture(leftTranslateY, leftOpacity, currentImages[0])
+    : undefined;
+
+  const rightImageGesture = currentImages
+    ? createImageGesture(rightTranslateY, rightOpacity, currentImages[1])
+    : undefined;
+
+  //Handles the horizontal swiping when finger swipes from background
+  const backgroundGesture = Gesture.Pan()
+    .onBegin(() => {
+      swipeStart.value = translateX.value;
+    })
+    .onUpdate(e => {
+      translateX.value = swipeStart.value + e.translationX;
+    })
+    .onEnd(() => {
+      if (translateX.value > width * 0.1) {
+        translateX.value = withSpring(MAX_TRANSLATE_X, {
+          stiffness: 100,
+          damping: 100,
+        });
+      } else if (translateX.value < -width * 0.1) {
+        translateX.value = withSpring(-MAX_TRANSLATE_X, {
+          stiffness: 100,
+          damping: 100,
+        });
+      } else {
+        translateX.value = withSpring(0, {
+          stiffness: 100,
+          damping: 100,
+        });
+      }
+    });
 
   //scaled values describing how much image can move horizontally
   const scaledTranslateX = horizontalScale(285);
@@ -250,6 +272,7 @@ export const VoteScreen = (): JSX.Element => {
     ],
   }));
 
+  //scaled values describing how much arrow can move horizontally
   const scaledArrowTranslateY = verticalScale(10);
   const scaledArrowTranslateY2 = verticalScale(0);
 
@@ -266,30 +289,34 @@ export const VoteScreen = (): JSX.Element => {
   return (
     <SafeAreaView style={globalStyle.flex}>
       {currentImages ? (
-        <View style={styles.container}>
-          <GestureDetector gesture={leftImageGesture}>
-            <AnimatedFastImage
-              source={{uri: currentImages[0].image_url}}
-              style={[styles.image, leftImageStyle]}
-              resizeMode={FastImage.resizeMode.cover}
-            />
-          </GestureDetector>
-
-          <GestureDetector gesture={rightImageGesture}>
-            <AnimatedFastImage
-              source={{uri: currentImages[1].image_url}}
-              style={[styles.image, rightImageStyle]}
-              resizeMode={FastImage.resizeMode.cover}
-            />
-          </GestureDetector>
-
-          {!hasVoted && (
-            <Animated.View style={[arrowStyle, styles.arrowContainer]}>
-              <ThemedIcon icon={faArrowUp} size={30} />
-              <ThemedText>Swipe up to vote!</ThemedText>
-            </Animated.View>
-          )}
-        </View>
+        <GestureDetector gesture={backgroundGesture}>
+          <View style={styles.container}>
+            {leftImageGesture && (
+              <GestureDetector gesture={leftImageGesture}>
+                <AnimatedFastImage
+                  source={{uri: currentImages[0].image_url}}
+                  style={[styles.image, leftImageStyle]}
+                  resizeMode={FastImage.resizeMode.cover}
+                />
+              </GestureDetector>
+            )}
+            {rightImageGesture && (
+              <GestureDetector gesture={rightImageGesture}>
+                <AnimatedFastImage
+                  source={{uri: currentImages?.[1].image_url}}
+                  style={[styles.image, rightImageStyle]}
+                  resizeMode={FastImage.resizeMode.cover}
+                />
+              </GestureDetector>
+            )}
+            {!hasVoted && (
+              <Animated.View style={[arrowStyle, styles.arrowContainer]}>
+                <ThemedIcon icon={faArrowUp} size={30} />
+                <ThemedText>Swipe up to vote!</ThemedText>
+              </Animated.View>
+            )}
+          </View>
+        </GestureDetector>
       ) : (
         <View style={styles.container}>
           <ThemedText>No more pictures</ThemedText>
