@@ -10,19 +10,9 @@ import {ButtonRow} from './ButtonRow';
 import {ProfileStatsRow} from './ProfileStatsRow';
 import {ThemedView} from '../../../components/ui/themed-view';
 import {ThemedText} from '../../../components/ui/typography';
+import {User} from '../../../services/user/users';
 
-export type CustomUser = {
-  id: number;
-  username: string;
-  email: string;
-  bio?: string;
-  num_followers: number;
-  num_following: number;
-  profile_picture_url: string;
-  num_posts: number;
-};
-
-export const ProfileInfoCard = ({user}: {user: CustomUser}): JSX.Element => {
+export const ProfileInfoCard = ({user}: {user: User}): JSX.Element => {
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
   const renderButton = (text: string) => (
@@ -31,11 +21,13 @@ export const ProfileInfoCard = ({user}: {user: CustomUser}): JSX.Element => {
 
   const profileActionButtons = [
     {
+      key: 'edit',
       component: renderButton('Edit profile'),
       onPress: () => navigation.navigate('EditProfile'),
       style: style.button,
     },
     {
+      key: 'share',
       component: renderButton('Share profile'),
       onPress: () => console.log('press share profile'),
       style: style.button,

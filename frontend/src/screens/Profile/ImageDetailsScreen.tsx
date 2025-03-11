@@ -9,8 +9,7 @@ import {ThemedView} from '../../components/ui/themed-view';
 
 type ImageDetailsProps = NativeStackScreenProps<
   ProfileStackParamList,
-  'ImageDetail',
-  'MyStack'
+  'ImageDetail'
 >;
 
 export const ImageDetailsScreen = ({route}: ImageDetailsProps): JSX.Element => {
@@ -43,7 +42,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
+    //backgroundColor: 'white',
   },
   imageStyle: {
     width: width,
