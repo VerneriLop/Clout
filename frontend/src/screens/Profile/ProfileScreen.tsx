@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import globalStyle from '../../assets/styles/globalStyle';
 import {ImageList} from './components/ImageList';
-import extendedMockImageList, {mockUser} from './mocks';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ProfileHeader} from './components/ProfileHeader';
 import {ThemedView} from '../../components/ui/themed-view';
