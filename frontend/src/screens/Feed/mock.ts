@@ -30,7 +30,8 @@ export const baseImageMock: CustomImage = {
   image_url:
     'https://i.guim.co.uk/img/media/b1c1caa029d6f186f9d6b3fabb7f02517eb9c33b/0_58_2528_1519/master/2528.jpg?width=1200&quality=85&auto=format&fit=max&s=a80cc1503df75e0c9d04b78ed226229e',
   thumbnail_url: null,
-  caption: null,
+  caption:
+    'Amazing SPONGEBOB picture. Took this one when i was drinking white ultra monster. PS. collaboration with monster would be great wink wink.',
   created_at: '01122024',
   is_visible: true,
 };

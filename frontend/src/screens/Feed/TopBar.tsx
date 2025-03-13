@@ -7,11 +7,15 @@ import {horizontalScale, verticalScale} from '../../assets/styles/scaling';
 import {ProfilePicture} from '../Profile/components/ProfilePicture';
 import {CustomUser} from '../Profile/components/ProfileInfoCard';
 
-type Props = {url: string; user: CustomUser; id: number};
+type Props = {
+  url: string;
+  user: CustomUser;
+  user_id: number;
+};
 
-export const TopBar = ({url, user, id}: Props): JSX.Element => {
+export const TopBar = ({url, user, user_id}: Props): JSX.Element => {
   const handleNavigate = () => {
-    console.log('NAVIGATE TO SPECIFIC PROFILE', id);
+    console.log('NAVIGATE TO SPECIFIC PROFILE', user_id);
   };
 
   return (
@@ -25,10 +29,10 @@ export const TopBar = ({url, user, id}: Props): JSX.Element => {
 };
 
 //TODO: Maybe profilepicture should have size prop instead of everytime styling it?
+//Also should border come from theme?
 const style = StyleSheet.create({
   container: {
     height: verticalScale(50),
-
     alignItems: 'center',
     flexDirection: 'row',
     borderBottomWidth: StyleSheet.hairlineWidth,

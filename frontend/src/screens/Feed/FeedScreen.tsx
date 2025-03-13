@@ -7,6 +7,7 @@ import {mockImageList} from './mock';
 
 export const FeedScreen = (): JSX.Element => {
   //TODO: Replace mockImageList with api answer.
+  //Should imageList come from redux?
   return (
     <ThemedSafeAreaView style={[globalStyle.flex]}>
       <FlatList
