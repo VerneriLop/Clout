@@ -4,7 +4,6 @@ import {ThemedView} from '../../components/ui/themed-view';
 import {ThemedIcon, ThemedText} from '../../components/ui/typography';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {horizontalScale, verticalScale} from '../../assets/styles/scaling';
-import {CustomUser} from '../Profile/components/ProfileInfoCard';
 import {faHeart as fasHeart} from '@fortawesome/free-solid-svg-icons';
 import {
   faComment,
@@ -13,68 +12,69 @@ import {
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 
 type Props = {
-  user: CustomUser;
-  user_id: number;
   caption: string | null;
 };
 
-export const BottomBar = ({user, user_id, caption}: Props): JSX.Element => {
-  const [isLiked, setIsLiked] = useState<boolean>(false);
-  const [expanded, setExpanded] = useState<boolean>(false);
+export const BottomBar = ({caption}: Props): JSX.Element => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const likesCount = 12; // Mock-data
+  const commentsCount = 12; // Mock-data
 
-  const handleNavigate = () => {
-    console.log('NAVIGATE TO SPECIFIC PROFILE', user_id);
+  const toggleLike = (newState: boolean) => {
+    setIsLiked(newState);
+
+    if (newState) {
+      console.log('Liked image');
+      // TODO: API call for liking the picture
+    } else {
+      console.log('Unliked image');
+      // TODO: API call for unliking the picture
+    }
   };
 
-  const likeImage = () => {
-    setIsLiked(true);
-    // TODO: API call for liking the picture
-  };
-
-  const unLikeImage = () => {
-    setIsLiked(false);
-    // TODO: API call for unliking the picture
-  };
-
-  const openCommentSection = () => {
-    console.log('comment section opened');
-  };
+  const showLikes = () => console.log('Show users that liked the picture');
+  const openCommentSection = () => console.log('Comment section opened');
 
   return (
-    <ThemedView style={[globalStyle.flex, style.container]}>
-      <View style={style.likeCommentContainer}>
-        {isLiked ? (
-          <Pressable onPress={() => unLikeImage()}>
-            <FontAwesomeIcon icon={fasHeart} color="red" size={25} />
+    <ThemedView style={[globalStyle.flex, styles.container]}>
+      <View style={styles.likeCommentContainer}>
+        <View style={styles.iconAndNumber}>
+          <Pressable onPress={() => toggleLike(!isLiked)}>
+            {isLiked ? (
+              <FontAwesomeIcon icon={fasHeart} color="red" size={25} />
+            ) : (
+              <ThemedIcon icon={farHeart} size={25} />
+            )}
           </Pressable>
-        ) : (
-          <Pressable onPress={() => likeImage()}>
-            <ThemedIcon icon={farHeart} size={25} />
+          <Pressable onPress={showLikes}>
+            <ThemedText variant="bold">{likesCount}</ThemedText>
           </Pressable>
-        )}
-        <Pressable onPress={() => openCommentSection()}>
+        </View>
+
+        <Pressable onPress={openCommentSection} style={styles.iconAndNumber}>
           <ThemedIcon icon={faComment} size={25} />
+          <ThemedText variant="bold">{commentsCount}</ThemedText>
         </Pressable>
       </View>
 
-      <Pressable onPress={() => handleNavigate()}>
-        <ThemedText variant="bold">{user.username}</ThemedText>
-      </Pressable>
-
       {caption && (
         <View>
-          <ThemedText numberOfLines={expanded ? undefined : 2}>
-            {caption}
-          </ThemedText>
-          {!expanded &&
-            caption.length > 100 && ( // Näytä "Show more" vain jos teksti on pitkä
-              <Pressable onPress={() => setExpanded(true)}>
-                <ThemedText style={style.showMoreText}>Show more...</ThemedText>
-              </Pressable>
-            )}
-          {expanded && (
+          <Pressable onPress={() => !expanded && setExpanded(true)}>
+            <ThemedText numberOfLines={expanded ? undefined : 2}>
+              {caption}
+            </ThemedText>
+          </Pressable>
+
+          {caption.length > 100 && expanded && (
             <Pressable onPress={() => setExpanded(false)}>
-              <ThemedText style={style.showMoreText}>Show less</ThemedText>
+              <ThemedText style={styles.showMoreText}>Show less</ThemedText>
+            </Pressable>
+          )}
+
+          {!expanded && caption.length > 100 && (
+            <Pressable onPress={() => setExpanded(true)}>
+              <ThemedText style={styles.showMoreText}>Show more...</ThemedText>
             </Pressable>
           )}
         </View>
@@ -83,9 +83,8 @@ export const BottomBar = ({user, user_id, caption}: Props): JSX.Element => {
   );
 };
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
-    height: 'auto',
     justifyContent: 'space-between',
     flexDirection: 'column',
     marginLeft: horizontalScale(10),
@@ -94,7 +93,12 @@ const style = StyleSheet.create({
   },
   likeCommentContainer: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 15,
+  },
+  iconAndNumber: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
   },
   showMoreText: {
     color: '#2889eb',

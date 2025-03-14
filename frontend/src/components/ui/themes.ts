@@ -78,7 +78,7 @@ export const LightTheme = {
   fonts: fonts,
   colors: {
     ...DefaultTheme.colors,
-    borderColor: 'rgb(200, 200, 200)',
+    borderColor: 'rgb(220, 220, 220)',
   },
 };
 
@@ -87,6 +87,6 @@ export const MyDarkTheme = {
   fonts: fonts,
   colors: {
     ...DarkTheme.colors,
-    borderColor: 'rgb(150, 150, 150)',
+    borderColor: 'rgb(60, 60, 60)',
   },
 };

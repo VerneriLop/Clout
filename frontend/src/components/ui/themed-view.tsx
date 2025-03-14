@@ -1,9 +1,15 @@
 import React from 'react';
 import {useTheme} from '@react-navigation/native';
-import {StyleProp, View, ViewProps, ViewStyle} from 'react-native';
+import {StyleProp, StyleSheet, View, ViewProps, ViewStyle} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type ThemedViewProps = ViewProps & {
+  children: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
+  bottomBorder?: boolean;
+};
+
+type ThemedSafeAreaViewProps = ViewProps & {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
 };
@@ -11,13 +17,21 @@ type ThemedViewProps = ViewProps & {
 export const ThemedView = ({
   children,
   style,
+  bottomBorder = false,
   ...props
 }: ThemedViewProps): JSX.Element => {
   const theme = useTheme();
 
   return (
     <View
-      style={[{backgroundColor: theme.colors.background}, style]}
+      style={[
+        {backgroundColor: theme.colors.background},
+        bottomBorder && {
+          borderBottomColor: theme.colors.border,
+          borderBottomWidth: StyleSheet.hairlineWidth,
+        },
+        style,
+      ]}
       {...props}>
       {children}
     </View>
@@ -28,7 +42,7 @@ export const ThemedSafeAreaView = ({
   children,
   style,
   ...props
-}: ThemedViewProps): JSX.Element => {
+}: ThemedSafeAreaViewProps): JSX.Element => {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
 

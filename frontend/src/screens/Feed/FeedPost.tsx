@@ -13,7 +13,7 @@ type Props = {
 export const FeedPost = ({post}: Props): JSX.Element => {
   console.log(post);
   return (
-    <ThemedView style={[globalStyle.flex, style.container]}>
+    <ThemedView bottomBorder style={globalStyle.flex}>
       <TopBar
         url={post.user.profile_picture_url}
         user={post.user}
@@ -24,11 +24,7 @@ export const FeedPost = ({post}: Props): JSX.Element => {
         resizeMode="cover"
         style={[style.image]}
       />
-      <BottomBar
-        user={post.user}
-        user_id={post.user.id}
-        caption={post.caption}
-      />
+      <BottomBar caption={post.caption} />
     </ThemedView>
   );
 };
@@ -38,7 +34,6 @@ const IMAGE_WIDTH = width;
 const IMAGE_HEIGHT = (IMAGE_WIDTH / 3) * 4;
 
 const style = StyleSheet.create({
-  container: {borderBottomWidth: StyleSheet.hairlineWidth},
   image: {
     width: IMAGE_WIDTH,
     height: IMAGE_HEIGHT,
