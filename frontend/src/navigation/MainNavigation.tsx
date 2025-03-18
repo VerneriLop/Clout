@@ -30,18 +30,22 @@ import {
   faHouse,
 } from '@fortawesome/free-solid-svg-icons';
 import {ThemedView} from '../components/ui/themed-view';
+import {useSelector} from 'react-redux';
+import {RootState} from '../redux/store/store';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const ProfileStack = createStackNavigator<ProfileStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
 const ProfileStackScreen = () => {
+  const loggedInUser = useSelector((state: RootState) => state.user);
   return (
     <ProfileStack.Navigator>
       <ProfileStack.Screen
         name={Routes.Profile}
         component={ProfileScreen}
         options={{header: () => null, headerShown: false}}
+        initialParams={{userId: loggedInUser.user?.id}}
       />
       <ProfileStack.Screen name={Routes.Settings} component={SettingsScreen} />
       <ProfileStack.Screen
@@ -56,7 +60,7 @@ const ProfileStackScreen = () => {
       <ProfileStack.Screen
         name={Routes.ImageDetail}
         component={ImageDetailsScreen}
-        options={{title: 'Post'}}
+        options={{title: 'Posts'}}
       />
     </ProfileStack.Navigator>
   );

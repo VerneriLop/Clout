@@ -3,6 +3,7 @@ import {StyleProp, ViewStyle, View} from 'react-native';
 import {CustomPressable} from '../CustomPressable';
 
 type ButtonProps = {
+  key: string;
   component: JSX.Element;
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
@@ -23,9 +24,9 @@ export const ButtonRow = ({
 
   return (
     <View style={containerStyle}>
-      {buttons.map((button, index) => (
+      {buttons.map(button => (
         <CustomPressable
-          key={index}
+          key={button.key}
           style={button.style}
           //pressedStyle={pressedStyle}
           onPress={button.onPress}>
