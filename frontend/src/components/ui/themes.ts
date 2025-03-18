@@ -76,17 +76,9 @@ const fonts = Platform.select({
 export const LightTheme = {
   ...DefaultTheme,
   fonts: fonts,
-  colors: {
-    ...DefaultTheme.colors,
-    borderColor: 'rgb(220, 220, 220)',
-  },
 };
 
 export const MyDarkTheme = {
   ...DarkTheme,
   fonts: fonts,
-  colors: {
-    ...DarkTheme.colors,
-    borderColor: 'rgb(60, 60, 60)',
-  },
 };

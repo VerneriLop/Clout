@@ -1,10 +1,11 @@
 import React from 'react';
 import globalStyle from '../../assets/styles/globalStyle';
 import {ThemedView} from '../../components/ui/themed-view';
-import {Dimensions, Image, StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import {TopBar} from './TopBar';
 import {CustomImage} from './mock';
 import {BottomBar} from './BottomBar';
+import FastImage from 'react-native-fast-image';
 
 type Props = {
   post: CustomImage;
@@ -19,7 +20,7 @@ export const FeedPost = ({post}: Props): JSX.Element => {
         user={post.user}
         user_id={post.user.id}
       />
-      <Image
+      <FastImage
         source={{uri: post.image_url}}
         resizeMode="cover"
         style={[style.image]}

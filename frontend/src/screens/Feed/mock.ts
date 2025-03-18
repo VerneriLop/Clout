@@ -24,6 +24,75 @@ export const mockUser: CustomUser = {
   num_posts: IMAGELIST_LENGTH,
 };
 
+export const mockUserList: CustomUser[] = [
+  {
+    id: 0,
+    username: 'Johtaja1',
+    email: 'johtaja@johtaja.johtaja',
+    bio: 'L5 Software Engineer @Clout',
+    num_followers: 420,
+    num_following: 0,
+    profile_picture_url:
+      'https://static.wikia.nocookie.net/joke-battles/images/d/df/Gigachad.png/revision/latest/scale-to-width-down/400?cb=20230812064835',
+    num_posts: IMAGELIST_LENGTH,
+  },
+  {
+    id: 1,
+    username: 'Johtaja2',
+    email: 'johtaja@johtaja.johtaja',
+    bio: 'L5 Software Engineer @Clout',
+    num_followers: 320,
+    num_following: 55,
+    profile_picture_url:
+      'https://static.wikia.nocookie.net/joke-battles/images/d/df/Gigachad.png/revision/latest/scale-to-width-down/400?cb=20230812064835',
+    num_posts: IMAGELIST_LENGTH,
+  },
+  {
+    id: 2,
+    username: 'Johtaja3',
+    email: 'johtaja@johtaja.johtaja',
+    bio: 'L5 Software Engineer @Clout',
+    num_followers: 4230,
+    num_following: 122,
+    profile_picture_url:
+      'https://static.wikia.nocookie.net/joke-battles/images/d/df/Gigachad.png/revision/latest/scale-to-width-down/400?cb=20230812064835',
+    num_posts: IMAGELIST_LENGTH,
+  },
+  {
+    id: 3,
+    username: 'Johtaja4',
+    email: 'johtaja@johtaja.johtaja',
+    bio: 'L5 Software Engineer @Clout',
+    num_followers: 20,
+    num_following: 1,
+    profile_picture_url:
+      'https://static.wikia.nocookie.net/joke-battles/images/d/df/Gigachad.png/revision/latest/scale-to-width-down/400?cb=20230812064835',
+    num_posts: IMAGELIST_LENGTH,
+  },
+  {
+    id: 4,
+    username: 'Johtaja5',
+    email: 'johtaja@johtaja.johtaja',
+    bio: 'L5 Software Engineer @Clout',
+    num_followers: 410,
+    num_following: 110,
+    profile_picture_url:
+      'https://static.wikia.nocookie.net/joke-battles/images/d/df/Gigachad.png/revision/latest/scale-to-width-down/400?cb=20230812064835',
+    num_posts: IMAGELIST_LENGTH,
+  },
+  {
+    id: 5,
+    username: 'Johtaja6',
+    email: 'johtaja@johtaja.johtaja',
+    bio: 'L5 Software Engineer @Clout',
+    num_followers: 770,
+    num_following: 20,
+    profile_picture_url:
+      'https://static.wikia.nocookie.net/joke-battles/images/d/df/Gigachad.png/revision/latest/scale-to-width-down/400?cb=20230812064835',
+    num_posts: IMAGELIST_LENGTH,
+  },
+];
+
 export const baseImageMock: CustomImage = {
   id: 1,
   user: mockUser,
@@ -72,5 +141,50 @@ export const mockImageList: CustomImage[] = [
     id: 7,
     image_url:
       'https://spinnaker-watches.com/cdn/shop/articles/pizza_delivery_106.jpg?v=1721710885',
+  },
+];
+
+export const mockLikes = [
+  {
+    id: 1,
+    user_id: 0,
+    image_id: 0,
+    created_at: '2024-03-07T12:00:00Z',
+  },
+  {
+    id: 2,
+    user_id: 1,
+    image: mockImageList[1],
+    created_at: '2024-03-07T12:05:00Z',
+  },
+  {
+    id: 3,
+    user_id: 3,
+    image: mockImageList[2],
+    created_at: '2024-03-07T12:10:00Z',
+  },
+  {
+    id: 4,
+    user_id: 2,
+    image: mockImageList[3],
+    created_at: '2024-03-07T12:15:00Z',
+  },
+  {
+    id: 5,
+    user_id: 1,
+    image: mockImageList[0],
+    created_at: '2024-03-07T12:20:00Z',
+  },
+  {
+    id: 6,
+    user_id: 2,
+    image: mockImageList[1],
+    created_at: '2024-03-07T12:25:00Z',
+  },
+  {
+    id: 7,
+    user_id: 3,
+    image: mockImageList[1],
+    created_at: '2024-03-07T12:25:00Z',
   },
 ];

@@ -50,7 +50,6 @@ export const ThemedSafeAreaView = ({
     <View
       style={[
         {
-          paddingBottom: insets.bottom,
           paddingTop: insets.top,
           paddingLeft: insets.left,
           paddingRight: insets.right,
