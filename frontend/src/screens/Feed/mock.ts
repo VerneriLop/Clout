@@ -1,4 +1,4 @@
-import {CustomUser} from '../Profile/components/ProfileInfoCard';
+import {CustomUser} from '../Vote/mock';
 
 export type CustomImage = {
   id: number;

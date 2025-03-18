@@ -5,7 +5,7 @@ import {ThemedText} from '../../components/ui/typography';
 import {Pressable, StyleSheet} from 'react-native';
 import {horizontalScale, verticalScale} from '../../assets/styles/scaling';
 import {ProfilePicture} from '../Profile/components/ProfilePicture';
-import {CustomUser} from '../Profile/components/ProfileInfoCard';
+import {CustomUser} from '../Vote/mock';
 
 type Props = {
   url: string;
