@@ -13,10 +13,9 @@ import {StackNavigationProp} from '@react-navigation/stack';
 type Props = {
   url: string;
   user: CustomUser;
-  user_id: number;
 };
 
-export const TopBar = ({url, user, user_id}: Props): JSX.Element => {
+export const TopBar = ({url, user}: Props): JSX.Element => {
   const navigation = useNavigation<StackNavigationProp<FeedStackParamList>>();
   const handleNavigate = () => {
     navigation.push(Routes.ProfileStack, {

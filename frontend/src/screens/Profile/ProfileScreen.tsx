@@ -2,16 +2,20 @@ import React, {useCallback, useEffect, useState} from 'react';
 import globalStyle from '../../assets/styles/globalStyle';
 import {ImageList} from './components/ImageList';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ProfileHeader, SettingsButton} from './components/ProfileHeader';
 import {ThemedView} from '../../components/ui/themed-view';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {ProfileStackParamList} from '../../navigation/Routes';
+import {ProfileStackParamList, Routes} from '../../navigation/Routes';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store/store';
 import {getImagesByUser, getUserById, User} from '../../services/user/users';
 import {ThemedText} from '../../components/ui/typography';
 import {ActivityIndicator, StyleSheet} from 'react-native';
 import {CustomImage} from '../../services/image/images';
+import {useNavigation, useTheme} from '@react-navigation/native';
+import {CustomPressable} from './CustomPressable';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faBars} from '@fortawesome/free-solid-svg-icons';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 type ProfileProps = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
 
@@ -27,7 +31,7 @@ export const ProfileScreen = ({
   const [loading, setLoading] = useState(true);
   const insets = useSafeAreaInsets();
 
-  //const renderSettingsButton = useCallback(({navigation}) => <SettingsButton />, []);
+  const renderSettingsButton = useCallback(() => <SettingsButton />, []);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -60,6 +64,18 @@ export const ProfileScreen = ({
     }
   }, [userId, loggedInUser, imageData]);
 
+  useEffect(() => {
+    if (userToRender) {
+      navigation.setOptions({
+        title: userToRender.username,
+        headerRight:
+          userToRender.id === loggedInUser?.id
+            ? renderSettingsButton
+            : undefined,
+      });
+    }
+  }, [navigation, userToRender, loggedInUser, renderSettingsButton]);
+
   if (loading) {
     return (
       <ActivityIndicator
@@ -77,20 +93,35 @@ export const ProfileScreen = ({
       </ThemedView>
     );
   }
-  if (userToRender === loggedInUser) {
-    navigation.setOptions({headerRight: () => <SettingsButton />});
-  }
-  navigation.setOptions({title: userToRender.username});
   return (
     <ThemedView style={[globalStyle.flex, {paddingTop: insets.top}]}>
       <ImageList data={imageData} user={userToRender} />
     </ThemedView>
   );
 };
-//<ProfileHeader user={userToRender} />
+
+export const SettingsButton = (): JSX.Element => {
+  const navigation =
+    useNavigation<StackNavigationProp<ProfileStackParamList>>();
+  const {colors} = useTheme();
+  const onPress = () => {
+    navigation.navigate(Routes.Settings);
+  };
+  return (
+    <ThemedView style={styles.button}>
+      <CustomPressable onPress={onPress}>
+        <FontAwesomeIcon icon={faBars} size={20} color={colors.text} />
+      </CustomPressable>
+    </ThemedView>
+  );
+};
+
 const styles = StyleSheet.create({
   activityIndicator: {
     flex: 1,
     justifyContent: 'center',
+  },
+  button: {
+    paddingHorizontal: globalStyle.defaultPadding.paddingHorizontal,
   },
 });

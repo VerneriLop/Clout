@@ -1,3 +1,5 @@
+import {NavigatorScreenParams} from '@react-navigation/native';
+
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
@@ -21,7 +23,7 @@ export type ProfileStackParamList = {
 
 export type FeedStackParamList = {
   Feed: undefined;
-  ProfileStack: undefined;
+  ProfileStack: NavigatorScreenParams<ProfileStackParamList>;
 };
 
 export const Routes = {

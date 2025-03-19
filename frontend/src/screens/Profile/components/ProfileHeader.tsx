@@ -7,11 +7,10 @@ import {StyleSheet, View} from 'react-native';
 import globalStyle from '../../../assets/styles/globalStyle';
 import {ProfileStackParamList, Routes} from '../../../navigation/Routes';
 import {CustomPressable} from '../CustomPressable';
-import {CustomUser} from './ProfileInfoCard';
+import {User} from '../../../services/user/users';
 import {ThemedText} from '../../../components/ui/typography';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-export const ProfileHeader = ({user}: {user: CustomUser}): JSX.Element => {
+export const ProfileHeader = ({user}: {user: User}): JSX.Element => {
   const {colors} = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
@@ -26,19 +25,6 @@ export const ProfileHeader = ({user}: {user: CustomUser}): JSX.Element => {
         <FontAwesomeIcon icon={faBars} size={20} color={colors.text} />
       </CustomPressable>
     </View>
-  );
-};
-type SettingsProps = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
-
-export const SettingsButton = ({navigation}: SettingsProps): JSX.Element => {
-  const {colors} = useTheme();
-  const onPress = () => {
-    navigation.navigate(Routes.Settings);
-  };
-  return (
-    <CustomPressable onPress={onPress}>
-      <FontAwesomeIcon icon={faBars} size={20} color={colors.text} />
-    </CustomPressable>
   );
 };
 
