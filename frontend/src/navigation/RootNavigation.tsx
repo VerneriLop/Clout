@@ -24,22 +24,23 @@ export const RootNavigation = () => {
 
   return (
     <ThemedView style={globalStyle.flex}>
-      <RootStack.Navigator screenOptions={{headerShown: false}}>
-        {user.isAuthenticated ? (
-          <RootStack.Screen
-            name="BottomTabNavigator"
-            component={BottomTabNavigator}
-          />
-        ) : (
-          <>
-            <RootStack.Screen name={Routes.Login} component={LoginScreen} />
-            <RootStack.Screen
-              name={Routes.Register}
-              component={RegisterScreen}
-            />
-          </>
-        )}
-      </RootStack.Navigator>
+      {user.isAuthenticated ? <AppStack /> : <AuthStack />}
     </ThemedView>
   );
 };
+
+const AuthStack = () => (
+  <RootStack.Navigator screenOptions={{headerShown: false}}>
+    <RootStack.Screen name={Routes.Login} component={LoginScreen} />
+    <RootStack.Screen name={Routes.Register} component={RegisterScreen} />
+  </RootStack.Navigator>
+);
+
+const AppStack = () => (
+  <RootStack.Navigator screenOptions={{headerShown: false}}>
+    <RootStack.Screen
+      name="BottomTabNavigator"
+      component={BottomTabNavigator}
+    />
+  </RootStack.Navigator>
+);
