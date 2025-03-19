@@ -25,7 +25,7 @@ export const FeedPost = ({post}: Props): JSX.Element => {
         resizeMode="cover"
         style={[style.image]}
       />
-      <BottomBar caption={post.caption} />
+      <BottomBar post={post} />
     </ThemedView>
   );
 };

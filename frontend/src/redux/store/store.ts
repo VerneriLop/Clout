@@ -2,12 +2,16 @@ import {configureStore} from '@reduxjs/toolkit';
 import userReducer from '../slices/userSlice';
 import cameraReducer from '../slices/cameraSlice';
 import voteImageReducer from '../slices/voteImageSlice';
+import feedImageReducer from '../slices/feedImageSlice';
+import likeReducer from '../slices/likeSlice';
 
 const store = configureStore({
   reducer: {
     user: userReducer,
     camera: cameraReducer,
     voteImage: voteImageReducer,
+    feedImage: feedImageReducer,
+    like: likeReducer,
   },
 });
 

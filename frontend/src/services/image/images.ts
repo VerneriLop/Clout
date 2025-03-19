@@ -18,6 +18,8 @@ export type CustomImage = {
   caption: string | null;
   created_at: string;
   is_visible: boolean;
+  num_likes: number | null;
+  num_comments: number | null;
 };
 
 type ImageUpdateObject = {

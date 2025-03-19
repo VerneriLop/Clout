@@ -10,16 +10,20 @@ import {
   faHeart as farHeart,
 } from '@fortawesome/free-regular-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {CustomImage} from '../../services/image/images';
 
 type Props = {
-  caption: string | null;
+  post: CustomImage;
 };
 
-export const BottomBar = ({caption}: Props): JSX.Element => {
+export const BottomBar = ({post}: Props): JSX.Element => {
   const [isLiked, setIsLiked] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const likesCount = 12; // Mock-data
-  const commentsCount = 12; // Mock-data
+
+  const likesCount = post.num_likes;
+  const commentsCount = post.num_comments;
+
+  const caption = post.caption;
 
   const toggleLike = (newState: boolean) => {
     setIsLiked(newState);
