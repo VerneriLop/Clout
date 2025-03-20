@@ -11,8 +11,10 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {CustomImage} from '../../services/image/images';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store/store';
+import {likeImage, unLikeImage} from '../../services/like/likes';
+import {addLike, removeLike} from '../../redux/slices/likeSlice';
 
 type Props = {
   post: CustomImage;
@@ -20,6 +22,7 @@ type Props = {
 
 export const BottomBar = ({post}: Props): JSX.Element => {
   const [expanded, setExpanded] = useState(false);
+  const dispatch = useDispatch();
 
   const caption = post.caption;
 
@@ -35,15 +38,14 @@ export const BottomBar = ({post}: Props): JSX.Element => {
   const user = useSelector((state: RootState) => state.user.user);
 
   const isLiked = imagelikes.find(like => like.user_id === user?.id);
-  //console.log('tykkäys', isLiked);
 
   const toggleLike = (newState: boolean) => {
     if (newState) {
-      console.log('Liked image');
-      // TODO: API call for liking the picture
+      const response = likeImage(post.id);
+      dispatch(addLike(response));
     } else {
-      console.log('Unliked image');
-      // TODO: API call for unliking the picture
+      unLikeImage(isLiked?.id as number);
+      dispatch(removeLike(isLiked?.id as number));
     }
   };
 

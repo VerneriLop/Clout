@@ -24,7 +24,7 @@ export const likesSlice = createSlice({
       state.comments = action.payload;
     },
     addComment: (state, action: PayloadAction<CommentType>) => {
-      state.comments.push(action.payload);
+      state.comments = [...state.comments, action.payload];
     },
     removeComment: (state, action: PayloadAction<{comment_id: number}>) => {
       state.comments = state.comments.filter(

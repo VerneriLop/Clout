@@ -4,7 +4,7 @@ type LikeType = {
   id: number;
   user_id: number;
   image_id: number;
-  created_at: string;
+  created_at?: string;
 };
 
 type LikesState = {
@@ -23,12 +23,10 @@ export const likesSlice = createSlice({
       state.likes = action.payload;
     },
     addLike: (state, action: PayloadAction<LikeType>) => {
-      state.likes.push(action.payload);
+      state.likes = [...state.likes, action.payload];
     },
-    removeLike: (state, action: PayloadAction<{like_id: number}>) => {
-      state.likes = state.likes.filter(
-        like => like.id !== action.payload.like_id,
-      );
+    removeLike: (state, action: PayloadAction<number>) => {
+      state.likes = state.likes.filter(like => like.id !== action.payload);
     },
   },
 });

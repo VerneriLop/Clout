@@ -15,7 +15,7 @@ export const FeedPost = ({post}: Props): JSX.Element => {
   console.log(post);
   return (
     <ThemedView bottomBorder style={globalStyle.flex}>
-      <TopBar url={post.user.profile_picture_url} user={post.user} />
+      <TopBar post={post} />
       <FastImage
         source={{uri: post.image_url}}
         resizeMode="cover"

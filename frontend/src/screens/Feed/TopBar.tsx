@@ -5,30 +5,29 @@ import {ThemedText} from '../../components/ui/typography';
 import {Pressable, StyleSheet} from 'react-native';
 import {horizontalScale, verticalScale} from '../../assets/styles/scaling';
 import {ProfilePicture} from '../Profile/components/ProfilePicture';
-import {CustomUser} from '../Vote/mock';
 import {useNavigation} from '@react-navigation/native';
 import {FeedStackParamList, Routes} from '../../navigation/Routes';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {CustomImage} from './mock';
 
 type Props = {
-  url: string;
-  user: CustomUser;
+  post: CustomImage;
 };
 
-export const TopBar = ({url, user}: Props): JSX.Element => {
+export const TopBar = ({post}: Props): JSX.Element => {
   const navigation = useNavigation<StackNavigationProp<FeedStackParamList>>();
   const handleNavigate = () => {
     navigation.navigate(Routes.ProfileStack, {
       screen: Routes.Profile,
-      params: {userId: user.id},
+      params: {userId: post.user.id},
     });
   };
 
   return (
     <ThemedView style={[globalStyle.flex]}>
       <Pressable style={style.container} onPress={() => handleNavigate()}>
-        <ProfilePicture uri={url} style={style.profileImage} />
-        <ThemedText variant="heavy">{user.username}</ThemedText>
+        <ProfilePicture uri={post.image_url} style={style.profileImage} />
+        <ThemedText variant="heavy">{post.user.username}</ThemedText>
       </Pressable>
     </ThemedView>
   );
