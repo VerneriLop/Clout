@@ -10,20 +10,34 @@ import {
   faHeart as farHeart,
 } from '@fortawesome/free-regular-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {CustomImage} from '../../services/image/images';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store/store';
 
 type Props = {
-  caption: string | null;
+  post: CustomImage;
 };
 
-export const BottomBar = ({caption}: Props): JSX.Element => {
-  const [isLiked, setIsLiked] = useState(false);
+export const BottomBar = ({post}: Props): JSX.Element => {
   const [expanded, setExpanded] = useState(false);
-  const likesCount = 12; // Mock-data
-  const commentsCount = 12; // Mock-data
+
+  const caption = post.caption;
+
+  const allLikes = useSelector((state: RootState) => state.like.likes);
+  const imagelikes = allLikes.filter(like => like.image_id === post.id);
+  const likeCount = imagelikes.length;
+
+  const comments = useSelector((state: RootState) => state.comment.comments);
+  const commentCount = comments.filter(
+    comment => comment.image_id === post.id,
+  ).length;
+
+  const user = useSelector((state: RootState) => state.user.user);
+
+  const isLiked = imagelikes.find(like => like.user_id === user?.id);
+  //console.log('tykkäys', isLiked);
 
   const toggleLike = (newState: boolean) => {
-    setIsLiked(newState);
-
     if (newState) {
       console.log('Liked image');
       // TODO: API call for liking the picture
@@ -47,14 +61,18 @@ export const BottomBar = ({caption}: Props): JSX.Element => {
               <ThemedIcon icon={farHeart} size={25} />
             )}
           </Pressable>
-          <Pressable onPress={showLikes}>
-            <ThemedText variant="bold">{likesCount}</ThemedText>
-          </Pressable>
+          {likeCount > 0 && (
+            <Pressable onPress={showLikes}>
+              <ThemedText variant="bold">{likeCount}</ThemedText>
+            </Pressable>
+          )}
         </View>
 
         <Pressable onPress={openCommentSection} style={styles.iconAndNumber}>
           <ThemedIcon icon={faComment} size={25} />
-          <ThemedText variant="bold">{commentsCount}</ThemedText>
+          {commentCount > 0 && (
+            <ThemedText variant="bold">{commentCount}</ThemedText>
+          )}
         </Pressable>
       </View>
 
