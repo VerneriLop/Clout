@@ -21,10 +21,13 @@ const getUserById = async (id: number) => {
 };
 
 const getImagesByUser = async (id: number) => {
-  return mockImageList.filter(img => img.id === id);
+  return mockImageList.filter(img => img.user.id === id);
 };
 
-export const ProfileScreen = ({route}: ProfileProps): JSX.Element => {
+export const ProfileScreen = ({
+  route,
+  navigation,
+}: ProfileProps): JSX.Element => {
   //useEffect --> get image data, user,
   const {userId} = route.params;
   const loggedInUser = useSelector((state: RootState) => state.user.user);
@@ -37,6 +40,7 @@ export const ProfileScreen = ({route}: ProfileProps): JSX.Element => {
     const fetchImages = async () => {
       try {
         const images = await getImagesByUser(userId);
+        console.log(userId);
         setImageData(images);
       } catch (error) {
         console.error('Error fetching images:', error);
@@ -62,7 +66,8 @@ export const ProfileScreen = ({route}: ProfileProps): JSX.Element => {
 
       fetchUserData();
     }
-  }, [userId, loggedInUser]);
+    navigation.setOptions({headerTitle: userToRender?.username});
+  }, [userId, loggedInUser, userToRender, navigation]);
 
   if (loading) {
     return (

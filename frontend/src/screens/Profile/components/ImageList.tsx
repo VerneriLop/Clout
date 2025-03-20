@@ -37,7 +37,10 @@ export const ImageList = ({
       <ImageListItem
         image={item}
         onPress={() =>
-          navigation.navigate(Routes.ImageDetail, {imageId: item.id})
+          navigation.navigate(Routes.ImageDetail, {
+            imageId: item.id,
+            userId: user.id,
+          })
         }
       />
     );

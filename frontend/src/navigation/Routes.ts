@@ -18,7 +18,7 @@ export type ProfileStackParamList = {
   Settings: undefined;
   Followers: undefined;
   EditProfile: undefined;
-  ImageDetail: {imageId: number};
+  ImageDetail: {imageId: number; userId: number};
 };
 
 export type FeedStackParamList = {
