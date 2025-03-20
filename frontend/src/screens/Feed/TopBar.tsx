@@ -18,7 +18,7 @@ type Props = {
 export const TopBar = ({url, user}: Props): JSX.Element => {
   const navigation = useNavigation<StackNavigationProp<FeedStackParamList>>();
   const handleNavigate = () => {
-    navigation.push(Routes.ProfileStack, {
+    navigation.navigate(Routes.ProfileStack, {
       screen: Routes.Profile,
       params: {userId: user.id},
     });

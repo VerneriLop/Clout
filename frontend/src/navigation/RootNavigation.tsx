@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../redux/store/store';
 import {loginUser} from '../redux/slices/userSlice';
@@ -14,14 +14,19 @@ import {RootStackParamList, Routes} from './Routes';
 const RootStack = createStackNavigator<RootStackParamList>();
 
 export const RootNavigation = () => {
+  const [loading, setLoading] = useState(true);
+
   const dispatch = useDispatch();
   useEffect(() => {
     const data = {user: mockUser, accessToken: 'lol', refreshToken: 'lol'};
     dispatch(loginUser(data));
+    setLoading(false);
   }, [dispatch]);
 
   const user = useSelector((state: RootState) => state.user);
-
+  if (loading) {
+    return <></>;
+  }
   return (
     <ThemedView style={globalStyle.flex}>
       {user.isAuthenticated ? <AppStack /> : <AuthStack />}
