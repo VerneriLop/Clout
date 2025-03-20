@@ -5,18 +5,19 @@ import {useNavigation, useTheme} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {StyleSheet, View} from 'react-native';
 import globalStyle from '../../../assets/styles/globalStyle';
-import {ProfileStackParamList} from '../../../navigation/Routes';
+import {ProfileStackParamList, Routes} from '../../../navigation/Routes';
 import {CustomPressable} from '../CustomPressable';
-import {CustomUser} from './ProfileInfoCard';
+import {User} from '../../../services/user/users';
 import {ThemedText} from '../../../components/ui/typography';
 
-export const ProfileHeader = ({user}: {user: CustomUser}): JSX.Element => {
+export const ProfileHeader = ({user}: {user: User}): JSX.Element => {
   const {colors} = useTheme();
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
   const onPress = () => {
-    navigation.navigate('Settings');
+    navigation.navigate(Routes.Settings);
   };
+
   return (
     <View style={headerstyle.container}>
       <ThemedText style={headerstyle.text}>{user.username}</ThemedText>

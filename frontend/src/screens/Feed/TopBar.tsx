@@ -6,16 +6,22 @@ import {Pressable, StyleSheet} from 'react-native';
 import {horizontalScale, verticalScale} from '../../assets/styles/scaling';
 import {ProfilePicture} from '../Profile/components/ProfilePicture';
 import {CustomUser} from '../Vote/mock';
+import {useNavigation} from '@react-navigation/native';
+import {FeedStackParamList, Routes} from '../../navigation/Routes';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 type Props = {
   url: string;
   user: CustomUser;
-  user_id: number;
 };
 
-export const TopBar = ({url, user, user_id}: Props): JSX.Element => {
+export const TopBar = ({url, user}: Props): JSX.Element => {
+  const navigation = useNavigation<StackNavigationProp<FeedStackParamList>>();
   const handleNavigate = () => {
-    console.log('NAVIGATE TO SPECIFIC PROFILE', user_id);
+    navigation.navigate(Routes.ProfileStack, {
+      screen: Routes.Profile,
+      params: {userId: user.id},
+    });
   };
 
   return (

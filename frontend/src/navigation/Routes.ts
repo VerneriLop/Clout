@@ -1,3 +1,5 @@
+import {NavigatorScreenParams} from '@react-navigation/native';
+
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
@@ -8,6 +10,7 @@ export type RootStackParamList = {
   Feed: undefined;
   BottomTabNavigator: undefined;
   ProfileStack: undefined;
+  Profile: {userId: number};
 };
 
 export type ProfileStackParamList = {
@@ -16,6 +19,11 @@ export type ProfileStackParamList = {
   Followers: undefined;
   EditProfile: undefined;
   ImageDetail: {imageId: number};
+};
+
+export type FeedStackParamList = {
+  Feed: undefined;
+  ProfileStack: NavigatorScreenParams<ProfileStackParamList>;
 };
 
 export const Routes = {
