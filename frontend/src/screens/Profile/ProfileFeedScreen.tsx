@@ -12,7 +12,7 @@ type ImageDetailsProps = NativeStackScreenProps<
   'ImageDetail'
 >;
 
-export const ImageDetailsScreen = ({route}: ImageDetailsProps): JSX.Element => {
+export const ProfileFeedScreen = ({route}: ImageDetailsProps): JSX.Element => {
   const {imageId} = route.params;
   const currentImage = getImageById(imageId);
   console.log(currentImage, imageId);

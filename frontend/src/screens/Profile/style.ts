@@ -28,19 +28,8 @@ export const style = StyleSheet.create({
     fontWeight: 'bold',
   },
   divider: {
-    paddingTop: horizontalScale(5),
     borderBottomColor: '#dedede',
     borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  button: {
-    //paddingHorizontal: horizontalScale(30),
-    paddingVertical: horizontalScale(3),
-    width: horizontalScale(150),
-    borderRadius: 6,
-    alignSelf: 'center',
-    borderWidth: StyleSheet.hairlineWidth * 5,
-    borderColor: 'black',
-    //backgroundColor: 'lightgray',
   },
   imageBox: {
     width: imageWidth,

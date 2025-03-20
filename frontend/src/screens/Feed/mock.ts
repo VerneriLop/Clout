@@ -16,7 +16,7 @@ const IMAGELIST_LENGTH = 10;
 
 export const mockUser: CustomUser = {
   id: 0,
-  username: 'Johtaja',
+  username: 'Johtaja1',
   email: 'johtaja@johtaja.johtaja',
   bio: 'L5 Software Engineer @Clout',
   num_followers: 420,
