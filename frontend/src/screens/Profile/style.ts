@@ -3,11 +3,7 @@ import {horizontalScale, scaleFontSize} from '../../assets/styles/scaling';
 import globalStyle from '../../assets/styles/globalStyle';
 
 const {width, height} = Dimensions.get('window');
-console.log(height);
 const imageWidth = Math.ceil(width / 3);
-console.log(imageWidth % 3);
-const buttonTextSize = scaleFontSize(17);
-console.log(buttonTextSize);
 export const imageHeight = imageWidth * (4 / 3);
 
 export const style = StyleSheet.create({

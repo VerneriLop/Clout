@@ -1,5 +1,10 @@
-import {ActivityIndicator, FlatList, StyleSheet} from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  StyleSheet,
+} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {ProfileStackParamList} from '../../navigation/Routes';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
@@ -7,6 +12,16 @@ import {ThemedView} from '../../components/ui/themed-view';
 import {CustomImage, mockImageList} from '../Feed/mock';
 import {FeedPost} from '../Feed/FeedPost';
 import globalStyle from '../../assets/styles/globalStyle';
+import {useSelector} from 'react-redux';
+import {
+  selectAllPosts,
+  selectPostIndexById,
+  selectPostsIndex,
+  selectPostsStatus,
+} from '../../redux/slices/profilePostsSlice';
+import store, {RootState} from '../../redux/store/store';
+import Animated from 'react-native-reanimated';
+import {verticalScale} from '../../assets/styles/scaling';
 
 type ImageDetailsProps = NativeStackScreenProps<
   ProfileStackParamList,
@@ -14,37 +29,36 @@ type ImageDetailsProps = NativeStackScreenProps<
 >;
 
 export const ProfileFeedScreen = ({route}: ImageDetailsProps): JSX.Element => {
-  const {imageId, userId} = route.params;
-  const [imageData, setImageData] = useState<CustomImage[]>([]);
-  const [loading, setLoading] = useState(true);
-  const flatListRef = useRef<FlatList<CustomImage>>(null);
-  useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const images = await getImagesByUser(userId);
-        setImageData(images);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching images:', error);
-      }
-    };
-    fetchImages();
-  }, [userId]);
+  const {imageId} = route.params || {};
+  const postIndex = useMemo(() => {
+    return imageId ? selectPostIndexById(store.getState(), imageId) : 0;
+  }, [imageId]);
+  //const {imageId} = route.params;
+  const imageData = useSelector(selectAllPosts);
+  const postStatus = useSelector(selectPostsStatus);
+  //const postIndex = useSelector((state: RootState) =>
+  //  selectPostIndexById(state, imageId),
+  //);
 
-  useEffect(() => {
-    if (!loading && imageData.length > 0) {
-      const index = imageData.findIndex(img => img.id === imageId);
-      if (index !== -1) {
+  console.log(postIndex);
+  console.log(postStatus);
+  //const [loading, setLoading] = useState(true);
+  const flatListRef = useRef<FlatList<CustomImage>>(null);
+  console.log('render profilefeedscreen');
+
+  /*useEffect(() => {
+    if (imageData.length > 0) {
+      if (postIndex !== null) {
         setTimeout(() => {
           flatListRef.current?.scrollToIndex({
-            index,
+            index: postIndex,
             animated: true,
             viewPosition: 0.5,
           });
-        }, 50);
+        }, 20);
       }
     }
-  }, [loading, imageData, imageId]);
+  }, [imageData, postIndex]);
 
   const handleScrollToFailed = (info: {
     index: number;
@@ -59,25 +73,36 @@ export const ProfileFeedScreen = ({route}: ImageDetailsProps): JSX.Element => {
       animated: true,
     });
   };
+  */
+  //https://reactnative.dev/docs/optimizing-flatlist-configuration
+  const renderItem = useCallback(
+    ({item}: {item: CustomImage}) => <FeedPost post={item} />,
+    [],
+  );
 
-  if (loading) {
+  if (!imageData) {
+    console.log('lol');
     return <ActivityIndicator style={styles.activityIndicator} size="large" />;
   }
-  console.log(
-    imageData.findIndex(img => img.id === imageId),
-    imageData.length,
-  );
+
   return (
-    <ThemedView style={[globalStyle.flex]}>
-      <FlatList
-        ref={flatListRef}
-        data={imageData}
-        keyExtractor={item => String(item.id)}
-        renderItem={({item}) => <FeedPost post={item} />}
-        showsVerticalScrollIndicator={false}
-        onScrollToIndexFailed={handleScrollToFailed}
-      />
-    </ThemedView>
+    <Animated.View style={[{flex: 1}]} sharedTransitionTag="Profile">
+      <ThemedView style={[globalStyle.flex]}>
+        <FlatList
+          ref={flatListRef}
+          data={imageData}
+          keyExtractor={item => String(item.id)}
+          renderItem={renderItem}
+          getItemLayout={(data, index) => ({
+            length: ITEM_HEIGHT,
+            offset: ITEM_HEIGHT * index,
+            index,
+          })}
+          showsVerticalScrollIndicator={false}
+          initialScrollIndex={postIndex}
+        />
+      </ThemedView>
+    </Animated.View>
   );
 };
 
@@ -85,6 +110,14 @@ const getImagesByUser = async (id: number) => {
   return mockImageList.filter(img => img.user.id === id);
 };
 
+const {width} = Dimensions.get('window');
+const IMAGE_WIDTH = width;
+const IMAGE_HEIGHT = (IMAGE_WIDTH / 3) * 4;
+
+const TOP_BAR_HEIGHT = verticalScale(50);
+const BOTTOM_BAR_HEIGHT = verticalScale(69);
+
+const ITEM_HEIGHT = IMAGE_HEIGHT + TOP_BAR_HEIGHT + BOTTOM_BAR_HEIGHT;
 const styles = StyleSheet.create({
   activityIndicator: {
     flex: 1,

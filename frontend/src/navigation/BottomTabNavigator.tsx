@@ -23,14 +23,13 @@ import {ProfileStackNavigator} from './ProfileStackNavigator';
 
 type tabBarIconProps = {
   route: RouteProp<RootStackParamList, keyof RootStackParamList>;
-  focused: boolean;
   color: string;
   size: number;
 };
 
-const tabBarIcon = ({route, focused, color, size}: tabBarIconProps) => {
+const tabBarIcon = ({route, color, size}: tabBarIconProps) => {
   let icon: IconDefinition = faHouse;
-  console.log(`Tab: ${route.name}, Focused: ${focused}`);
+  //console.log(`Tab: ${route.name}, Focused: ${focused}`);
 
   if (route.name === Routes.Vote) {
     icon = faHouse;
@@ -76,8 +75,7 @@ export const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
-        tabBarIcon: ({focused, color, size}) =>
-          tabBarIcon({route, focused, color, size}),
+        tabBarIcon: ({color, size}) => tabBarIcon({route, color, size}),
         tabBarActiveTintColor: 'tomato',
         tabBarInactiveTintColor: 'gray',
         tabBarButton: tabBarButton,
