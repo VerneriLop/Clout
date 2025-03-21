@@ -12,8 +12,7 @@ import {
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {CustomImage} from '../../services/image/images';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../redux/store/store';
-import {likeImage, unLikeImage} from '../../services/like/likes';
+import {AppDispatch, RootState} from '../../redux/store/store';
 import {addLike, removeLike} from '../../redux/slices/likeSlice';
 
 type Props = {
@@ -22,7 +21,7 @@ type Props = {
 
 export const BottomBar = ({post}: Props): JSX.Element => {
   const [expanded, setExpanded] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const caption = post.caption;
 
@@ -38,14 +37,13 @@ export const BottomBar = ({post}: Props): JSX.Element => {
   const user = useSelector((state: RootState) => state.user.user);
 
   const isLiked = imagelikes.find(like => like.user_id === user?.id);
+  console.log(isLiked);
 
   const toggleLike = (newState: boolean) => {
     if (newState) {
-      const response = likeImage(post.id);
-      dispatch(addLike(response));
-    } else {
-      unLikeImage(isLiked?.id as number);
-      dispatch(removeLike(isLiked?.id as number));
+      dispatch(addLike(post.id));
+    } else if (isLiked?.id) {
+      dispatch(removeLike(isLiked.id));
     }
   };
 

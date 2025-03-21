@@ -1,4 +1,5 @@
 //import {AxiosResponse} from 'axios';
+import {mockLikes} from '../../screens/Feed/mock';
 import instance, {API_URL} from '../utils';
 
 type LikeType = {
@@ -8,9 +9,16 @@ type LikeType = {
   created_at?: string;
 };
 
+/*
 export const getAllLikes = async (): Promise<LikeType[]> => {
   const response = await instance.get<LikeType[]>(`${API_URL}/likes/`);
   return response.data;
+};
+*/
+
+//MOCK API
+export const getAllLikes = async () => {
+  return mockLikes;
 };
 
 export const getLikeById = async (id: number): Promise<LikeType> => {
@@ -28,7 +36,7 @@ export const likeImage = async (image_id: number): Promise<LikeType> => {
 */
 
 //MOCK API
-export const likeImage = (image_id: number) => {
+export const likeImage = async (image_id: number) => {
   const response = {
     id: Date.now(),
     user_id: 0,
@@ -39,13 +47,13 @@ export const likeImage = (image_id: number) => {
 };
 
 /*
-export const unLikeImage = async (id: number): Promise<AxiosResponse> => {
-  const response = await instance.delete(`${API_URL}/likes/${id}`);
+export const unLikeImage = async (like_id: number): Promise<AxiosResponse> => {
+  const response = await instance.delete(`${API_URL}/likes/${like_id}`);
   return response;
 };
 */
 
 //MOCK API
-export const unLikeImage = (id: number) => {
-  console.log('Deleted image', id);
+export const unLikeImage = async (like_id: number) => {
+  console.log('Unlike', like_id);
 };

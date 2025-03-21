@@ -26,7 +26,10 @@ export const TopBar = ({post}: Props): JSX.Element => {
   return (
     <ThemedView style={[globalStyle.flex]}>
       <Pressable style={style.container} onPress={() => handleNavigate()}>
-        <ProfilePicture uri={post.image_url} style={style.profileImage} />
+        <ProfilePicture
+          uri={post.user.profile_picture_url}
+          style={style.profileImage}
+        />
         <ThemedText variant="heavy">{post.user.username}</ThemedText>
       </Pressable>
     </ThemedView>
