@@ -11,9 +11,6 @@ import {ThemedView} from '../../../components/ui/themed-view';
 import {ThemedText} from '../../../components/ui/typography';
 import {User} from '../../../services/user/users';
 import {ProfileInfoCard} from './ProfileInfoCard';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../../../redux/store/store';
-import {setIndex} from '../../../redux/slices/profilePostsSlice';
 
 const ITEM_HEIGHT = imageHeight;
 
@@ -27,7 +24,6 @@ export const ImageList = ({
   const [refreshing, setRefreshing] = useState(false);
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
-  // const dispatch = useDispatch<AppDispatch>();
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -37,7 +33,6 @@ export const ImageList = ({
   };
 
   const handlePress = (item: CustomImage) => {
-    //dispatch(setIndex(item.id));
     navigation.navigate(Routes.ImageDetail, {
       imageId: item.id,
       userId: user.id,

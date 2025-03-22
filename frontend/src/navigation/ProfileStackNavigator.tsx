@@ -42,7 +42,10 @@ export const ProfileStackNavigator = () => {
           headerTitleAlign: 'left',
           title: route.params?.username,
         })}
-        initialParams={{userId: loggedInUser?.id}}
+        initialParams={{
+          userId: loggedInUser?.id,
+          username: loggedInUser?.username,
+        }}
       />
       <ProfileStack.Screen name={Routes.Settings} component={SettingsScreen} />
       <ProfileStack.Screen

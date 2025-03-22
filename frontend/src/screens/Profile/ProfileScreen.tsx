@@ -1,81 +1,41 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import globalStyle from '../../assets/styles/globalStyle';
 import {ImageList} from './components/ImageList';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedView} from '../../components/ui/themed-view';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {ProfileStackParamList, Routes} from '../../navigation/Routes';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, AppThunk, RootState} from '../../redux/store/store';
-import {User} from '../../services/user/users';
+import {ProfileStackParamList} from '../../navigation/Routes';
 import {ThemedText} from '../../components/ui/typography';
 import {ActivityIndicator, StyleSheet} from 'react-native';
-import {CustomImage} from '../../services/image/images';
-import {mockImageList, mockUserList} from '../Feed/mock';
 import {
-  fetchPosts,
-  selectAllPosts,
-  selectPostsStatus,
-} from '../../redux/slices/profilePostsSlice';
+  useGetPostsQuery,
+  useGetUserByIdQuery,
+} from '../../redux/slices/apiSlice';
 
 type ProfileProps = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
 
-//Mock api call definitions; Only for testing purposes
-const getUserById = async (id: number) => {
-  return mockUserList.find(user => user.id === id);
-};
-
-export const ProfileScreen = ({
-  route,
-  navigation,
-}: ProfileProps): JSX.Element => {
-  //useEffect --> get image data, user,
+export const ProfileScreen = ({route}: ProfileProps): JSX.Element => {
   const {userId} = route.params;
-  const loggedInUser = useSelector((state: RootState) => state.user.user);
-
-  const imageData = useSelector(selectAllPosts);
-  const dispatch = useDispatch<AppDispatch>();
-  const postStatus = useSelector(selectPostsStatus);
-
-  const [userToRender, setUserToRender] = useState<User | null>(null);
-  //const [imageData, setImageData] = useState<CustomImage[]>([]);
-  const [loading, setLoading] = useState(true);
   const insets = useSafeAreaInsets();
-  console.log('render profilescreen');
+  console.log('renders profilescreen');
 
-  // fix: only now checks the first rendered users data
-  useEffect(() => {
-    if (postStatus === 'idle') {
-      dispatch(fetchPosts(userId));
-    }
-  }, [postStatus, dispatch, userId]);
+  const {
+    data: posts = [],
+    isLoading: isPostsLoading,
+    //isSuccess: isPostsSuccess,
+    isError: isPostsError,
+    error: postsError,
+  } = useGetPostsQuery(userId);
 
-  useEffect(() => {
-    if (userId === loggedInUser?.id) {
-      setUserToRender(loggedInUser);
-      setLoading(false);
-    } else if (userId) {
-      const fetchUserData = async () => {
-        try {
-          const user = await getUserById(userId);
-          setUserToRender(user);
-        } catch (error) {
-          console.error('Error fetching user:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
+  const {
+    data: user = null,
+    isLoading: isUserLoading,
+    //isSuccess: isUserSuccess,
+    isError: isUserError,
+    error: userError,
+  } = useGetUserByIdQuery(userId);
 
-      fetchUserData();
-    }
-    navigation.setOptions({headerTitle: userToRender?.username});
-  }, [userId, loggedInUser, userToRender, navigation]);
-
-  //useEffect(() => {
-  // navigation.preload(Routes.ImageDetail, {imageId: 0, userId: 0}); // Preload in the background
-  //}, [navigation]);
-
-  if (loading) {
+  if (isPostsLoading || isUserLoading) {
     return (
       <ActivityIndicator
         style={styles.activityIndicator}
@@ -85,7 +45,14 @@ export const ProfileScreen = ({
     );
   }
 
-  if (!userToRender) {
+  if (isPostsError || isUserError) {
+    console.error(
+      'Error fetching data:',
+      isPostsError ? postsError : userError,
+    );
+  }
+
+  if (!user) {
     return (
       <ThemedView>
         <ThemedText>Error getting profile</ThemedText>
@@ -95,7 +62,7 @@ export const ProfileScreen = ({
 
   return (
     <ThemedView style={[globalStyle.flex, {paddingTop: insets.top}]}>
-      <ImageList data={imageData} user={userToRender} />
+      <ImageList data={posts} user={user} />
     </ThemedView>
   );
 };
