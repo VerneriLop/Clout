@@ -3,7 +3,7 @@ import {horizontalScale, scaleFontSize} from '../../assets/styles/scaling';
 import globalStyle from '../../assets/styles/globalStyle';
 
 const {width, height} = Dimensions.get('window');
-const imageWidth = Math.ceil(width / 3);
+export const imageWidth = Math.ceil(width / 3);
 export const imageHeight = imageWidth * (4 / 3);
 
 export const style = StyleSheet.create({

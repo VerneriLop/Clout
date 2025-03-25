@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     paddingHorizontal: globalStyle.defaultPadding.paddingHorizontal,
-    paddingBottom: 5,
+    paddingVertical: 5,
   },
   button: {
     paddingVertical: horizontalScale(3),
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     gap: 5,
     borderBottomColor: '#dedede',
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    //borderBottomWidth: StyleSheet.hairlineWidth,
   },
   defaultMargin: {
     marginVertical: verticalScale(10),

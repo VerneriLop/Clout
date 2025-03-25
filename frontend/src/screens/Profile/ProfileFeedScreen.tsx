@@ -80,7 +80,7 @@ const IMAGE_HEIGHT = (IMAGE_WIDTH / 3) * 4;
 
 const TOP_BAR_HEIGHT = verticalScale(50);
 const BOTTOM_BAR_HEIGHT = verticalScale(69);
-
+// TODO: make sure the calculation is working on all devices
 const ITEM_HEIGHT = IMAGE_HEIGHT + TOP_BAR_HEIGHT + BOTTOM_BAR_HEIGHT;
 const styles = StyleSheet.create({
   activityIndicator: {

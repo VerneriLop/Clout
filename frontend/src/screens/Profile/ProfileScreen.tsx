@@ -1,7 +1,6 @@
 import React from 'react';
 import globalStyle from '../../assets/styles/globalStyle';
 import {ImageList} from './components/ImageList';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedView} from '../../components/ui/themed-view';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ProfileStackParamList} from '../../navigation/Routes';
@@ -16,7 +15,6 @@ type ProfileProps = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
 
 export const ProfileScreen = ({route}: ProfileProps): JSX.Element => {
   const {userId} = route.params;
-  const insets = useSafeAreaInsets();
   console.log('renders profilescreen');
 
   const {
@@ -61,7 +59,7 @@ export const ProfileScreen = ({route}: ProfileProps): JSX.Element => {
   }
 
   return (
-    <ThemedView style={[globalStyle.flex, {paddingTop: insets.top}]}>
+    <ThemedView style={[globalStyle.flex]}>
       <ImageList data={posts} user={user} />
     </ThemedView>
   );

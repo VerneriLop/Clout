@@ -26,6 +26,7 @@ export const FeedScreen = (): JSX.Element => {
   }, [dispatch]);
 
   const data = useSelector((state: RootState) => state.feedImage.feedImages);
+
   const renderItem = useCallback(
     ({item}: {item: CustomImage}) => <FeedPost post={item} />,
     [],

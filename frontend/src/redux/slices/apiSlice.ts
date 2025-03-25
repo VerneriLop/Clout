@@ -15,26 +15,23 @@ const getUserById = async (id: number) => {
   return mockUserList.find(user => user.id === id);
 };
 
+// mock api
 export const apiSlice = createApi({
   // The cache reducer expects to be added at `state.api` (already default - this is optional)
   reducerPath: 'api',
-  // Replace with our actual abse url
+  // Replace with our actual base url
   baseQuery: fetchBaseQuery({baseUrl: '/fakeApi'}),
   endpoints: builder => ({
-    // The `getPosts` endpoint is a "query" operation that returns data.
-    // The return value is a `Post[]` array, and it takes no arguments.
     getPosts: builder.query<CustomImage[], number>({
       queryFn: async (userId: number) => {
-        // Use the mock function instead of making a real API call
         const posts = await getImagesByUser(userId);
-        return {data: posts}; // Must return data in this format
+        return {data: posts};
       },
     }),
     getUserById: builder.query<CustomUser | undefined, number>({
       queryFn: async (userId: number) => {
-        // Use the mock function instead of making a real API call
         const user = await getUserById(userId);
-        return {data: user}; // Must return data in this format
+        return {data: user};
       },
     }),
   }),
