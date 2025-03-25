@@ -6,7 +6,6 @@ import {
 } from 'react-native';
 import React, {useCallback, useMemo} from 'react';
 import {ProfileStackParamList} from '../../navigation/Routes';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 import {ThemedView} from '../../components/ui/themed-view';
 import {CustomImage} from '../Feed/mock';
@@ -14,11 +13,9 @@ import {FeedPost} from '../Feed/FeedPost';
 import globalStyle from '../../assets/styles/globalStyle';
 import {verticalScale} from '../../assets/styles/scaling';
 import {useGetPostsQuery} from '../../redux/slices/apiSlice';
+import {StackScreenProps} from '@react-navigation/stack';
 
-type ImageDetailsProps = NativeStackScreenProps<
-  ProfileStackParamList,
-  'ImageDetail'
->;
+type ImageDetailsProps = StackScreenProps<ProfileStackParamList, 'ImageDetail'>;
 
 export const ProfileFeedScreen = ({route}: ImageDetailsProps): JSX.Element => {
   const {imageId, userId} = route.params || {};

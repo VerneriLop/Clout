@@ -1,5 +1,5 @@
 import {Dimensions, StyleSheet} from 'react-native';
-import {horizontalScale, scaleFontSize} from '../../assets/styles/scaling';
+import {horizontalScale} from '../../assets/styles/scaling';
 import globalStyle from '../../assets/styles/globalStyle';
 
 const {width, height} = Dimensions.get('window');

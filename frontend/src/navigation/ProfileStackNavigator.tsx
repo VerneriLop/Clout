@@ -60,7 +60,7 @@ export const ProfileStackNavigator = () => {
       <ProfileStack.Screen
         name={Routes.ImageDetail}
         component={ProfileFeedScreen}
-        options={{title: 'Posts'}}
+        options={{title: 'Posts', animation: 'scale_from_center'}}
       />
     </ProfileStack.Navigator>
   );
