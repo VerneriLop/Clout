@@ -19,7 +19,7 @@ export const TopBar = ({post}: Props): JSX.Element => {
   const handleNavigate = () => {
     navigation.navigate(Routes.ProfileStack, {
       screen: Routes.Profile,
-      params: {userId: post.user.id},
+      params: {userId: post.user.id, username: post.user.username},
     });
   };
 
