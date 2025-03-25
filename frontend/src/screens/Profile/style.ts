@@ -2,7 +2,7 @@ import {Dimensions, StyleSheet} from 'react-native';
 import {horizontalScale} from '../../assets/styles/scaling';
 import globalStyle from '../../assets/styles/globalStyle';
 
-const {width, height} = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 export const imageWidth = Math.ceil(width / 3);
 export const imageHeight = imageWidth * (4 / 3);
 

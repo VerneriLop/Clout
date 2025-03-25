@@ -1,16 +1,12 @@
-import {StyleSheet, TextInput, View} from 'react-native';
+import {StyleSheet, TextInput} from 'react-native';
 import React, {useCallback, useMemo, useState} from 'react';
-import {ThemedText} from '../../components/ui/typography';
 import {ThemedView} from '../../components/ui/themed-view';
-import {StackScreenProps} from '@react-navigation/stack';
-import {ProfileStackParamList} from '../../navigation/Routes';
 import {CustomUser} from '../Vote/mock';
 import {mockUserList} from '../Feed/mock';
 import {FlatList} from 'react-native-gesture-handler';
 import {TopBar} from '../Feed/TopBar';
 import {verticalScale} from '../../assets/styles/scaling';
 import {useTheme} from '@react-navigation/native';
-import {CustomPressable} from './CustomPressable';
 
 //type FollowersScreenProps = StackScreenProps<
 //  ProfileStackParamList,
@@ -29,7 +25,6 @@ export const FollowersScreen = (): JSX.Element => {
         tabBarStyle: {backgroundColor: colors.background},
         tabBarIndicatorStyle: {backgroundColor: colors.text, height: 2}, // Sliding bottom border
         tabBarLabelStyle: {fontWeight: 'bold', color: colors.text},
-        tabBarAndroidRipple: false,
       }}>
       <Tab.Screen name="Followers" component={FollowersList} />
       <Tab.Screen name="Following" component={FollowingList} />
@@ -140,6 +135,7 @@ export const FollowingList = (): JSX.Element => {
     </ThemedView>
   );
 };
+/*
 
 type TabButtonProps = {
   borderColor: string;
@@ -148,7 +144,7 @@ type TabButtonProps = {
   onPress: () => void;
 };
 
-/*
+
       <View style={[styles.actionBar, {borderBottomColor: colors.border}]}>
         <TabButton
           borderColor={colors.border}
@@ -163,7 +159,7 @@ type TabButtonProps = {
           onPress={() => setActiveIndex(1)}
         />
       </View>
- */
+
 
 const TabButton = ({
   borderColor,
@@ -183,6 +179,7 @@ const TabButton = ({
     </CustomPressable>
   );
 };
+ */
 
 const ITEM_HEIGHT = verticalScale(50);
 

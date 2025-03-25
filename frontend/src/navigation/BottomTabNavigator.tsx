@@ -37,7 +37,7 @@ const tabBarIcon = ({route, color, size}: tabBarIconProps) => {
     icon = faAward;
   } else if (route.name === Routes.Camera) {
     icon = faCamera;
-  } else if (route.name === Routes.Feed) {
+  } else if (route.name === Routes.FeedStack) {
     icon = faImages;
   } else if (route.name === Routes.ProfileStack) {
     icon = faUser;
@@ -93,7 +93,7 @@ export const BottomTabNavigator = () => {
         component={CameraScreen}
         options={{tabBarStyle: {display: 'none'}}}
       />
-      <Tab.Screen name={Routes.Feed} component={FeedStackNavigator} />
+      <Tab.Screen name={Routes.FeedStack} component={FeedStackNavigator} />
       <Tab.Screen
         name={Routes.ProfileStack}
         component={ProfileStackNavigator}
