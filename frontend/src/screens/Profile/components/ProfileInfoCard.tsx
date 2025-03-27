@@ -12,13 +12,13 @@ import {ProfileStackParamList, Routes} from '../../../navigation/Routes';
 import {ProfileStatsRow} from './ProfileStatsRow';
 import {ThemedView} from '../../../components/ui/themed-view';
 import {ThemedText} from '../../../components/ui/typography';
-import {User} from '../../../services/user/users';
 import {CustomPressable} from '../CustomPressable';
 import {style} from '../style';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store/store';
+import {CustomUser} from '../../Vote/mock';
 
-export const ProfileInfoCard = ({user}: {user: User}): JSX.Element => {
+export const ProfileInfoCard = ({user}: {user: CustomUser}): JSX.Element => {
   const loggedInUser = useSelector((state: RootState) => state.user.user);
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();

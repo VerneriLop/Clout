@@ -1,13 +1,13 @@
 import React from 'react';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {View, StyleSheet} from 'react-native';
-import {ThemedView} from '../../components/ui/themed-view';
+import {ThemedView} from '../ui/themed-view';
 import {ProfileStackParamList, Routes} from '../../navigation/Routes';
-import {CustomUser} from '../Vote/mock';
-import {ThemedText} from '../../components/ui/typography';
+import {CustomUser} from '../../screens/Vote/mock';
+import {ThemedText} from '../ui/typography';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {ProfilePicture} from './components/ProfilePicture';
-import {CustomPressable} from './CustomPressable';
+import {ProfilePicture} from '../ProfilePicture/ProfilePicture';
+import {CustomPressable} from '../../screens/Profile/CustomPressable';
 
 type UserListItemProps = {
   user: CustomUser;

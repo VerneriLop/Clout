@@ -4,7 +4,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ProfileStackParamList} from '../../../navigation/Routes';
 import {CustomPressable} from '../CustomPressable';
-import {ProfilePicture} from './ProfilePicture';
+import {ProfilePicture} from '../../../components/ProfilePicture/ProfilePicture';
 import {ThemedText} from '../../../components/ui/typography';
 import {CustomUser} from '../../Vote/mock';
 //import { useGetUserFollowersQuery, useGetUserFollowingQuery } from '../../../redux/slices/apiSlice';
