@@ -1,5 +1,10 @@
-import {StyleSheet, useWindowDimensions} from 'react-native';
-import React, {memo} from 'react';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import React, {memo, useCallback} from 'react';
 import {CustomUser} from '../Vote/mock';
 import {useTheme} from '@react-navigation/native';
 import {TabView, TabBar} from 'react-native-tab-view';
@@ -10,6 +15,7 @@ import {
 import {ProfileStackParamList} from '../../navigation/Routes';
 import {StackScreenProps} from '@react-navigation/stack';
 import {UserList} from '../../components/UserList/UserList';
+import {ThemedText} from '../../components/ui/typography';
 
 type FollowersScreenProps = StackScreenProps<
   ProfileStackParamList,
@@ -29,27 +35,32 @@ export const FollowersScreen = ({
   const [index, setIndex] = React.useState(0);
   const {colors} = useTheme();
 
-  const {data: following = []} = useGetUserFollowingQuery(userId);
+  const {
+    data: following = [],
+    isLoading: isLoadingFollowing,
+    isError: isErrorFollowing,
+  } = useGetUserFollowingQuery(userId);
 
-  const {data: followers = []} = useGetUserFollowersQuery(userId);
+  const {
+    data: followers = [],
+    isLoading: isLoadingFollowers,
+    isError: isErrorFollowers,
+  } = useGetUserFollowersQuery(userId);
 
-  const renderScene = ({
-    route,
-  }: {
-    route: {
-      key: string;
-      title: string;
-    };
-  }) => {
-    switch (route.key) {
-      case 'followers':
-        return <FollowersList data={followers} />;
-      case 'following':
-        return <FollowingList data={following} />;
-      default:
-        return null;
-    }
-  };
+  const renderScene = useCallback(
+    ({route}: {route: {key: string}}) => {
+      switch (route.key) {
+        case 'followers':
+          return <FollowersList data={followers} />;
+        case 'following':
+          return <FollowingList data={following} />;
+        default:
+          return null;
+      }
+    },
+    [followers, following],
+  );
+
   const renderTabBar = (props: any) => (
     <TabBar
       {...props}
@@ -64,6 +75,24 @@ export const FollowersScreen = ({
       android_ripple={{radius: 0}}
     />
   );
+
+  if (isLoadingFollowers || isLoadingFollowing) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  if (isErrorFollowers || isErrorFollowing) {
+    return (
+      <View style={styles.centered}>
+        <ThemedText style={{color: colors.notification}}>
+          Failed to load data. Please try again later.
+        </ThemedText>
+      </View>
+    );
+  }
 
   return (
     <TabView
@@ -88,9 +117,10 @@ export const FollowersList = memo(
   },
 );
 
-/*
-const renderScene = SceneMap({
-  followers: FollowersList,
-  following: FollowingList,
+const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
-*/
