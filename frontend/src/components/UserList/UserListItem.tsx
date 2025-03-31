@@ -3,11 +3,11 @@ import {useNavigation, useTheme} from '@react-navigation/native';
 import {View, StyleSheet} from 'react-native';
 import {ThemedView} from '../ui/themed-view';
 import {ProfileStackParamList, Routes} from '../../navigation/Routes';
-import {CustomUser} from '../../screens/Vote/mock';
 import {ThemedText} from '../ui/typography';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {ProfilePicture} from '../ProfilePicture/ProfilePicture';
 import {OpacityPressable} from '../OpacityPressable/OpacityPressable';
+import {CustomUser} from '../../types/types';
 
 type UserListItemProps = {
   user: CustomUser;

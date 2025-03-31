@@ -3,9 +3,9 @@ import React, {useCallback, useMemo, useState} from 'react';
 import {TextInput, FlatList, StyleSheet} from 'react-native';
 import {verticalScale} from '../../assets/styles/scaling';
 import {UserListItem} from './UserListItem';
-import {CustomUser} from '../../screens/Vote/mock';
 import {ThemedView} from '../ui/themed-view';
 import {ThemedText} from '../ui/typography';
+import {CustomUser} from '../../types/types';
 
 // todo: add options for size and searchbarvisible
 export const UserList = ({data}: {data: CustomUser[]}): JSX.Element => {
