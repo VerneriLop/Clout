@@ -1,6 +1,6 @@
 import {StyleSheet, useWindowDimensions, View} from 'react-native';
 import React, {memo, useCallback} from 'react';
-import {CustomUser} from '../Vote/mock';
+import {CustomUser} from '../../types/types';
 import {useTheme} from '@react-navigation/native';
 import {TabView, TabBar} from 'react-native-tab-view';
 import {

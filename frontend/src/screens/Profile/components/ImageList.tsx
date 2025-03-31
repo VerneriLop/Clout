@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {FlatList, Pressable, StyleSheet} from 'react-native';
-import {CustomImage} from '../../../services/image/images';
 import {imageHeight, style} from '../style';
 import {scaleFontSize, verticalScale} from '../../../assets/styles/scaling';
 import {useNavigation, useTheme} from '@react-navigation/native';
@@ -9,9 +8,9 @@ import {ProfileStackParamList, Routes} from '../../../navigation/Routes';
 import {ThemedView} from '../../../components/ui/themed-view';
 import {ThemedText} from '../../../components/ui/typography';
 import {ProfileInfoCard} from './ProfileInfoCard';
-import {CustomUser} from '../../Vote/mock';
 import {Spinner} from '../../../components/Spinner/Spinner';
 import FastImage, {FastImageProps} from 'react-native-fast-image';
+import {CustomImage, CustomUser} from '../../../types/types';
 
 const ITEM_HEIGHT = imageHeight;
 

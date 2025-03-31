@@ -1,16 +1,4 @@
-import {CustomUser} from '../Vote/mock';
-
-export type CustomImage = {
-  id: number;
-  user: CustomUser;
-  image_url: string;
-  thumbnail_url: string | null;
-  caption: string | null;
-  created_at: string;
-  is_visible: boolean;
-  num_likes: number | null;
-  num_comments: number | null;
-};
+import {CustomImage, CustomUser} from '../types/types';
 
 const IMAGELIST_LENGTH = 10;
 
@@ -187,7 +175,7 @@ export const mockImageList: CustomImage[] = [
   },
 ];
 
-export const mockLikes = [
+export let mockLikes = [
   {
     id: 1,
     user_id: 0,
@@ -313,3 +301,20 @@ export const mockFollowRelations = [
   {id: 11, user_id1: 6, user_id2: 3},
   {id: 12, user_id1: 6, user_id2: 5},
 ];
+type TupleType = [CustomImage, CustomImage];
+
+let extendedMockImageList: TupleType[] = [];
+let uri_idx: number;
+let uri_idx2: number;
+
+for (let i = 0; i < IMAGELIST_LENGTH; i += 1) {
+  uri_idx = Math.floor(Math.random() * mockImageList.length);
+  uri_idx2 = Math.floor(Math.random() * mockImageList.length);
+
+  extendedMockImageList.push([
+    {...baseImageMock, id: i, image_url: mockImageList[uri_idx].image_url},
+    {...baseImageMock, id: i + 1, image_url: mockImageList[uri_idx2].image_url},
+  ]);
+}
+
+export default extendedMockImageList;

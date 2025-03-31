@@ -8,7 +8,7 @@ import {ThemedText} from '../../components/ui/typography';
 import {
   useGetPostsQuery,
   useGetUserByIdQuery,
-} from '../../redux/slices/apiSlice';
+} from '../../redux/slices/mockApiSlice';
 import {Spinner} from '../../components/Spinner/Spinner';
 
 type ProfileProps = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;

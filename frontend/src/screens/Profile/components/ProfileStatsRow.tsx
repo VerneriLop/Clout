@@ -6,8 +6,7 @@ import {ProfileStackParamList} from '../../../navigation/Routes';
 import {OpacityPressable} from '../../../components/OpacityPressable/OpacityPressable';
 import {ProfilePicture} from '../../../components/ProfilePicture/ProfilePicture';
 import {ThemedText} from '../../../components/ui/typography';
-import {CustomUser} from '../../Vote/mock';
-//import { useGetUserFollowersQuery, useGetUserFollowingQuery } from '../../../redux/slices/apiSlice';
+import {CustomUser} from '../../../types/types';
 
 export const ProfileStatsRow = ({user}: {user: CustomUser}): JSX.Element => {
   //  const {data: following = []} = useGetUserFollowingQuery(user.id);
