@@ -10,7 +10,6 @@ import {
   faHeart as farHeart,
 } from '@fortawesome/free-regular-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {CustomImage} from '../../services/image/images';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store/store';
 import {
@@ -18,6 +17,7 @@ import {
   useDeleteLikeMutation,
   useGetLikesByImageIdQuery,
 } from '../../redux/slices/mockApiSlice';
+import {CustomImage} from '../../types/types';
 
 type Props = {
   post: CustomImage;

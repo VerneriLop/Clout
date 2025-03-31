@@ -1,11 +1,6 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-//import {CustomImage} from '../../services/image/images';
-import {
-  mockImageList,
-  mockUserList,
-  CustomImage,
-} from '../../screens/Feed/mock';
-import {CustomUser} from '../../screens/Vote/mock';
+import {mockImageList, mockUserList} from '../../mock/mock';
+import {CustomImage, CustomUser} from '../../types/types';
 
 let mockLikes = [
   {

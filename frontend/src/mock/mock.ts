@@ -1,16 +1,4 @@
-import {CustomUser} from '../Vote/mock';
-
-export type CustomImage = {
-  id: number;
-  user: CustomUser;
-  image_url: string;
-  thumbnail_url: string | null;
-  caption: string | null;
-  created_at: string;
-  is_visible: boolean;
-  num_likes: number | null;
-  num_comments: number | null;
-};
+import {CustomImage, CustomUser} from '../types/types';
 
 const IMAGELIST_LENGTH = 10;
 
@@ -280,3 +268,21 @@ export const mockComments = [
     created_at: '2024-03-07T12:00:00Z',
   },
 ];
+
+type TupleType = [CustomImage, CustomImage];
+
+let extendedMockImageList: TupleType[] = [];
+let uri_idx: number;
+let uri_idx2: number;
+
+for (let i = 0; i < IMAGELIST_LENGTH; i += 1) {
+  uri_idx = Math.floor(Math.random() * mockImageList.length);
+  uri_idx2 = Math.floor(Math.random() * mockImageList.length);
+
+  extendedMockImageList.push([
+    {...baseImageMock, id: i, image_url: mockImageList[uri_idx].image_url},
+    {...baseImageMock, id: i + 1, image_url: mockImageList[uri_idx2].image_url},
+  ]);
+}
+
+export default extendedMockImageList;

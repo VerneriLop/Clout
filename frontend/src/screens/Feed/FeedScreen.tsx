@@ -3,12 +3,13 @@ import globalStyle from '../../assets/styles/globalStyle';
 import {ThemedSafeAreaView} from '../../components/ui/themed-view';
 import {FlatList} from 'react-native';
 import {FeedPost} from './FeedPost';
-import {CustomImage, mockImageList} from './mock';
 import {useDispatch, useSelector} from 'react-redux';
 import {setFeedImages} from '../../redux/slices/feedImageSlice';
 import {AppDispatch, RootState} from '../../redux/store/store';
 import {fetchLikes} from '../../redux/slices/likeSlice';
 import {fetchComments} from '../../redux/slices/commentSlice';
+import {mockImageList} from '../../mock/mock';
+import {CustomImage} from '../../types/types';
 
 export const FeedScreen = (): JSX.Element => {
   //TODO: if feed downloads for example 20 images

@@ -1,6 +1,6 @@
 //import {AxiosResponse} from 'axios';
 import instance, {API_URL} from '../utils';
-import {mockComments} from '../../screens/Feed/mock';
+import {mockComments} from '../../mock/mock';
 
 type CommentType = {
   id: number;

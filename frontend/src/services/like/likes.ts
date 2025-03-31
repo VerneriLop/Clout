@@ -1,5 +1,5 @@
 //import {AxiosResponse} from 'axios';
-import {mockLikes} from '../../screens/Feed/mock';
+import {mockLikes} from '../../mock/mock';
 import instance, {API_URL} from '../utils';
 
 type LikeType = {

@@ -8,7 +8,7 @@ import {ProfilePicture} from '../Profile/components/ProfilePicture';
 import {useNavigation} from '@react-navigation/native';
 import {FeedStackParamList, Routes} from '../../navigation/Routes';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {CustomImage} from './mock';
+import {CustomImage} from '../../types/types';
 
 type Props = {
   post: CustomImage;

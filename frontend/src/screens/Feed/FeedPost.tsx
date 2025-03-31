@@ -3,9 +3,9 @@ import globalStyle from '../../assets/styles/globalStyle';
 import {ThemedView} from '../../components/ui/themed-view';
 import {Dimensions, StyleSheet} from 'react-native';
 import {TopBar} from './TopBar';
-import {CustomImage} from './mock';
 import {BottomBar} from './BottomBar';
 import FastImage from 'react-native-fast-image';
+import {CustomImage} from '../../types/types';
 
 type Props = {
   post: CustomImage;
