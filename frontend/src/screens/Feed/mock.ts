@@ -171,7 +171,7 @@ export const mockImageList: CustomImage[] = [
   },
 ];
 
-export const mockLikes = [
+export let mockLikes = [
   {
     id: 1,
     user_id: 0,
