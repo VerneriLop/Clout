@@ -3,27 +3,30 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ProfileStackParamList} from '../../../navigation/Routes';
-import {CustomPressable} from '../CustomPressable';
-import {ProfilePicture} from './ProfilePicture';
+import {OpacityPressable} from '../../../components/OpacityPressable/OpacityPressable';
+import {ProfilePicture} from '../../../components/ProfilePicture/ProfilePicture';
 import {ThemedText} from '../../../components/ui/typography';
 import {CustomUser} from '../../../types/types';
 
 export const ProfileStatsRow = ({user}: {user: CustomUser}): JSX.Element => {
+  //  const {data: following = []} = useGetUserFollowingQuery(user.id);
+  //  const {data: followers = []} = useGetUserFollowersQuery(user.id);
+
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
   const onPress = () => {
-    navigation.navigate('Followers');
+    navigation.navigate('Followers', {userId: user.id});
   };
   return (
     <View style={styles.container}>
       <ProfilePicture uri={user.profile_picture_url} />
       <ProfileStatItem value={user.num_posts} label={'posts'} />
-      <CustomPressable onPress={onPress} style={styles.statItem}>
+      <OpacityPressable onPress={onPress} style={styles.statItem}>
         <ProfileStatItem value={user.num_following} label={'following'} />
-      </CustomPressable>
-      <CustomPressable onPress={onPress} style={styles.statItem}>
+      </OpacityPressable>
+      <OpacityPressable onPress={onPress} style={styles.statItem}>
         <ProfileStatItem value={user.num_followers} label={'followers'} />
-      </CustomPressable>
+      </OpacityPressable>
     </View>
   );
 };

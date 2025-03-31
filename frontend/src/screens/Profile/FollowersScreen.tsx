@@ -1,218 +1,118 @@
-import {StyleSheet, TextInput} from 'react-native';
-import React, {useCallback, useMemo, useState} from 'react';
-import {ThemedView} from '../../components/ui/themed-view';
-import {mockUserList} from '../../mock/mock';
-import {FlatList} from 'react-native-gesture-handler';
-import {TopBar} from '../Feed/TopBar';
-import {verticalScale} from '../../assets/styles/scaling';
-import {useTheme} from '@react-navigation/native';
-
-//type FollowersScreenProps = StackScreenProps<
-//  ProfileStackParamList,
-//  'Followers'
-//>;
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {StyleSheet, useWindowDimensions, View} from 'react-native';
+import React, {memo, useCallback} from 'react';
 import {CustomUser} from '../../types/types';
+import {useTheme} from '@react-navigation/native';
+import {TabView, TabBar} from 'react-native-tab-view';
+import {ProfileStackParamList} from '../../navigation/Routes';
+import {StackScreenProps} from '@react-navigation/stack';
+import {UserList} from '../../components/UserList/UserList';
+import {ThemedText} from '../../components/ui/typography';
+import {Spinner} from '../../components/Spinner/Spinner';
+import {
+  useGetUserFollowersQuery,
+  useGetUserFollowingQuery,
+} from '../../redux/slices/mockApiSlice';
 
-const Tab = createMaterialTopTabNavigator();
+type FollowersScreenProps = StackScreenProps<
+  ProfileStackParamList,
+  'Followers'
+>;
 
-export const FollowersScreen = (): JSX.Element => {
+const routes = [
+  {key: 'followers', title: 'Followers'},
+  {key: 'following', title: 'Following'},
+];
+
+export const FollowersScreen = ({
+  route: mainRoute,
+}: FollowersScreenProps): JSX.Element => {
+  const {userId} = mainRoute.params;
+  const layout = useWindowDimensions();
+  const [index, setIndex] = React.useState(0);
   const {colors} = useTheme();
 
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarStyle: {backgroundColor: colors.background},
-        tabBarIndicatorStyle: {backgroundColor: colors.text, height: 2}, // Sliding bottom border
-        tabBarLabelStyle: {fontWeight: 'bold', color: colors.text},
-      }}>
-      <Tab.Screen name="Followers" component={FollowersList} />
-      <Tab.Screen name="Following" component={FollowingList} />
-    </Tab.Navigator>
+  const {
+    data: following = [],
+    isLoading: isLoadingFollowing,
+    isError: isErrorFollowing,
+  } = useGetUserFollowingQuery(userId);
+
+  const {
+    data: followers = [],
+    isLoading: isLoadingFollowers,
+    isError: isErrorFollowers,
+  } = useGetUserFollowersQuery(userId);
+
+  const renderScene = useCallback(
+    ({route}: {route: {key: string}}) => {
+      switch (route.key) {
+        case 'followers':
+          return <FollowersList data={followers} />;
+        case 'following':
+          return <FollowingList data={following} />;
+        default:
+          return null;
+      }
+    },
+    [followers, following],
   );
-};
 
-export const FollowersList = (): JSX.Element => {
-  const data = useMemo<CustomUser[]>(() => mockUserList, []);
-  //const followingData = mockUserList.concat(mockUserList);
-
-  const [value, setValue] = useState('');
-  const {colors} = useTheme();
-
-  //const [activeIndex, setActiveIndex] = useState(0); // default: Followers
-
-  const filteredList = useMemo(() => {
-    return value.trim()
-      ? data.filter(user =>
-          user.username.toLowerCase().includes(value.toLowerCase()),
-        )
-      : data;
-  }, [value, data]);
-
-  const renderItem = useCallback(
-    ({item}: {item: CustomUser}) => (
-      <TopBar url={item.profile_picture_url} user={item} />
-    ),
-    [],
+  const renderTabBar = (props: any) => (
+    <TabBar
+      {...props}
+      indicatorStyle={{backgroundColor: colors.primary}}
+      style={{
+        backgroundColor: colors.background,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: colors.border,
+      }}
+      activeColor={colors.text}
+      inactiveColor={'gray'}
+      android_ripple={{radius: 0}}
+    />
   );
-  return (
-    <ThemedView style={styles.container}>
-      <TextInput
-        placeholder={'Search'}
-        style={[
-          styles.input,
-          {
-            backgroundColor: colors.card,
-            color: colors.text,
-            borderColor: colors.border,
-          },
-        ]}
-        value={value}
-        onChangeText={text => setValue(text)}
-      />
-      <FlatList
-        data={filteredList ?? data}
-        keyExtractor={item => String(item.id)}
-        renderItem={renderItem}
-        getItemLayout={(data, index) => ({
-          length: ITEM_HEIGHT,
-          offset: ITEM_HEIGHT * index,
-          index,
-        })}
-      />
-    </ThemedView>
-  );
-};
 
-export const FollowingList = (): JSX.Element => {
-  //const data = useMemo<CustomUser[]>(() => mockUserList, []);
-  const data = mockUserList.concat(mockUserList);
+  if (isLoadingFollowers || isLoadingFollowing) {
+    return <Spinner />;
+  }
 
-  const [value, setValue] = useState('');
-  const {colors} = useTheme();
-
-  //const [activeIndex, setActiveIndex] = useState(0); // default: Followers
-
-  const filteredList = useMemo(() => {
-    return value.trim()
-      ? data.filter(user =>
-          user.username.toLowerCase().includes(value.toLowerCase()),
-        )
-      : data;
-  }, [value, data]);
-
-  const renderItem = useCallback(
-    ({item}: {item: CustomUser}) => (
-      <TopBar url={item.profile_picture_url} user={item} />
-    ),
-    [],
-  );
-  return (
-    <ThemedView style={styles.container}>
-      <TextInput
-        placeholder={'Search'}
-        style={[
-          styles.input,
-          {
-            backgroundColor: colors.card,
-            color: colors.text,
-            borderColor: colors.border,
-          },
-        ]}
-        value={value}
-        onChangeText={text => setValue(text)}
-      />
-      <FlatList
-        data={filteredList ?? data}
-        keyExtractor={item => String(item.id)}
-        renderItem={renderItem}
-        getItemLayout={(data, index) => ({
-          length: ITEM_HEIGHT,
-          offset: ITEM_HEIGHT * index,
-          index,
-        })}
-      />
-    </ThemedView>
-  );
-};
-/*
-
-type TabButtonProps = {
-  borderColor: string;
-  isActive: boolean;
-  content: string;
-  onPress: () => void;
-};
-
-
-      <View style={[styles.actionBar, {borderBottomColor: colors.border}]}>
-        <TabButton
-          borderColor={colors.border}
-          isActive={activeIndex === 0}
-          content={'Followers'}
-          onPress={() => setActiveIndex(0)}
-        />
-        <TabButton
-          borderColor={colors.border}
-          isActive={activeIndex === 1}
-          content={'Following'}
-          onPress={() => setActiveIndex(1)}
-        />
+  if (isErrorFollowers || isErrorFollowing) {
+    return (
+      <View style={styles.centered}>
+        <ThemedText style={{color: colors.notification}}>
+          Failed to load data. Please try again later.
+        </ThemedText>
       </View>
+    );
+  }
 
-
-const TabButton = ({
-  borderColor,
-  isActive,
-  content,
-  onPress,
-}: TabButtonProps): JSX.Element => {
-  const activeStyle = {
-    borderBottomColor: isActive ? borderColor : 'transparent',
-    borderBottomWidth: isActive ? 2 : 0,
-  };
   return (
-    <CustomPressable
-      onPress={onPress}
-      style={[activeStyle, styles.actionPressable]}>
-      <ThemedText style={styles.actionText}>{content}</ThemedText>
-    </CustomPressable>
+    <TabView
+      navigationState={{index, routes}}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={{width: layout.width}}
+      renderTabBar={renderTabBar}
+    />
   );
 };
- */
 
-const ITEM_HEIGHT = verticalScale(50);
+export const FollowingList = memo(
+  ({data}: {data: CustomUser[]}): JSX.Element => {
+    return <UserList data={data} />;
+  },
+);
+
+export const FollowersList = memo(
+  ({data}: {data: CustomUser[]}): JSX.Element => {
+    return <UserList data={data} />;
+  },
+);
 
 const styles = StyleSheet.create({
-  container: {
+  centered: {
     flex: 1,
-    flexDirection: 'column',
-    //alignItems: 'center',
-    //justifyContent: 'center',
-    //backgroundColor: 'white',
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    color: 'white',
-  },
-  actionBar: {
-    paddingHorizontal: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    gap: 5,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  actionPressable: {
-    alignSelf: 'stretch',
-    flex: 1,
-    paddingBottom: 15,
-  },
-  actionText: {
-    textAlign: 'center',
-    fontWeight: 'bold',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

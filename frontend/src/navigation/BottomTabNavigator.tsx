@@ -45,7 +45,7 @@ const tabBarIcon = ({route, color, size}: tabBarIconProps) => {
   return <FontAwesomeIcon icon={icon} size={size} color={color} />;
 };
 
-const CustomPressable = ({
+const OpacityPressable = ({
   onPress,
   style,
   children,
@@ -65,7 +65,7 @@ const CustomPressable = ({
 };
 
 const tabBarButton = (props: BottomTabBarButtonProps) => (
-  <CustomPressable {...props} />
+  <OpacityPressable {...props} />
 );
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -76,7 +76,7 @@ export const BottomTabNavigator = () => {
     <Tab.Navigator
       screenOptions={({route}) => ({
         tabBarIcon: ({color, size}) => tabBarIcon({route, color, size}),
-        tabBarActiveTintColor: 'tomato',
+        tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: 'gray',
         tabBarButton: tabBarButton,
         tabBarStyle: {

@@ -8,6 +8,8 @@ export type LikeType = {
 export type CustomUser = {
   id: number;
   username: string;
+  first_name?: string;
+  last_name?: string;
   email: string;
   bio?: string;
   num_followers: number;

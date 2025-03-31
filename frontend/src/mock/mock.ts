@@ -5,6 +5,8 @@ const IMAGELIST_LENGTH = 10;
 export const mockUser: CustomUser = {
   id: 0,
   username: 'Johtaja1',
+  first_name: 'Johtaja',
+  last_name: 'McJohtaja',
   email: 'johtaja@johtaja.johtaja',
   bio: 'L5 Software Engineer @Clout',
   num_followers: 420,
@@ -18,6 +20,8 @@ export const mockUserList: CustomUser[] = [
   {
     id: 0,
     username: 'Johtaja1',
+    first_name: 'Johtaja',
+    last_name: 'McJohtaja',
     email: 'johtaja@johtaja.johtaja',
     bio: 'L5 Software Engineer @Clout',
     num_followers: 420,
@@ -29,6 +33,8 @@ export const mockUserList: CustomUser[] = [
   {
     id: 1,
     username: 'Johtaja2',
+    first_name: 'Johto',
+    last_name: 'Jaajotain',
     email: 'johtaja@johtaja.johtaja',
     bio: 'L5 Software Engineer @Clout',
     num_followers: 320,
@@ -40,6 +46,8 @@ export const mockUserList: CustomUser[] = [
   {
     id: 2,
     username: 'Johtaja3',
+    first_name: 'Johta',
+    last_name: 'GigaChad',
     email: 'johtaja@johtaja.johtaja',
     bio: 'L5 Software Engineer @Clout',
     num_followers: 4230,
@@ -51,6 +59,8 @@ export const mockUserList: CustomUser[] = [
   {
     id: 3,
     username: 'Johtaja4',
+    first_name: 'Johan',
+    last_name: 'Tajaja',
     email: 'johtaja@johtaja.johtaja',
     bio: 'L5 Software Engineer @Clout',
     num_followers: 20,
@@ -62,6 +72,8 @@ export const mockUserList: CustomUser[] = [
   {
     id: 4,
     username: 'Johtaja5',
+    first_name: 'Johtimies',
+    last_name: 'Von Johto',
     email: 'johtaja@johtaja.johtaja',
     bio: 'L5 Software Engineer @Clout',
     num_followers: 410,
@@ -73,6 +85,8 @@ export const mockUserList: CustomUser[] = [
   {
     id: 5,
     username: 'Johtaja6',
+    first_name: 'Johto',
+    last_name: 'Majuri',
     email: 'johtaja@johtaja.johtaja',
     bio: 'L5 Software Engineer @Clout',
     num_followers: 770,
@@ -84,6 +98,8 @@ export const mockUserList: CustomUser[] = [
   {
     id: 6,
     username: 'Johtaja7',
+    first_name: 'Johto',
+    last_name: 'Jormanen',
     email: 'johtaja@johtajasdasdasdaa.johtaja',
     bio: 'L5 Software Engineer @Clout',
     num_followers: 7270,
@@ -269,6 +285,22 @@ export const mockComments = [
   },
 ];
 
+// Mock follow relations: user_id1 follows user_id2
+export const mockFollowRelations = [
+  {id: 0, user_id1: 0, user_id2: 1},
+  {id: 1, user_id1: 0, user_id2: 2},
+  {id: 2, user_id1: 1, user_id2: 3},
+  {id: 3, user_id1: 2, user_id2: 4},
+  {id: 4, user_id1: 2, user_id2: 5},
+  {id: 5, user_id1: 3, user_id2: 1},
+  {id: 6, user_id1: 4, user_id2: 2},
+  {id: 7, user_id1: 4, user_id2: 5},
+  {id: 8, user_id1: 5, user_id2: 6},
+  {id: 9, user_id1: 6, user_id2: 0},
+  {id: 10, user_id1: 6, user_id2: 1},
+  {id: 11, user_id1: 6, user_id2: 3},
+  {id: 12, user_id1: 6, user_id2: 5},
+];
 type TupleType = [CustomImage, CustomImage];
 
 let extendedMockImageList: TupleType[] = [];
