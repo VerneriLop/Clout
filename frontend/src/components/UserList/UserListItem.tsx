@@ -1,8 +1,7 @@
 import React from 'react';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {View, StyleSheet} from 'react-native';
-import {ThemedView} from '../ui/themed-view';
-import {ProfileStackParamList, Routes} from '../../navigation/Routes';
+import {RootStackParamList, Routes} from '../../navigation/Routes';
 import {ThemedText} from '../ui/typography';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {ProfilePicture} from '../ProfilePicture/ProfilePicture';
@@ -12,21 +11,29 @@ import {CustomUser} from '../../types/types';
 type UserListItemProps = {
   user: CustomUser;
   size?: 'small' | 'medium' | 'large';
+  onItemPress?: () => void;
 };
 
-export const UserListItem = ({user, size = 'small'}: UserListItemProps) => {
+export const UserListItem = ({
+  user,
+  size = 'small',
+  onItemPress,
+}: UserListItemProps) => {
   // query here to retrieve data from followers/following table
   const {colors} = useTheme();
 
-  const navigation =
-    useNavigation<StackNavigationProp<ProfileStackParamList>>();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const handlePress = () => {
-    navigation.push(Routes.Profile, {userId: user.id, username: user.username});
+    onItemPress?.();
+    navigation.navigate(Routes.ProfileStack, {
+      screen: Routes.Profile,
+      params: {userId: user.id, username: user.username},
+    });
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <OpacityPressable onPress={handlePress} style={styles.profileWrapper}>
         <ProfilePicture uri={user.profile_picture_url} size={size} />
         <View style={styles.textContainer}>
@@ -41,7 +48,7 @@ export const UserListItem = ({user, size = 'small'}: UserListItemProps) => {
         onPress={() => console.log('follow pressed')}>
         <ThemedText style={styles.buttonText}>Follow</ThemedText>
       </OpacityPressable>
-    </ThemedView>
+    </View>
   );
 };
 
