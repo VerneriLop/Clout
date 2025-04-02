@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import globalStyle from '../../assets/styles/globalStyle';
 import {ThemedSafeAreaView} from '../../components/ui/themed-view';
-import {FlatList} from 'react-native';
+import {FlatList, StyleSheet} from 'react-native';
 import {FeedPost} from './FeedPost';
 import {useDispatch, useSelector} from 'react-redux';
 import {setFeedImages} from '../../redux/slices/feedImageSlice';
@@ -11,8 +11,12 @@ import {fetchComments} from '../../redux/slices/commentSlice';
 import {mockImageList} from '../../mock/mock';
 import {CustomImage} from '../../types/types';
 import {BottomSheetModal, BottomSheetView} from '@gorhom/bottom-sheet';
-import {ThemedText} from '../../components/ui/typography';
 import {useTheme} from '@react-navigation/native';
+import {
+  useGetLikesByImageIdQuery,
+  useGetUsersByIdsQuery,
+} from '../../redux/slices/mockApiSlice';
+import {UserList} from '../../components/UserList/UserList';
 
 export const FeedScreen = (): JSX.Element => {
   const [selectedPost, setSelectedPost] = useState<CustomImage | null>(null);
@@ -29,6 +33,15 @@ export const FeedScreen = (): JSX.Element => {
   }, [dispatch]);
 
   const data = useSelector((state: RootState) => state.feedImage.feedImages);
+  const {data: likes = []} = useGetLikesByImageIdQuery(selectedPost?.id!, {
+    skip: !selectedPost,
+  });
+  const userIds = likes.map(like => like.user_id);
+  const {data: likedUsers = []} = useGetUsersByIdsQuery(userIds, {
+    skip: userIds.length === 0,
+  });
+
+  console.log('Tykkääjät', likedUsers);
 
   const handleShowLikes = (post: CustomImage) => {
     setSelectedPost(post);
@@ -56,13 +69,17 @@ export const FeedScreen = (): JSX.Element => {
         snapPoints={snapPoints}
         enablePanDownToClose
         onDismiss={() => setSelectedPost(null)}
-        index={1}
+        index={0}
         backgroundStyle={{backgroundColor: colors.card}}
         handleIndicatorStyle={{backgroundColor: colors.border}}>
-        <BottomSheetView>
-          <ThemedText>Tykkääjien lista tulisi tähän</ThemedText>
+        <BottomSheetView style={style.container}>
+          <UserList data={likedUsers} />
         </BottomSheetView>
       </BottomSheetModal>
     </ThemedSafeAreaView>
   );
 };
+
+const style = StyleSheet.create({
+  container: {flex: 1},
+});

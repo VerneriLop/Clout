@@ -1,9 +1,8 @@
 import {useTheme} from '@react-navigation/native';
 import React, {useCallback, useMemo, useState} from 'react';
-import {TextInput, FlatList, StyleSheet} from 'react-native';
+import {TextInput, FlatList, StyleSheet, View} from 'react-native';
 import {verticalScale} from '../../assets/styles/scaling';
 import {UserListItem} from './UserListItem';
-import {ThemedView} from '../ui/themed-view';
 import {ThemedText} from '../ui/typography';
 import {CustomUser} from '../../types/types';
 
@@ -44,8 +43,10 @@ export const UserList = ({data}: {data: CustomUser[]}): JSX.Element => {
     />
   );
 
+  console.log('Render user list');
+
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <FlatList
         ListEmptyComponent={
           <ThemedText style={styles.listEmptyText}>No users found</ThemedText>
@@ -60,7 +61,7 @@ export const UserList = ({data}: {data: CustomUser[]}): JSX.Element => {
           index,
         })}
       />
-    </ThemedView>
+    </View>
   );
 };
 

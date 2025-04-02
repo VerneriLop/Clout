@@ -46,7 +46,6 @@ export const BottomBar = ({post, onShowLikes}: Props): JSX.Element => {
   const user = useSelector((state: RootState) => state.user.user);
 
   const like = likes.find(item => item.user_id === user?.id);
-  console.log(like);
 
   const toggleLike = (newState: boolean) => {
     if (newState) {
