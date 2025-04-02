@@ -51,8 +51,6 @@ export const UserList = ({
     />
   );
 
-  console.log('Render user list');
-
   return (
     <View style={styles.container}>
       <FlatList

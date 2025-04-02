@@ -32,8 +32,6 @@ export const UserListItem = ({
     });
   };
 
-  console.log('render list itemii!');
-
   return (
     <View style={styles.container}>
       <OpacityPressable onPress={handlePress} style={styles.profileWrapper}>

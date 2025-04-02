@@ -41,8 +41,6 @@ export const FeedScreen = (): JSX.Element => {
     skip: userIds.length === 0,
   });
 
-  console.log('Tykkääjät', likedUsers);
-
   const handleShowLikes = (post: CustomImage) => {
     setSelectedPost(post);
     bottomSheetRef.current?.present();
