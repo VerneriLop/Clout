@@ -18,12 +18,14 @@ import {
   useGetLikesByImageIdQuery,
 } from '../../redux/slices/mockApiSlice';
 import {CustomImage} from '../../types/types';
+import {OpacityPressable} from '../../components/OpacityPressable/OpacityPressable';
 
 type Props = {
   post: CustomImage;
+  onShowLikes: (post: CustomImage) => void;
 };
 
-export const BottomBar = ({post}: Props): JSX.Element => {
+export const BottomBar = ({post, onShowLikes}: Props): JSX.Element => {
   const [expanded, setExpanded] = useState(false);
 
   const {data: likes = []} = useGetLikesByImageIdQuery(post.id);
@@ -54,33 +56,37 @@ export const BottomBar = ({post}: Props): JSX.Element => {
     }
   };
 
-  const showLikes = () => console.log('Show users that liked the picture');
+  const showLikes = () => {
+    onShowLikes(post);
+  };
   const openCommentSection = () => console.log('Comment section opened');
 
   return (
     <ThemedView style={[globalStyle.flex, styles.container]}>
       <View style={styles.likeCommentContainer}>
         <View style={styles.iconAndNumber}>
-          <Pressable onPress={() => toggleLike(!like)}>
+          <OpacityPressable onPress={() => toggleLike(!like)}>
             {like ? (
               <FontAwesomeIcon icon={fasHeart} color="red" size={25} />
             ) : (
               <ThemedIcon icon={farHeart} size={25} />
             )}
-          </Pressable>
+          </OpacityPressable>
           {likeCount > 0 && (
-            <Pressable onPress={showLikes}>
+            <OpacityPressable onPress={showLikes}>
               <ThemedText variant="bold">{likeCount}</ThemedText>
-            </Pressable>
+            </OpacityPressable>
           )}
         </View>
 
-        <Pressable onPress={openCommentSection} style={styles.iconAndNumber}>
+        <OpacityPressable
+          onPress={openCommentSection}
+          style={styles.iconAndNumber}>
           <ThemedIcon icon={faComment} size={25} />
           {commentCount > 0 && (
             <ThemedText variant="bold">{commentCount}</ThemedText>
           )}
-        </Pressable>
+        </OpacityPressable>
       </View>
 
       {caption && (
@@ -92,15 +98,15 @@ export const BottomBar = ({post}: Props): JSX.Element => {
           </Pressable>
 
           {caption.length > 100 && expanded && (
-            <Pressable onPress={() => setExpanded(false)}>
+            <OpacityPressable onPress={() => setExpanded(false)}>
               <ThemedText style={styles.showMoreText}>Show less</ThemedText>
-            </Pressable>
+            </OpacityPressable>
           )}
 
           {!expanded && caption.length > 100 && (
-            <Pressable onPress={() => setExpanded(true)}>
+            <OpacityPressable onPress={() => setExpanded(true)}>
               <ThemedText style={styles.showMoreText}>Show more...</ThemedText>
-            </Pressable>
+            </OpacityPressable>
           )}
         </View>
       )}
