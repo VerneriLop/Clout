@@ -1,4 +1,6 @@
 import 'react-native-gesture-handler';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 import {Provider} from 'react-redux';
@@ -18,19 +20,23 @@ const App = (): React.JSX.Element => {
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <Provider store={store}>
-        <NavigationContainer
-          theme={scheme === 'dark' ? MyDarkTheme : DefaultTheme}>
-          <StatusBar
-            translucent
-            backgroundColor="transparent"
-            barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'}
-          />
-          <RootNavigation />
-        </NavigationContainer>
-      </Provider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView>
+      <SafeAreaProvider>
+        <Provider store={store}>
+          <NavigationContainer
+            theme={scheme === 'dark' ? MyDarkTheme : DefaultTheme}>
+            <BottomSheetModalProvider>
+              <StatusBar
+                translucent
+                backgroundColor="transparent"
+                barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'}
+              />
+              <RootNavigation />
+            </BottomSheetModalProvider>
+          </NavigationContainer>
+        </Provider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 };
 

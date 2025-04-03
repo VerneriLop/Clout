@@ -175,6 +175,11 @@ export const mockApiSlice = createApi({
         return {data: user};
       },
     }),
+    getUsersByIds: builder.query<CustomUser[], number[]>({
+      queryFn: async userIds => {
+        return {data: mockUserList.filter(user => userIds.includes(user.id))};
+      },
+    }),
     getUserFollowers: builder.query<CustomUser[], number>({
       queryFn: async (userId: number) => {
         const users = await getUserFollowers(userId);
@@ -290,6 +295,7 @@ export const mockApiSlice = createApi({
 export const {
   useGetPostsQuery,
   useGetUserByIdQuery,
+  useGetUsersByIdsQuery,
   useGetUserFollowersQuery,
   useGetUserFollowingQuery,
   useGetLikesByImageIdQuery,

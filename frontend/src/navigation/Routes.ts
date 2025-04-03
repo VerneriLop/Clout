@@ -10,7 +10,7 @@ export type RootStackParamList = {
   Feed: undefined;
   FeedStack: undefined;
   BottomTabNavigator: undefined;
-  ProfileStack: undefined;
+  ProfileStack: NavigatorScreenParams<ProfileStackParamList>;
   Profile: {userId: number};
 };
 

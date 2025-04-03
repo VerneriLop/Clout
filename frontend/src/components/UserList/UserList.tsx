@@ -1,6 +1,6 @@
 import {useTheme} from '@react-navigation/native';
 import React, {useCallback, useMemo, useState} from 'react';
-import {TextInput, FlatList, StyleSheet} from 'react-native';
+import {TextInput, FlatList, StyleSheet, View} from 'react-native';
 import {verticalScale} from '../../assets/styles/scaling';
 import {UserListItem} from './UserListItem';
 import {ThemedView} from '../ui/themed-view';
@@ -15,7 +15,13 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store/store';
 
 // todo: add options for size and searchbarvisible
-export const UserList = ({data}: {data: CustomUser[]}): JSX.Element => {
+export const UserList = ({
+  data,
+  onItemPress,
+}: {
+  data: CustomUser[];
+  onItemPress?: () => void;
+}): JSX.Element => {
   const [value, setValue] = useState('');
   const {colors} = useTheme();
   const loggedInUser = useSelector((state: RootState) => state.user.user);
@@ -102,10 +108,17 @@ export const UserList = ({data}: {data: CustomUser[]}): JSX.Element => {
           isFollowedByLoggedInUser={isFollowed}
           onFollowToggle={handleFollowToggle}
           isLoadingToggle={isLoadingThisItem}
+          onItemPress={onItemPress}
         />
       );
     },
-    [followedUserIds, handleFollowToggle, isMutationLoading, togglingUserId],
+    [
+      followedUserIds,
+      handleFollowToggle,
+      isMutationLoading,
+      togglingUserId,
+      onItemPress,
+    ],
   );
 
   const renderListHeader = (
@@ -144,7 +157,7 @@ export const UserList = ({data}: {data: CustomUser[]}): JSX.Element => {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <FlatList
         ListEmptyComponent={
           <ThemedText style={styles.listEmptyText}>No users found</ThemedText>
@@ -166,7 +179,7 @@ export const UserList = ({data}: {data: CustomUser[]}): JSX.Element => {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
       />
-    </ThemedView>
+    </View>
   );
 };
 

@@ -2,7 +2,7 @@ import React from 'react';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {View, StyleSheet, ActivityIndicator} from 'react-native';
 import {ThemedView} from '../ui/themed-view';
-import {ProfileStackParamList, Routes} from '../../navigation/Routes';
+import {RootStackParamList, Routes} from '../../navigation/Routes';
 import {ThemedText} from '../ui/typography';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {ProfilePicture} from '../ProfilePicture/ProfilePicture';
@@ -17,6 +17,7 @@ type UserListItemProps = {
   onFollowToggle: (userId: number, currentlyFollowing: boolean) => void;
   isLoadingToggle?: boolean;
   size?: 'small' | 'medium' | 'large';
+  onItemPress?: () => void;
 };
 
 export const UserListItem = ({
@@ -25,14 +26,18 @@ export const UserListItem = ({
   onFollowToggle,
   isLoadingToggle = false,
   size = 'small',
+  onItemPress,
 }: UserListItemProps) => {
   const {colors} = useTheme();
-  const navigation =
-    useNavigation<StackNavigationProp<ProfileStackParamList>>();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const loggedInUser = useSelector((state: RootState) => state.user.user);
 
   const handlePressProfile = () => {
-    navigation.push(Routes.Profile, {userId: user.id, username: user.username});
+    onItemPress?.();
+    navigation.navigate(Routes.ProfileStack, {
+      screen: Routes.Profile,
+      params: {userId: user.id, username: user.username},
+    });
   };
   const handleFollowPress = () => {
     onFollowToggle(user.id, isFollowedByLoggedInUser);
