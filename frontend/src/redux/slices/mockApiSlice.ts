@@ -4,7 +4,12 @@ import {
   mockImageList,
   mockUserList,
 } from '../../mock/mock';
-import {CustomImage, CustomUser} from '../../types/types';
+import {
+  CommentType,
+  CustomImage,
+  CustomUser,
+  LikeType,
+} from '../../types/types';
 
 let mockLikes = [
   {
@@ -57,7 +62,7 @@ let mockLikes = [
   },
 ];
 
-/*let mockComments = [
+let mockComments = [
   {
     id: 1,
     user_id: 0,
@@ -69,7 +74,8 @@ let mockLikes = [
     id: 2,
     user_id: 1,
     image_id: 1,
-    comment: 'HIENO KUVA joo',
+    comment:
+      'HIENO KUVA joo. Terveppä terve. tässä pitkä kommentti jotta joutuu vähän laajentamaan kommenttikenttää. Tättärää ja silleesti. jokohan riittää. No ei ihan vielä niin lisätään hiukan tänne tekstii. Oispa valkost monsuu',
     created_at: '2024-03-07T12:05:00Z',
   },
   {
@@ -115,14 +121,6 @@ let mockLikes = [
     created_at: '2024-03-07T12:00:00Z',
   },
 ];
-*/
-
-type LikeType = {
-  id: number;
-  user_id: number;
-  image_id: number;
-  created_at?: string;
-};
 
 const getImagesByUser = async (id: number) => {
   return mockImageList.filter(img => img.user.id === id);
@@ -154,7 +152,7 @@ export const mockApiSlice = createApi({
   reducerPath: 'mockApi',
   // Replace with our actual base url
   baseQuery: fetchBaseQuery({baseUrl: '/fakeApi'}),
-  tagTypes: ['Likes'],
+  tagTypes: ['Likes', 'Comments'],
   endpoints: builder => ({
     getPosts: builder.query<CustomImage[], number>({
       queryFn: async (userId: number) => {
@@ -195,7 +193,7 @@ export const mockApiSlice = createApi({
     }),
     addLike: builder.mutation<LikeType, number>({
       queryFn: async image_id => {
-        const newLike = {
+        const newLike: LikeType = {
           id: Date.now(),
           user_id: 0,
           image_id: image_id,
@@ -217,6 +215,50 @@ export const mockApiSlice = createApi({
         {type: 'Likes', id: image_id},
       ],
     }),
+    getCommentsByImageId: builder.query<CommentType[], number>({
+      queryFn: async image_id => {
+        const filtered = mockComments.filter(
+          item => item.image_id === image_id,
+        );
+        return {data: filtered};
+      },
+      providesTags: (result, error, image_id) => [
+        {type: 'Comments', id: image_id},
+      ],
+    }),
+
+    addComment: builder.mutation<
+      CommentType,
+      {image_id: number; comment: string}
+    >({
+      queryFn: async ({image_id, comment}) => {
+        const newComment: CommentType = {
+          id: Date.now(),
+          user_id: 0,
+          image_id,
+          comment,
+          created_at: new Date().toISOString(),
+        };
+        mockComments = [...mockComments, newComment];
+        return {data: newComment};
+      },
+      invalidatesTags: (result, error, {image_id}) => [
+        {type: 'Comments', id: image_id},
+      ],
+    }),
+
+    deleteComment: builder.mutation<
+      CommentType[],
+      {id: number; image_id: number}
+    >({
+      queryFn: async ({id}) => {
+        mockComments = mockComments.filter(c => c.id !== id);
+        return {data: mockComments};
+      },
+      invalidatesTags: (result, error, {image_id}) => [
+        {type: 'Comments', id: image_id},
+      ],
+    }),
   }),
 });
 
@@ -230,4 +272,7 @@ export const {
   useGetLikesByImageIdQuery,
   useAddLikeMutation,
   useDeleteLikeMutation,
+  useGetCommentsByImageIdQuery,
+  useAddCommentMutation,
+  useDeleteCommentMutation,
 } = mockApiSlice;

@@ -1,11 +1,5 @@
+import {LikeType} from '../../../types/types';
 import {apiSlice} from '../apiSlice';
-
-type LikeType = {
-  id: number;
-  user_id: number;
-  image_id: number;
-  created_at?: string;
-};
 
 export const likesApi = apiSlice.injectEndpoints({
   endpoints: builder => ({

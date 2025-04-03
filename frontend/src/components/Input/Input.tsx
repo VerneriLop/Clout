@@ -1,48 +1,35 @@
 import React from 'react';
 import {
-  KeyboardTypeOptions,
-  NativeSyntheticEvent,
   Text,
   TextInput,
-  TextInputFocusEventData,
+  TextInputProps,
   View,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import style from './style';
 import {useTheme} from '@react-navigation/native';
 
 type Props = {
-  label: string;
-  placeholder?: string;
-  value: string;
-  onChangeText: (val: string) => void;
-  onBlur?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
-  keyboardType?: KeyboardTypeOptions;
-  secureTextEntry?: boolean;
-  style?: object;
-};
+  label?: string;
+  containerStyle?: StyleProp<ViewStyle>;
+} & TextInputProps;
 
 const Input = ({
   label,
-  placeholder,
-  value,
-  onChangeText,
-  onBlur,
-  keyboardType = 'default',
-  secureTextEntry = false,
+  containerStyle,
   style: inputStyle,
+  ...props
 }: Props): JSX.Element => {
   const {colors} = useTheme();
+
   return (
-    <View style={inputStyle}>
-      <Text style={style.label}>{label}</Text>
+    <View style={containerStyle}>
+      {label && <Text style={style.label}>{label}</Text>}
       <TextInput
-        placeholder={placeholder}
-        style={[style.input, {color: colors.text}]}
-        value={value}
-        secureTextEntry={secureTextEntry}
-        keyboardType={keyboardType}
-        onChangeText={onChangeText}
-        onBlur={onBlur}
+        {...props}
+        placeholderTextColor={colors.border}
+        style={[style.input, {color: colors.text}, inputStyle]}
       />
     </View>
   );

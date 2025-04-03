@@ -13,16 +13,20 @@ import {CustomImage} from '../../types/types';
 import {BottomSheetModal, BottomSheetView} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
 import {
+  useGetCommentsByImageIdQuery,
   useGetLikesByImageIdQuery,
   useGetUsersByIdsQuery,
 } from '../../redux/slices/mockApiSlice';
 import {UserList} from '../../components/UserList/UserList';
+import {CommentList} from '../../components/Comment/CommentList';
 
 export const FeedScreen = (): JSX.Element => {
   const [selectedPost, setSelectedPost] = useState<CustomImage | null>(null);
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const likeSheetRef = useRef<BottomSheetModal>(null);
+  const commentSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['50%', '90%'], []);
   const {colors} = useTheme();
+
   const dispatch = useDispatch<AppDispatch>();
   //TODO: if feed downloads for example 20 images
   // -> when scrolled to 18th image then download more from backend
@@ -33,22 +37,37 @@ export const FeedScreen = (): JSX.Element => {
   }, [dispatch]);
 
   const data = useSelector((state: RootState) => state.feedImage.feedImages);
-  const {data: likes = []} = useGetLikesByImageIdQuery(selectedPost?.id!, {
+  const {data: likes = []} = useGetLikesByImageIdQuery(selectedPost?.id ?? -1, {
     skip: !selectedPost,
   });
   const userIds = likes.map(like => like.user_id);
   const {data: likedUsers = []} = useGetUsersByIdsQuery(userIds, {
     skip: userIds.length === 0,
   });
+  const {data: comments = []} = useGetCommentsByImageIdQuery(
+    selectedPost?.id ?? -1,
+    {
+      skip: !selectedPost,
+    },
+  );
 
   const handleShowLikes = (post: CustomImage) => {
     setSelectedPost(post);
-    bottomSheetRef.current?.present();
+    likeSheetRef.current?.present();
+  };
+
+  const handleShowComments = (post: CustomImage) => {
+    setSelectedPost(post);
+    commentSheetRef.current?.present();
   };
 
   const renderItem = useCallback(
     ({item}: {item: CustomImage}) => (
-      <FeedPost post={item} onShowLikes={handleShowLikes} />
+      <FeedPost
+        post={item}
+        onShowLikes={handleShowLikes}
+        onShowComments={handleShowComments}
+      />
     ),
     [],
   );
@@ -63,7 +82,7 @@ export const FeedScreen = (): JSX.Element => {
       />
 
       <BottomSheetModal
-        ref={bottomSheetRef}
+        ref={likeSheetRef}
         snapPoints={snapPoints}
         enablePanDownToClose
         onDismiss={() => setSelectedPost(null)}
@@ -73,8 +92,21 @@ export const FeedScreen = (): JSX.Element => {
         <BottomSheetView style={style.container}>
           <UserList
             data={likedUsers}
-            onItemPress={() => bottomSheetRef.current?.dismiss()}
+            onItemPress={() => likeSheetRef.current?.dismiss()}
           />
+        </BottomSheetView>
+      </BottomSheetModal>
+
+      <BottomSheetModal
+        ref={commentSheetRef}
+        snapPoints={snapPoints}
+        enablePanDownToClose
+        onDismiss={() => setSelectedPost(null)}
+        index={0}
+        backgroundStyle={{backgroundColor: colors.card}}
+        handleIndicatorStyle={{backgroundColor: colors.border}}>
+        <BottomSheetView style={style.container}>
+          <CommentList data={comments} />
         </BottomSheetView>
       </BottomSheetModal>
     </ThemedSafeAreaView>

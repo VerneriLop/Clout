@@ -71,6 +71,7 @@ export const UserList = ({
   );
 };
 
+//TODO: check this value
 const ITEM_HEIGHT = verticalScale(50);
 
 const styles = StyleSheet.create({

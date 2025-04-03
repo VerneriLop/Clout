@@ -10,9 +10,14 @@ import {CustomImage} from '../../types/types';
 type Props = {
   post: CustomImage;
   onShowLikes: (post: CustomImage) => void;
+  onShowComments: (post: CustomImage) => void;
 };
 
-export const FeedPost = ({post, onShowLikes}: Props): JSX.Element => {
+export const FeedPost = ({
+  post,
+  onShowLikes,
+  onShowComments,
+}: Props): JSX.Element => {
   //console.log(post);
   return (
     <ThemedView bottomBorder style={globalStyle.flex}>
@@ -22,7 +27,11 @@ export const FeedPost = ({post, onShowLikes}: Props): JSX.Element => {
         resizeMode="cover"
         style={[style.image]}
       />
-      <BottomBar post={post} onShowLikes={onShowLikes} />
+      <BottomBar
+        post={post}
+        onShowLikes={onShowLikes}
+        onShowComments={onShowComments}
+      />
     </ThemedView>
   );
 };

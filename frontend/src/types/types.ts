@@ -2,7 +2,7 @@ export type LikeType = {
   id: number;
   user_id: number;
   image_id: number;
-  created_at?: string;
+  created_at: string;
 };
 
 export type CustomUser = {
@@ -35,5 +35,5 @@ export type CommentType = {
   user_id: number;
   image_id: number;
   comment: string;
-  created_at?: string;
+  created_at: string;
 };
