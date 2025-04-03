@@ -1,7 +1,6 @@
 import React from 'react';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {View, StyleSheet, ActivityIndicator} from 'react-native';
-import {ThemedView} from '../ui/themed-view';
 import {RootStackParamList, Routes} from '../../navigation/Routes';
 import {ThemedText} from '../ui/typography';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -50,9 +49,12 @@ export const UserListItem = ({
     ? [
         styles.followButton,
         styles.followingButton,
-        {borderColor: colors.primary, backgroundColor: colors.background},
+        {borderColor: colors.primary},
       ]
-    : [styles.followButton, {backgroundColor: colors.primary}];
+    : [
+        styles.followButton,
+        {backgroundColor: colors.primary, borderColor: colors.primary},
+      ];
 
   const buttonTextStyle = isFollowing
     ? [styles.buttonText, {color: colors.primary}]
@@ -61,7 +63,7 @@ export const UserListItem = ({
   const buttonText = isFollowing ? 'Following' : 'Follow';
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <OpacityPressable
         onPress={handlePressProfile}
         style={styles.profileWrapper}>
@@ -91,7 +93,7 @@ export const UserListItem = ({
           )}
         </OpacityPressable>
       )}
-    </ThemedView>
+    </View>
   );
 };
 
@@ -124,8 +126,9 @@ const styles = StyleSheet.create({
   followButton: {
     paddingVertical: 4,
     borderRadius: 6,
-    flex: 0.4,
+    flex: 0.45,
     alignSelf: 'center',
+    borderWidth: StyleSheet.hairlineWidth * 5,
   },
   followingButton: {
     borderWidth: StyleSheet.hairlineWidth * 5,

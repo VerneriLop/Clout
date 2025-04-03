@@ -2,120 +2,12 @@ import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import {
   mockFollowRelations,
   mockImageList,
+  mockLikes,
   mockUserList,
 } from '../../mock/mock';
 import {CustomImage, CustomUser} from '../../types/types';
 
-let mockLikes = [
-  {
-    id: 1,
-    user_id: 0,
-    image_id: 1,
-    created_at: '2024-03-07T12:00:00Z',
-  },
-  {
-    id: 2,
-    user_id: 1,
-    image_id: 1,
-    created_at: '2024-03-07T12:05:00Z',
-  },
-  {
-    id: 3,
-    user_id: 3,
-    image_id: 1,
-    created_at: '2024-03-07T12:10:00Z',
-  },
-  {
-    id: 4,
-    user_id: 2,
-    image_id: 2,
-    created_at: '2024-03-07T12:15:00Z',
-  },
-  {
-    id: 5,
-    user_id: 1,
-    image_id: 3,
-    created_at: '2024-03-07T12:20:00Z',
-  },
-  {
-    id: 6,
-    user_id: 2,
-    image_id: 1,
-    created_at: '2024-03-07T12:25:00Z',
-  },
-  {
-    id: 7,
-    user_id: 3,
-    image_id: 2,
-    created_at: '2024-03-07T12:25:00Z',
-  },
-  {
-    id: 8,
-    user_id: 0,
-    image_id: 3,
-    created_at: '2024-03-07T12:25:00Z',
-  },
-];
-
-/*let mockComments = [
-  {
-    id: 1,
-    user_id: 0,
-    image_id: 1,
-    comment: 'HIENO KUVA',
-    created_at: '2024-03-07T12:00:00Z',
-  },
-  {
-    id: 2,
-    user_id: 1,
-    image_id: 1,
-    comment: 'HIENO KUVA joo',
-    created_at: '2024-03-07T12:05:00Z',
-  },
-  {
-    id: 3,
-    user_id: 3,
-    image_id: 1,
-    comment: 'HIENO KUVA hei hoi hai',
-    created_at: '2024-03-07T12:10:00Z',
-  },
-  {
-    id: 4,
-    user_id: 2,
-    image_id: 2,
-    comment: 'HIENO KUVA',
-    created_at: '2024-03-07T12:15:00Z',
-  },
-  {
-    id: 5,
-    user_id: 1,
-    image_id: 3,
-    comment: 'ONPA HIenooo',
-    created_at: '2024-03-07T12:20:00Z',
-  },
-  {
-    id: 6,
-    user_id: 2,
-    image_id: 1,
-    comment: 'katos katos',
-    created_at: '2024-03-07T12:25:00Z',
-  },
-  {
-    id: 7,
-    user_id: 3,
-    image_id: 2,
-    comment: 'terve mikä kuva',
-    created_at: '2024-03-07T12:25:00Z',
-  },
-  {
-    id: 8,
-    user_id: 0,
-    image_id: 1,
-    comment: 'HIENO KUVA hahaha',
-    created_at: '2024-03-07T12:00:00Z',
-  },
-];
-*/
+let mutableMockLikes = [...mockLikes];
 let mutableMockFollowRelations = [...mockFollowRelations];
 
 type LikeType = {
@@ -258,7 +150,9 @@ export const mockApiSlice = createApi({
     }),
     getLikesByImageId: builder.query<LikeType[], number>({
       queryFn: async image_id => {
-        return {data: mockLikes.filter(item => item.image_id === image_id)};
+        return {
+          data: mutableMockLikes.filter(item => item.image_id === image_id),
+        };
       },
       providesTags: (result, error, image_id) => [
         {type: 'Likes', id: image_id},
@@ -268,11 +162,11 @@ export const mockApiSlice = createApi({
       queryFn: async image_id => {
         const newLike = {
           id: Date.now(),
-          user_id: 0,
+          user_id: 1,
           image_id: image_id,
           created_at: new Date().toISOString(),
         };
-        mockLikes = [...mockLikes, newLike];
+        mutableMockLikes = [...mutableMockLikes, newLike];
         return {data: newLike};
       },
       invalidatesTags: (result, error, image_id) => [
@@ -281,8 +175,8 @@ export const mockApiSlice = createApi({
     }),
     deleteLike: builder.mutation<LikeType[], LikeType>({
       queryFn: async ({id}) => {
-        mockLikes = mockLikes.filter(like => like.id !== id);
-        return {data: mockLikes};
+        mutableMockLikes = mutableMockLikes.filter(like => like.id !== id);
+        return {data: mutableMockLikes};
       },
       invalidatesTags: (result, error, {image_id}) => [
         {type: 'Likes', id: image_id},
