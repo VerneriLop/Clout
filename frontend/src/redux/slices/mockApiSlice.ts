@@ -116,12 +116,19 @@ let mockLikes = [
   },
 ];
 */
+let mutableMockFollowRelations = [...mockFollowRelations];
 
 type LikeType = {
   id: number;
   user_id: number;
   image_id: number;
   created_at?: string;
+};
+
+type FollowType = {
+  id: number;
+  user_id1: number;
+  user_id2: number;
 };
 
 const getImagesByUser = async (id: number) => {
@@ -133,7 +140,7 @@ const getUserById = async (id: number) => {
 };
 
 const getUserFollowers = async (id: number) => {
-  return mockFollowRelations.flatMap(data => {
+  return mutableMockFollowRelations.flatMap(data => {
     return data.user_id2 === id
       ? mockUserList.find(user => user.id === data.user_id1) || []
       : [];
@@ -141,7 +148,7 @@ const getUserFollowers = async (id: number) => {
 };
 
 const getUserFollowing = async (id: number) => {
-  return mockFollowRelations.flatMap(data => {
+  return mutableMockFollowRelations.flatMap(data => {
     return data.user_id1 === id
       ? mockUserList.find(user => user.id === data.user_id2) || []
       : [];
@@ -154,7 +161,7 @@ export const mockApiSlice = createApi({
   reducerPath: 'mockApi',
   // Replace with our actual base url
   baseQuery: fetchBaseQuery({baseUrl: '/fakeApi'}),
-  tagTypes: ['Likes'],
+  tagTypes: ['Likes', 'Following', 'Followers'],
   endpoints: builder => ({
     getPosts: builder.query<CustomImage[], number>({
       queryFn: async (userId: number) => {
@@ -171,14 +178,78 @@ export const mockApiSlice = createApi({
     getUserFollowers: builder.query<CustomUser[], number>({
       queryFn: async (userId: number) => {
         const users = await getUserFollowers(userId);
+        console.log(
+          `[QueryFn] getUserFollowers for ${userId} - Reading Store:`,
+          [...mutableMockFollowRelations],
+        );
         return {data: users};
+      },
+      providesTags: (result, error, userId) => {
+        console.log(
+          `[Provides Tag] Followers list for ID: ${userId}`,
+          typeof userId,
+        );
+        return [{type: 'Followers', id: userId}];
       },
     }),
     getUserFollowing: builder.query<CustomUser[], number>({
       queryFn: async (userId: number) => {
         const users = await getUserFollowing(userId);
+        console.log(
+          `[QueryFn] getUserFollowing for ${userId} - Reading Store:`,
+          [...mutableMockFollowRelations],
+        );
         return {data: users};
       },
+      providesTags: (result, error, userId) => {
+        console.log(
+          `[Provides Tag] Following list for ID: ${userId}`,
+          typeof userId,
+        );
+        return [{type: 'Following', id: userId}];
+      },
+    }),
+    followUser: builder.mutation<FollowType, Omit<FollowType, 'id'>>({
+      queryFn: async ({user_id1, user_id2}) => {
+        const relationToAdd = {
+          id: Date.now(),
+          user_id1: user_id1,
+          user_id2: user_id2,
+        };
+        mutableMockFollowRelations = mutableMockFollowRelations.concat([
+          relationToAdd,
+        ]);
+        console.log(
+          `[Mutation] followUser: Added ${user_id1} -> ${user_id2}. Store:`,
+          [...mutableMockFollowRelations],
+        );
+        return {data: relationToAdd};
+      },
+      invalidatesTags: (result, error, {user_id1, user_id2}) => {
+        console.log(
+          `[Invalidating Tags] Following: ${user_id1}, Followers: ${user_id2}`,
+        ); // Log IDs being used
+        return [
+          {type: 'Following', id: user_id1},
+          {type: 'Followers', id: user_id2},
+        ];
+      },
+    }),
+    unFollowUser: builder.mutation<null, Omit<FollowType, 'id'>>({
+      queryFn: async ({user_id1: id1, user_id2: id2}) => {
+        mutableMockFollowRelations = mutableMockFollowRelations.filter(
+          relation => !(relation.user_id1 === id1 && relation.user_id2 === id2),
+        );
+        console.log(
+          `[Mutation] unFollowUser: Removed ${id1} -> ${id2}. Store:`,
+          [...mutableMockFollowRelations],
+        );
+        return {data: null};
+      },
+      invalidatesTags: (result, error, {user_id1, user_id2}) => [
+        {type: 'Following', id: user_id1},
+        {type: 'Followers', id: user_id2},
+      ],
     }),
     getLikesByImageId: builder.query<LikeType[], number>({
       queryFn: async image_id => {
@@ -224,4 +295,6 @@ export const {
   useGetLikesByImageIdQuery,
   useAddLikeMutation,
   useDeleteLikeMutation,
+  useFollowUserMutation,
+  useUnFollowUserMutation,
 } = mockApiSlice;

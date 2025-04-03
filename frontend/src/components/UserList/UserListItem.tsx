@@ -1,6 +1,6 @@
 import React from 'react';
 import {useNavigation, useTheme} from '@react-navigation/native';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ActivityIndicator} from 'react-native';
 import {ThemedView} from '../ui/themed-view';
 import {ProfileStackParamList, Routes} from '../../navigation/Routes';
 import {ThemedText} from '../ui/typography';
@@ -8,39 +8,84 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {ProfilePicture} from '../ProfilePicture/ProfilePicture';
 import {OpacityPressable} from '../OpacityPressable/OpacityPressable';
 import {CustomUser} from '../../types/types';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store/store';
 
 type UserListItemProps = {
   user: CustomUser;
+  isFollowedByLoggedInUser: boolean;
+  onFollowToggle: (userId: number, currentlyFollowing: boolean) => void;
+  isLoadingToggle?: boolean;
   size?: 'small' | 'medium' | 'large';
 };
 
-export const UserListItem = ({user, size = 'small'}: UserListItemProps) => {
-  // query here to retrieve data from followers/following table
+export const UserListItem = ({
+  user,
+  isFollowedByLoggedInUser,
+  onFollowToggle,
+  isLoadingToggle = false,
+  size = 'small',
+}: UserListItemProps) => {
   const {colors} = useTheme();
-
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
+  const loggedInUser = useSelector((state: RootState) => state.user.user);
 
-  const handlePress = () => {
+  const handlePressProfile = () => {
     navigation.push(Routes.Profile, {userId: user.id, username: user.username});
   };
+  const handleFollowPress = () => {
+    onFollowToggle(user.id, isFollowedByLoggedInUser);
+  };
+
+  const shouldShowFollowButton = loggedInUser && user.id !== loggedInUser.id;
+  const isFollowing = isFollowedByLoggedInUser;
+
+  const buttonStyle = isFollowing
+    ? [
+        styles.followButton,
+        styles.followingButton,
+        {borderColor: colors.primary, backgroundColor: colors.background},
+      ]
+    : [styles.followButton, {backgroundColor: colors.primary}];
+
+  const buttonTextStyle = isFollowing
+    ? [styles.buttonText, {color: colors.primary}]
+    : styles.buttonText;
+
+  const buttonText = isFollowing ? 'Following' : 'Follow';
 
   return (
     <ThemedView style={styles.container}>
-      <OpacityPressable onPress={handlePress} style={styles.profileWrapper}>
+      <OpacityPressable
+        onPress={handlePressProfile}
+        style={styles.profileWrapper}>
         <ProfilePicture uri={user.profile_picture_url} size={size} />
         <View style={styles.textContainer}>
-          <ThemedText style={styles.username}>{user.username}</ThemedText>
+          <ThemedText style={styles.username} numberOfLines={1}>
+            {user.username}
+          </ThemedText>
           <ThemedText style={styles.displayName}>
             {`${user.first_name} ${user.last_name}`}
           </ThemedText>
         </View>
       </OpacityPressable>
-      <OpacityPressable
-        style={[styles.followButton, {backgroundColor: colors.primary}]}
-        onPress={() => console.log('follow pressed')}>
-        <ThemedText style={styles.buttonText}>Follow</ThemedText>
-      </OpacityPressable>
+
+      {shouldShowFollowButton && (
+        <OpacityPressable
+          style={buttonStyle}
+          onPress={handleFollowPress}
+          disabled={isLoadingToggle}>
+          {isLoadingToggle ? (
+            <ActivityIndicator
+              size="small"
+              color={isFollowing ? colors.primary : colors.card}
+            />
+          ) : (
+            <ThemedText style={buttonTextStyle}>{buttonText}</ThemedText>
+          )}
+        </OpacityPressable>
+      )}
     </ThemedView>
   );
 };
@@ -76,7 +121,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     flex: 0.4,
     alignSelf: 'center',
-    //borderWidth: StyleSheet.hairlineWidth * 5,
+  },
+  followingButton: {
+    borderWidth: StyleSheet.hairlineWidth * 5,
   },
   buttonText: {
     textAlign: 'center',
