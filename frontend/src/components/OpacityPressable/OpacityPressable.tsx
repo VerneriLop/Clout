@@ -1,5 +1,11 @@
 import React from 'react';
-import {StyleProp, ViewStyle, Pressable, PressableProps} from 'react-native';
+import {
+  StyleProp,
+  ViewStyle,
+  Pressable,
+  PressableProps,
+  StyleSheet,
+} from 'react-native';
 
 type OpacityPressableProps = Omit<PressableProps, 'style'> & {
   style?: StyleProp<ViewStyle>; // Allow regular style objects/arrays
@@ -16,8 +22,18 @@ export const OpacityPressable = ({
   return (
     <Pressable
       {...props}
-      style={({pressed}) => [{opacity: pressed ? activeOpacity : 1}, style]}>
+      style={({pressed}) => [
+        {opacity: pressed ? activeOpacity : 1},
+        style,
+        props.disabled && styles.disabled,
+      ]}>
       {children}
     </Pressable>
   );
 };
+
+const styles = StyleSheet.create({
+  disabled: {
+    opacity: 0.4,
+  },
+});

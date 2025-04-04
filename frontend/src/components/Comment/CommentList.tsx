@@ -26,9 +26,11 @@ export const CommentList = ({
     <View style={styles.container}>
       <FlatList
         ListEmptyComponent={
-          <ThemedText style={styles.listEmptyText}>
-            No comments found
-          </ThemedText>
+          <View style={styles.noComments}>
+            <ThemedText style={styles.listEmptyText}>
+              No comments found
+            </ThemedText>
+          </View>
         }
         data={data}
         keyExtractor={item => String(item.id)}
@@ -56,5 +58,9 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: 'gray',
     paddingHorizontal: 16,
+  },
+  noComments: {
+    alignItems: 'center',
+    paddingTop: 40,
   },
 });

@@ -18,13 +18,13 @@ import {
   useGetUsersByIdsQuery,
 } from '../../redux/slices/mockApiSlice';
 import {UserList} from '../../components/UserList/UserList';
-import {CommentList} from '../../components/Comment/CommentList';
+import {CommentModal} from './CommentModal';
 
 export const FeedScreen = (): JSX.Element => {
   const [selectedPost, setSelectedPost] = useState<CustomImage | null>(null);
   const likeSheetRef = useRef<BottomSheetModal>(null);
   const commentSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ['50%', '90%'], []);
+  const snapPoints = useMemo(() => ['50%'], []);
   const {colors} = useTheme();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -72,6 +72,8 @@ export const FeedScreen = (): JSX.Element => {
     [],
   );
 
+  console.log('Feedscreeni rendered');
+
   return (
     <ThemedSafeAreaView style={[globalStyle.flex]}>
       <FlatList
@@ -89,7 +91,7 @@ export const FeedScreen = (): JSX.Element => {
         index={0}
         backgroundStyle={{backgroundColor: colors.card}}
         handleIndicatorStyle={{backgroundColor: colors.border}}>
-        <BottomSheetView style={style.container}>
+        <BottomSheetView style={styles.container}>
           <UserList
             data={likedUsers}
             onItemPress={() => likeSheetRef.current?.dismiss()}
@@ -97,22 +99,22 @@ export const FeedScreen = (): JSX.Element => {
         </BottomSheetView>
       </BottomSheetModal>
 
-      <BottomSheetModal
-        ref={commentSheetRef}
-        snapPoints={snapPoints}
-        enablePanDownToClose
-        onDismiss={() => setSelectedPost(null)}
-        index={0}
-        backgroundStyle={{backgroundColor: colors.card}}
-        handleIndicatorStyle={{backgroundColor: colors.border}}>
-        <BottomSheetView style={style.container}>
-          <CommentList data={comments} />
-        </BottomSheetView>
-      </BottomSheetModal>
+      {selectedPost && (
+        <CommentModal
+          comments={comments}
+          commentSheetRef={commentSheetRef}
+          snapPoints={snapPoints}
+          onDismiss={() => setSelectedPost(null)}
+          selectedPost={selectedPost}
+        />
+      )}
     </ThemedSafeAreaView>
   );
 };
 
-const style = StyleSheet.create({
-  container: {flex: 1},
+const styles = StyleSheet.create({
+  container: {
+    gap: 10,
+    flex: 1, //REMEMBER FLEX 1, OTHERWISE LIST WONT RENDER CORRECTLY
+  },
 });
