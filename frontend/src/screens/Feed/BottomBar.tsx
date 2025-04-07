@@ -23,9 +23,14 @@ import {OpacityPressable} from '../../components/OpacityPressable/OpacityPressab
 type Props = {
   post: CustomImage;
   onShowLikes: (post: CustomImage) => void;
+  onShowComments: (post: CustomImage) => void;
 };
 
-export const BottomBar = ({post, onShowLikes}: Props): JSX.Element => {
+export const BottomBar = ({
+  post,
+  onShowLikes,
+  onShowComments,
+}: Props): JSX.Element => {
   const [expanded, setExpanded] = useState(false);
 
   const {data: likes = []} = useGetLikesByImageIdQuery(post.id);
@@ -56,10 +61,9 @@ export const BottomBar = ({post, onShowLikes}: Props): JSX.Element => {
     }
   };
 
-  const showLikes = () => {
-    onShowLikes(post);
-  };
-  const openCommentSection = () => console.log('Comment section opened');
+  const showLikes = () => onShowLikes(post);
+
+  const openCommentSection = () => onShowComments(post);
 
   return (
     <ThemedView style={[globalStyle.flex, styles.container]}>
