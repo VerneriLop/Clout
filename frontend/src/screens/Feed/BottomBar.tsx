@@ -53,6 +53,7 @@ export const BottomBar = ({
   const like = likes.find(item => item.user_id === user?.id);
 
   const toggleLike = (newState: boolean) => {
+    console.log(like, user?.id, likes);
     if (newState) {
       addLike(post.id);
     } else if (like?.id) {

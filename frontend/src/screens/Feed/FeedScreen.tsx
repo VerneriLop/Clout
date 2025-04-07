@@ -1,23 +1,26 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import globalStyle from '../../assets/styles/globalStyle';
-import {ThemedSafeAreaView} from '../../components/ui/themed-view';
 import {FlatList, StyleSheet} from 'react-native';
-import {FeedPost} from './FeedPost';
-import {useDispatch, useSelector} from 'react-redux';
-import {setFeedImages} from '../../redux/slices/feedImageSlice';
-import {AppDispatch, RootState} from '../../redux/store/store';
-import {fetchLikes} from '../../redux/slices/likeSlice';
-import {fetchComments} from '../../redux/slices/commentSlice';
-import {mockImageList} from '../../mock/mock';
-import {CustomImage} from '../../types/types';
+
 import {BottomSheetModal, BottomSheetView} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+
+import globalStyle from '../../assets/styles/globalStyle';
+import {UserList} from '../../components/UserList/UserList';
+import {ThemedSafeAreaView} from '../../components/ui/themed-view';
+import {mockImageList} from '../../mock/mock';
+import {fetchComments} from '../../redux/slices/commentSlice';
+import {setFeedImages} from '../../redux/slices/feedImageSlice';
+import {fetchLikes} from '../../redux/slices/likeSlice';
 import {
   useGetCommentsByImageIdQuery,
   useGetLikesByImageIdQuery,
   useGetUsersByIdsQuery,
 } from '../../redux/slices/mockApiSlice';
-import {UserList} from '../../components/UserList/UserList';
+import {AppDispatch, RootState} from '../../redux/store/store';
+import {FeedPost} from './FeedPost';
+
+import {CustomImage} from '../../types/types';
 import {CommentModal} from './CommentModal';
 import {Backdrop} from '../../components/Backdrop/Backdrop';
 
