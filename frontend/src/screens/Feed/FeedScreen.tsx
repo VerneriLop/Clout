@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {FlatList, StyleSheet} from 'react-native';
+import {FlatList} from 'react-native';
 
-import {BottomSheetModal, BottomSheetView} from '@gorhom/bottom-sheet';
+import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -21,6 +21,7 @@ import {FeedPost} from './FeedPost';
 import {CustomImage} from '../../types/types';
 import {CommentModal} from './CommentModal';
 import {Backdrop} from '../../components/Backdrop/Backdrop';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const FeedScreen = (): JSX.Element => {
   const [selectedPost, setSelectedPost] = useState<CustomImage | null>(null);
@@ -28,6 +29,7 @@ export const FeedScreen = (): JSX.Element => {
   const commentSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['50%', '90%'], []);
   const {colors} = useTheme();
+  const insets = useSafeAreaInsets();
 
   const dispatch = useDispatch<AppDispatch>();
   //TODO: if feed downloads for example 20 images
@@ -89,13 +91,15 @@ export const FeedScreen = (): JSX.Element => {
         index={0}
         backgroundStyle={{backgroundColor: colors.card}}
         handleIndicatorStyle={{backgroundColor: colors.border}}
+        topInset={insets.top}
         backdropComponent={Backdrop}>
-        <BottomSheetView style={styles.container}>
+
           <UserList
             data={likedUsers}
             onItemPress={() => likeSheetRef.current?.dismiss()}
+            onModal
           />
-        </BottomSheetView>
+
       </BottomSheetModal>
 
       <CommentModal
@@ -108,10 +112,3 @@ export const FeedScreen = (): JSX.Element => {
     </ThemedSafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    gap: 10,
-    flex: 1, //REMEMBER FLEX 1, OTHERWISE LIST WONT RENDER CORRECTLY
-  },
-});

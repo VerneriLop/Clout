@@ -17,15 +17,20 @@ import {ThemedView} from '../ui/themed-view';
 import {ThemedText} from '../ui/typography';
 
 import {UserListItem} from './UserListItem';
+import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+
+type UserListType = {
+  data: CustomUser[];
+  onItemPress?: () => void;
+  onModal: boolean;
+}
 
 // todo: add options for size and searchbarvisible
 export const UserList = ({
   data,
   onItemPress,
-}: {
-  data: CustomUser[];
-  onItemPress?: () => void;
-}): JSX.Element => {
+  onModal,
+}: UserListType): JSX.Element => {
   const [value, setValue] = useState('');
   const {colors} = useTheme();
   const loggedInUser = useSelector((state: RootState) => state.user.user);
@@ -160,9 +165,11 @@ export const UserList = ({
     );
   }
 
+  const FlatListComponent = onModal ? BottomSheetFlatList : FlatList;
+
   return (
-    <View style={styles.container}>
-      <FlatList
+    <View style={onModal ? styles.containerModal : styles.container}>
+      <FlatListComponent
         ListEmptyComponent={
           <ThemedText style={styles.listEmptyText}>No users found</ThemedText>
         }
@@ -171,9 +178,9 @@ export const UserList = ({
         keyExtractor={item => String(item.id)}
         renderItem={renderItem}
         extraData={{
-          followedUserIds: followedUserIds,
-          togglingUserId: togglingUserId,
-          isMutationLoading: isMutationLoading,
+          followedUserIds,
+          togglingUserId,
+          isMutationLoading,
         }}
         getItemLayout={(_data, index) => ({
           length: ITEM_HEIGHT,
@@ -197,6 +204,11 @@ const styles = StyleSheet.create({
     //alignItems: 'center',
     //justifyContent: 'center',
     //backgroundColor: 'white',
+  },
+  containerModal: {
+    flex: 1,
+    flexDirection: 'column',
+    marginBottom: 30,
   },
   input: {
     height: 40,
