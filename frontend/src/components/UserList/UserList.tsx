@@ -1,8 +1,9 @@
 import React, {useCallback, useMemo, useState} from 'react';
+import {FlatList, StyleSheet, TextInput} from 'react-native';
 
-import {FlatList, StyleSheet, TextInput, View} from 'react-native';
-
+import {BottomSheetFlatList, BottomSheetTextInput} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
 
 import {verticalScale} from '../../assets/styles/scaling';
@@ -12,18 +13,17 @@ import {
   useUnFollowUserMutation,
 } from '../../redux/slices/mockApiSlice';
 import {RootState} from '../../redux/store/store';
-import {CustomUser} from '../../types/types';
 import {ThemedView} from '../ui/themed-view';
 import {ThemedText} from '../ui/typography';
-
 import {UserListItem} from './UserListItem';
-import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+
+import {CustomUser} from '../../types/types';
 
 type UserListType = {
   data: CustomUser[];
   onItemPress?: () => void;
   onModal: boolean;
-}
+};
 
 // todo: add options for size and searchbarvisible
 export const UserList = ({
@@ -34,6 +34,7 @@ export const UserList = ({
   const [value, setValue] = useState('');
   const {colors} = useTheme();
   const loggedInUser = useSelector((state: RootState) => state.user.user);
+  const insets = useSafeAreaInsets();
 
   const [togglingUserId, setTogglingUserId] = useState<number | null>(null);
 
@@ -130,8 +131,10 @@ export const UserList = ({
     ],
   );
 
+  const SearchInput = onModal ? BottomSheetTextInput : TextInput;
+
   const renderListHeader = (
-    <TextInput
+    <SearchInput
       placeholder="Search"
       inputMode="search"
       autoCapitalize="none"
@@ -168,29 +171,27 @@ export const UserList = ({
   const FlatListComponent = onModal ? BottomSheetFlatList : FlatList;
 
   return (
-    <View style={onModal ? styles.containerModal : styles.container}>
-      <FlatListComponent
-        ListEmptyComponent={
-          <ThemedText style={styles.listEmptyText}>No users found</ThemedText>
-        }
-        ListHeaderComponent={renderListHeader}
-        data={filteredList ?? []}
-        keyExtractor={item => String(item.id)}
-        renderItem={renderItem}
-        extraData={{
-          followedUserIds,
-          togglingUserId,
-          isMutationLoading,
-        }}
-        getItemLayout={(_data, index) => ({
-          length: ITEM_HEIGHT,
-          offset: ITEM_HEIGHT * index,
-          index,
-        })}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
-      />
-    </View>
+    <FlatListComponent
+      ListEmptyComponent={
+        <ThemedText style={styles.listEmptyText}>No users found</ThemedText>
+      }
+      ListHeaderComponent={renderListHeader}
+      data={filteredList ?? []}
+      keyExtractor={item => String(item.id)}
+      renderItem={renderItem}
+      extraData={{
+        followedUserIds,
+        togglingUserId,
+        isMutationLoading,
+      }}
+      getItemLayout={(_data, index) => ({
+        length: ITEM_HEIGHT,
+        offset: ITEM_HEIGHT * index,
+        index,
+      })}
+      keyboardDismissMode="on-drag"
+      contentContainerStyle={onModal && {paddingBottom: insets.bottom}}
+    />
   );
 };
 
@@ -208,7 +209,8 @@ const styles = StyleSheet.create({
   containerModal: {
     flex: 1,
     flexDirection: 'column',
-    marginBottom: 30,
+    paddingBottom: 30,
+    backgroundColor: 'transparent',
   },
   input: {
     height: 40,

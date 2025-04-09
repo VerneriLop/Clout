@@ -3,9 +3,11 @@ import {FlatList} from 'react-native';
 
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 
 import globalStyle from '../../assets/styles/globalStyle';
+import {Backdrop} from '../../components/Backdrop/Backdrop';
 import {UserList} from '../../components/UserList/UserList';
 import {ThemedSafeAreaView} from '../../components/ui/themed-view';
 import {mockImageList} from '../../mock/mock';
@@ -16,12 +18,10 @@ import {
   useGetUsersByIdsQuery,
 } from '../../redux/slices/mockApiSlice';
 import {AppDispatch, RootState} from '../../redux/store/store';
+import {CommentModal} from './CommentModal';
 import {FeedPost} from './FeedPost';
 
 import {CustomImage} from '../../types/types';
-import {CommentModal} from './CommentModal';
-import {Backdrop} from '../../components/Backdrop/Backdrop';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const FeedScreen = (): JSX.Element => {
   const [selectedPost, setSelectedPost] = useState<CustomImage | null>(null);
@@ -93,13 +93,11 @@ export const FeedScreen = (): JSX.Element => {
         handleIndicatorStyle={{backgroundColor: colors.border}}
         topInset={insets.top}
         backdropComponent={Backdrop}>
-
-          <UserList
-            data={likedUsers}
-            onItemPress={() => likeSheetRef.current?.dismiss()}
-            onModal
-          />
-
+        <UserList
+          data={likedUsers}
+          onItemPress={() => likeSheetRef.current?.dismiss()}
+          onModal
+        />
       </BottomSheetModal>
 
       <CommentModal
