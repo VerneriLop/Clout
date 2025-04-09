@@ -237,8 +237,8 @@ export const mockApiSlice = createApi({
           .filter(({user_id1}) => user_id1 === user_id)
           .map(({user_id2}) => user_id2);
         return {
-          data: mutableMockImagelist.filter(({user}) =>
-            followedIds.includes(user.id),
+          data: mutableMockImagelist.filter(
+            ({user}) => followedIds.includes(user.id) || user.id === user_id,
           ),
         };
       },
