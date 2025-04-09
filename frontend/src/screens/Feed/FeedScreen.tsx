@@ -1,23 +1,22 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {FlatList} from 'react-native';
 
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 
 import globalStyle from '../../assets/styles/globalStyle';
 import {Backdrop} from '../../components/Backdrop/Backdrop';
 import {UserList} from '../../components/UserList/UserList';
 import {ThemedSafeAreaView} from '../../components/ui/themed-view';
-import {mockImageList} from '../../mock/mock';
-import {setFeedImages} from '../../redux/slices/feedImageSlice';
 import {
   useGetCommentsByImageIdQuery,
+  useGetFeedImagesQuery,
   useGetLikesByImageIdQuery,
   useGetUsersByIdsQuery,
 } from '../../redux/slices/mockApiSlice';
-import {AppDispatch, RootState} from '../../redux/store/store';
+import {RootState} from '../../redux/store/store';
 import {CommentModal} from './CommentModal';
 import {FeedPost} from './FeedPost';
 
@@ -31,14 +30,13 @@ export const FeedScreen = (): JSX.Element => {
   const {colors} = useTheme();
   const insets = useSafeAreaInsets();
 
-  const dispatch = useDispatch<AppDispatch>();
   //TODO: if feed downloads for example 20 images
   // -> when scrolled to 18th image then download more from backend
-  useEffect(() => {
-    dispatch(setFeedImages(mockImageList));
-  }, [dispatch]);
+  const loggedInUser = useSelector((state: RootState) => state.user.user);
+  const {data} = useGetFeedImagesQuery(loggedInUser?.id ?? -1, {
+    skip: !loggedInUser,
+  });
 
-  const data = useSelector((state: RootState) => state.feedImage.feedImages);
   const {data: likes = []} = useGetLikesByImageIdQuery(selectedPost?.id ?? -1, {
     skip: !selectedPost,
   });
