@@ -1,4 +1,5 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
+
 import {
   mockComments,
   mockFollowRelations,
@@ -6,6 +7,7 @@ import {
   mockLikes,
   mockUserList,
 } from '../../mock/mock';
+
 import {
   CommentType,
   CustomImage,
@@ -17,6 +19,7 @@ import {
 let mutableMockLikes = [...mockLikes];
 let mutableMockFollowRelations = [...mockFollowRelations];
 let mutableMockComments = [...mockComments];
+let mutableMockImagelist = [...mockImageList];
 
 const getImagesByUser = async (id: number) => {
   return mockImageList.filter(img => img.user.id === id);
@@ -48,7 +51,7 @@ export const mockApiSlice = createApi({
   reducerPath: 'mockApi',
   // Replace with our actual base url
   baseQuery: fetchBaseQuery({baseUrl: '/fakeApi'}),
-  tagTypes: ['Likes', 'Following', 'Followers', 'Comments'],
+  tagTypes: ['Likes', 'Following', 'Followers', 'Comments', 'FeedImages'],
   endpoints: builder => ({
     getPosts: builder.query<CustomImage[], number>({
       queryFn: async (userId: number) => {
@@ -124,6 +127,7 @@ export const mockApiSlice = createApi({
         return [
           {type: 'Following', id: user_id1},
           {type: 'Followers', id: user_id2},
+          {type: 'FeedImages', id: user_id1},
         ];
       },
     }),
@@ -141,6 +145,7 @@ export const mockApiSlice = createApi({
       invalidatesTags: (result, error, {user_id1, user_id2}) => [
         {type: 'Following', id: user_id1},
         {type: 'Followers', id: user_id2},
+        {type: 'FeedImages', id: user_id1},
       ],
     }),
     getLikesByImageId: builder.query<LikeType[], number>({
@@ -221,6 +226,26 @@ export const mockApiSlice = createApi({
         {type: 'Comments', id: image_id},
       ],
     }),
+    /** Get feed image list for user: api/feedimages/id
+     * User unfollows someone from feed
+     * --> mutation in follow table
+     * --> updated data on refetch since feed image list depends on who the loggedin user follows
+     */
+    getFeedImages: builder.query<CustomImage[], number>({
+      queryFn: async user_id => {
+        const followedIds = mutableMockFollowRelations
+          .filter(({user_id1}) => user_id1 === user_id)
+          .map(({user_id2}) => user_id2);
+        return {
+          data: mutableMockImagelist.filter(
+            ({user}) => followedIds.includes(user.id) || user.id === user_id,
+          ),
+        };
+      },
+      providesTags: (result, error, user_id) => [
+        {type: 'FeedImages', id: user_id},
+      ],
+    }),
   }),
 });
 
@@ -239,4 +264,5 @@ export const {
   useGetCommentsByImageIdQuery,
   useAddCommentMutation,
   useDeleteCommentMutation,
+  useGetFeedImagesQuery,
 } = mockApiSlice;
