@@ -37,7 +37,7 @@ export const FeedScreen = (): JSX.Element => {
     skip: !loggedInUser,
   });
 
-  const sortedData = data.sort(
+  const sortedData = [...data].sort(
     (a, b) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
   );
