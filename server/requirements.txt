@@ -9,8 +9,12 @@ psycopg2-binary>=2.9.0
 
 # Salasanan hashays
 passlib[bcrypt]>=1.7.4
-jwt
+pyjwt<3.0.0,>=2.8.0
 
 # .env-tuki ja asetukset
 python-dotenv>=1.0.0
 pydantic-settings>=2.0.0
+
+tenacity<9.0.0,>=8.2.3
+
+alembic<2.0.0,>=1.12.1

@@ -1,14 +1,18 @@
 import uuid
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.schemas.user import UserCreate, UserOut
 from app.services.user import create_user, get_user_by_id
-from app.api.deps import SessionDep
+from app.api.deps import SessionDep, get_current_active_superuser
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.get("/{user_id}", response_model=UserOut)
+@router.get(
+    "/{user_id}",
+    dependencies=[Depends(get_current_active_superuser)],
+    response_model=UserOut,
+)
 def read_user_by_id(user_id: uuid.UUID, db: SessionDep):
     user = get_user_by_id(db, user_id)
     if not user:

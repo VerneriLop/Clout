@@ -2,9 +2,15 @@ import uuid
 from pydantic import BaseModel, EmailStr
 
 
-class UserCreate(BaseModel):
-    username: str
+class UserBase(BaseModel):
     email: EmailStr
+    is_active: bool = True
+    is_superuser: bool = False
+    first_name: str | None
+    last_name: str | None
+
+
+class UserCreate(UserBase):
     password: str
 
 
@@ -15,3 +21,9 @@ class UserOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class User(UserBase):
+    id: uuid.UUID
+    hashed_password: str
+    username: str
