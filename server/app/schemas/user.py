@@ -1,9 +1,10 @@
 import uuid
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class UserBase(BaseModel):
     email: EmailStr
+    username: str
     is_active: bool = True
     is_superuser: bool = False
     # first_name: str | None
@@ -11,7 +12,6 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    username: str
     password: str
 
 
@@ -22,6 +22,13 @@ class UserOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# Properties to receive via API on update
+class UserUpdateMe(BaseModel):
+    username: str | None = Field(default=None, max_length=255)
+    email: str | None = Field(default=None, max_length=255)
+    # first_name....
 
 
 # Properties to return via API, id is always required

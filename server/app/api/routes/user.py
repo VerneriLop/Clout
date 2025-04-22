@@ -2,7 +2,8 @@ from typing import Any
 import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, func
-from app.schemas.user import UserCreate, UserOut, UserPublic, UsersPublic
+from sqlalchemy.exc import IntegrityError
+from app.schemas.user import UserCreate, UserOut, UserPublic, UserUpdateMe, UsersPublic
 from app.services import user_crud as crud
 from app.api.deps import CurrentUser, SessionDep, get_current_active_superuser
 from app.models import User
@@ -36,25 +37,62 @@ def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
     """
     Create new user.
     """
-    user = crud.get_user_by_email(session=session, email=user_in.email)
-    if user:
+    try:
+        user = crud.create_user(session=session, user_create=user_in)
+        # TODO: email confirmation as in the template
+        return user
+    except IntegrityError as e:
+        session.rollback()
+        user = crud.get_user_by_email(session=session, email=user_in.email)
+        if user:
+            raise HTTPException(
+                status_code=409,
+                detail="The user with this email already exists in the system.",
+            )
+
+        user = crud.get_user_by_username(session=session, email=user_in.username)
+        if user:
+            raise HTTPException(
+                status_code=409,
+                detail="The user with this username already exists in the system.",
+            )
+    except Exception as e:  # noqa: F841
+        session.rollback()
         raise HTTPException(
-            status_code=400,
-            detail="The user with this email already exists in the system.",
+            status_code=500,
+            detail="An unexpected error occurred. Try again later.",
         )
 
-    user = crud.create_user(session=session, user_create=user_in)
-    """TODO:
-    if settings.emails_enabled and user_in.email:
-        email_data = generate_new_account_email(
-            email_to=user_in.email, username=user_in.email, password=user_in.password
+
+@router.patch("/me", response_model=UserPublic)
+def update_user_me(
+    *, session: SessionDep, user_in: UserUpdateMe, current_user: CurrentUser
+) -> Any:
+    """
+    Update own user: username or email
+    """
+    if user_in.email:
+        existing_user = crud.get_user_by_email(session=session, email=user_in.email)
+        if existing_user and existing_user.id != current_user.id:
+            raise HTTPException(
+                status_code=409, detail="User with this email already exists"
+            )
+        current_user.email = user_in.email
+
+    if user_in.username:
+        existing_user = crud.get_user_by_username(
+            session=session, username=user_in.username
         )
-        send_email(
-            email_to=user_in.email,
-            subject=email_data.subject,
-            html_content=email_data.html_content,
-        )"""
-    return user
+        if existing_user and existing_user.id != current_user.id:
+            raise HTTPException(
+                status_code=409, detail="User with this username already exists"
+            )
+        current_user.username = user_in.username
+
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+    return current_user
 
 
 @router.get("/{user_id}", response_model=UserPublic)
