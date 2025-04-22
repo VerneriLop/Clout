@@ -41,7 +41,7 @@ def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
         user = crud.create_user(session=session, user_create=user_in)
         # TODO: email confirmation as in the template
         return user
-    except IntegrityError as e:
+    except IntegrityError:
         session.rollback()
         user = crud.get_user_by_email(session=session, email=user_in.email)
         if user:
@@ -56,7 +56,7 @@ def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
                 status_code=409,
                 detail="The user with this username already exists in the system.",
             )
-    except Exception as e:  # noqa: F841
+    except Exception:
         session.rollback()
         raise HTTPException(
             status_code=500,
