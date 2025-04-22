@@ -10,7 +10,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.api.deps import CurrentUser, SessionDep
 from app.schemas.utils import Token
 from app.services.user_crud import authenticate
-from app.schemas.user import UserOut
+from app.schemas.user import UserPublic
 
 
 router = APIRouter(tags=["login"])
@@ -37,7 +37,7 @@ def login_access_token(
     return Token(access_token=access_token)
 
 
-@router.post("/login/test-token", response_model=UserOut)
+@router.post("/login/test-token", response_model=UserPublic)
 def test_token(current_user: CurrentUser) -> Any:
     """
     Test access token

@@ -1,13 +1,13 @@
 from typing import Any
 import uuid
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import ValidationError
 from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
 from app.schemas.user import (
     Message,
     UpdatePassword,
     UserCreate,
-    UserOut,
     UserPublic,
     UserUpdateMe,
     UsersPublic,
@@ -109,6 +109,9 @@ def update_user_me(
 def update_password_me(
     *, session: SessionDep, body: UpdatePassword, current_user: CurrentUser
 ) -> Any:
+    """
+    Update own password
+    """
     if not verify_password(body.current_password, current_user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect password")
     if body.current_password == body.new_password:
@@ -120,6 +123,60 @@ def update_password_me(
     session.add(current_user)
     session.commit()
     return Message(message="Password updated succesfully")
+
+
+@router.get("/me")
+def read_user_me(current_user: CurrentUser) -> Any:
+    """
+    Get current user.
+    """
+    return current_user
+
+
+@router.delete("/me")
+def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
+    """
+    Delete own user.
+    """
+    if current_user.is_superuser:
+        raise HTTPException(
+            status_code=403, detail="Super users are not allowed to delete themselves"
+        )
+    session.delete(current_user)
+    session.commit()
+    return Message(message="User deleted successfully")
+
+
+@router.post("/signup", response_model=UserPublic)
+def register_user(user_in: UserCreate, session: SessionDep) -> Any:
+    """
+    Create a new user without the need to be logged in.
+    """
+    try:
+        user_create = UserCreate.model_validate(user_in)
+        user = crud.create_user(session=session, user_create=user_create)
+        return user
+    except IntegrityError:
+        session.rollback()
+        user = crud.get_user_by_email(session=session, email=user_in.email)
+        if user:
+            raise HTTPException(
+                status_code=409,
+                detail="The user with this email already exists in the system.",
+            )
+
+        user = crud.get_user_by_username(session=session, email=user_in.username)
+        if user:
+            raise HTTPException(
+                status_code=409,
+                detail="The user with this username already exists in the system.",
+            )
+    except Exception:
+        session.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail="An unexpected error occurred. Try again later.",
+        )
 
 
 @router.get("/{user_id}", response_model=UserPublic)
@@ -140,8 +197,3 @@ def read_user_by_id(
             detail="The user doesn't have enough privileges",
         )
     return user
-
-
-@router.post("/register", response_model=UserOut)
-def register_user(user_in: UserCreate, db: SessionDep):
-    return crud.create_user(db, user_in)
