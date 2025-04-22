@@ -31,6 +31,11 @@ class UserUpdateMe(BaseModel):
     # first_name....
 
 
+class UpdatePassword(BaseModel):
+    current_password: str = Field(min_length=8, max_length=40)
+    new_password: str = Field(min_length=8, max_length=40)
+
+
 # Properties to return via API, id is always required
 class UserPublic(UserBase):
     id: uuid.UUID
@@ -42,6 +47,11 @@ class UserPublic(UserBase):
 class UsersPublic(BaseModel):
     data: list[UserPublic]
     count: int
+
+
+# Generic message
+class Message(BaseModel):
+    message: str
 
 
 class User(UserBase):

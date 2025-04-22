@@ -3,10 +3,19 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
-from app.schemas.user import UserCreate, UserOut, UserPublic, UserUpdateMe, UsersPublic
+from app.schemas.user import (
+    Message,
+    UpdatePassword,
+    UserCreate,
+    UserOut,
+    UserPublic,
+    UserUpdateMe,
+    UsersPublic,
+)
 from app.services import user_crud as crud
 from app.api.deps import CurrentUser, SessionDep, get_current_active_superuser
 from app.models import User
+from app.core.security import get_password_hash, verify_password
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -71,6 +80,7 @@ def update_user_me(
     """
     Update own user: username or email
     """
+    # TODO: implement more graceful exception handling ?
     if user_in.email:
         existing_user = crud.get_user_by_email(session=session, email=user_in.email)
         if existing_user and existing_user.id != current_user.id:
@@ -93,6 +103,23 @@ def update_user_me(
     session.commit()
     session.refresh(current_user)
     return current_user
+
+
+@router.patch("/me/password", response_model=Message)
+def update_password_me(
+    *, session: SessionDep, body: UpdatePassword, current_user: CurrentUser
+) -> Any:
+    if not verify_password(body.current_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Incorrect password")
+    if body.current_password == body.new_password:
+        raise HTTPException(
+            status_code=400, detail="New password cannot be the same as the current one"
+        )
+    hashed_password = get_password_hash(body.new_password)
+    current_user.hashed_password = hashed_password
+    session.add(current_user)
+    session.commit()
+    return Message(message="Password updated succesfully")
 
 
 @router.get("/{user_id}", response_model=UserPublic)
