@@ -1,7 +1,6 @@
 from typing import Any
 import uuid
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import ValidationError
 from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
 from app.schemas.user import (
@@ -9,6 +8,7 @@ from app.schemas.user import (
     UpdatePassword,
     UserCreate,
     UserPublic,
+    UserUpdate,
     UserUpdateMe,
     UsersPublic,
 )
@@ -125,7 +125,7 @@ def update_password_me(
     return Message(message="Password updated succesfully")
 
 
-@router.get("/me")
+@router.get("/me", response_model=UserPublic)
 def read_user_me(current_user: CurrentUser) -> Any:
     """
     Get current user.
@@ -153,8 +153,7 @@ def register_user(user_in: UserCreate, session: SessionDep) -> Any:
     Create a new user without the need to be logged in.
     """
     try:
-        user_create = UserCreate.model_validate(user_in)
-        user = crud.create_user(session=session, user_create=user_create)
+        user = crud.create_user(session=session, user_create=user_in)
         return user
     except IntegrityError:
         session.rollback()
@@ -197,3 +196,65 @@ def read_user_by_id(
             detail="The user doesn't have enough privileges",
         )
     return user
+
+
+@router.patch(
+    "/{user_id}",
+    dependencies=[Depends(get_current_active_superuser)],
+    response_model=UserPublic,
+)
+def update_user(
+    *,
+    session: SessionDep,
+    user_id: uuid.UUID,
+    user_in: UserUpdate,
+) -> Any:
+    """
+    Update a user.
+    """
+
+    db_user = session.get(User, user_id)
+    if not db_user:
+        raise HTTPException(
+            status_code=404,
+            detail="The user with this id does not exist in the system",
+        )
+    if user_in.email:
+        existing_user = crud.get_user_by_email(session=session, email=user_in.email)
+        if existing_user and existing_user.id != user_id:
+            raise HTTPException(
+                status_code=409, detail="User with this email already exists"
+            )
+
+    if user_in.username:
+        existing_user = crud.get_user_by_username(
+            session=session, username=user_in.username
+        )
+        if existing_user and existing_user.id != user_id:
+            raise HTTPException(
+                status_code=409, detail="User with this username already exists"
+            )
+
+    db_user = crud.update_user(session=session, db_user=db_user, user_in=user_in)
+    return db_user
+
+
+@router.delete("/{user_id}", dependencies=[Depends(get_current_active_superuser)])
+def delete_user(
+    session: SessionDep, current_user: CurrentUser, user_id: uuid.UUID
+) -> Message:
+    """
+    Delete a user.
+    """
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user == current_user:
+        raise HTTPException(
+            status_code=403, detail="Super users are not allowed to delete themselves"
+        )
+    # statement = delete(Item).where(col(Item.owner_id) == user_id)
+    # session.exec(statement)  # type: ignore
+    session.delete(user)
+    session.commit()
+    return Message(message="User deleted successfully")

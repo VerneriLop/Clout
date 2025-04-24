@@ -18,7 +18,14 @@ class UserCreate(UserBase):
 # Properties to receive via API on update
 class UserUpdateMe(BaseModel):
     username: str | None = Field(default=None, max_length=255)
-    email: str | None = Field(default=None, max_length=255)
+    email: EmailStr | None = Field(default=None, max_length=255)
+    # first_name....
+
+
+class UserUpdate(BaseModel):
+    username: str | None = Field(default=None, max_length=255)
+    email: EmailStr | None = Field(default=None, max_length=255)
+    password: str | None = Field(default=None, min_length=8, max_length=40)
     # first_name....
 
 

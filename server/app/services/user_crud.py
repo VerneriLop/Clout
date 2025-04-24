@@ -1,8 +1,9 @@
+from typing import Any
 import uuid
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.models.user import User
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserUpdate
 from app.core.security import get_password_hash, verify_password
 
 
@@ -22,6 +23,22 @@ def create_user(*, session: Session, user_create: UserCreate) -> User:
     session.commit()
     session.refresh(db_obj)
     return db_obj
+
+
+def update_user(*, session: Session, db_user: User, user_in: UserUpdate) -> Any:
+    user_data = user_in.model_dump(exclude_unset=True)
+
+    if "password" in user_data:
+        password = user_data.pop("password")
+        user_data["hashed_password"] = get_password_hash(password)
+
+    for field, value in user_data.items():
+        setattr(db_user, field, value)
+
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+    return db_user
 
 
 def get_user_by_email(*, session: Session, email: str) -> User | None:
