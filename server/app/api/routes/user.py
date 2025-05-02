@@ -1,6 +1,6 @@
 from typing import Any
 import uuid
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
 from app.schemas.user import (

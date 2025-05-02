@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import select, join
+from sqlalchemy import func, select, join
 from sqlalchemy.orm import Session
 from app.models import User, Follower
 from typing import List
@@ -45,3 +45,19 @@ def get_followings_for_user(
     user_followings = session.scalars(stmt).all()
 
     return user_followings
+
+
+def get_follower_count(*, session: Session, user_id: uuid.UUID) -> int:
+    count = session.scalar(
+        select(func.count()).select_from(Follower).where(Follower.user_id2 == user_id)
+    )
+
+    return count
+
+
+def get_following_count(*, session: Session, user_id: uuid.UUID) -> int:
+    count = session.scalar(
+        select(func.count()).select_from(Follower).where(Follower.user_id1 == user_id)
+    )
+
+    return count
