@@ -37,4 +37,27 @@ class PostPublic(PostBase):
 
 class PostsPublic(BaseModel):
     data: list[PostPublic]
-    # count: int
+    count: int
+
+
+# Response model for comment
+class CommentPublic(BaseModel):
+    id: uuid.UUID
+    owner_id: uuid.UUID
+    post_id: uuid.UUID
+    content: str
+    created_at: datetime
+    owner: UserInfoBasic
+
+    class Config:
+        from_attributes = True
+
+
+class CommentsPublic(BaseModel):
+    data: list[CommentPublic]
+    count: int
+
+
+# request model
+class CommentCreate(BaseModel):
+    content: str

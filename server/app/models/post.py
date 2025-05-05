@@ -2,7 +2,6 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING  # , List
 
-from pydantic import HttpUrl
 from sqlalchemy import (
     UUID,
     ForeignKey,
@@ -19,7 +18,7 @@ from app.models import Base
 
 if TYPE_CHECKING:
     from .user import User
-    # from .comment import Comment
+    from .comment import Comment
     # from .like import Like
 
 
@@ -32,7 +31,6 @@ class Post(Base):
     owner_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
     )
-    owner: Mapped["User"] = relationship(back_populates="posts")
     image_url: Mapped[str] = mapped_column(String(1024), nullable=False)
     thumbnail_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     caption: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -48,9 +46,12 @@ class Post(Base):
     num_comments: Mapped[int] = mapped_column(
         Integer, default=0, server_default="0", nullable=False
     )
-    """
-    comments: Mapped[List["Comment"]] = relationship(
+
+    owner: Mapped["User"] = relationship(back_populates="posts")
+    comments: Mapped[list["Comment"]] = relationship(
         "Comment", back_populates="post", cascade="all, delete-orphan"
+    )
+    """
     )
     likes: Mapped[List["Like"]] = relationship(
         "Like", back_populates="post", cascade="all, delete-orphan"

@@ -20,12 +20,21 @@ import uuid
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy import and_, func, select
+from sqlalchemy.orm import selectinload
 
-from app.schemas.posts import PostCreate, PostPublic, PostUpdate, PostsPublic
+from app.schemas.posts import (
+    CommentCreate,
+    CommentPublic,
+    CommentsPublic,
+    PostCreate,
+    PostPublic,
+    PostUpdate,
+    PostsPublic,
+)
 from app.schemas.user import Message
 from app.services import post_crud as crud
 from app.api.deps import CurrentUser, SessionDep
-from app.models.post import Post
+from app.models import Post, Comment
 
 
 router = APIRouter(prefix="/posts", tags=["posts"])
@@ -36,6 +45,7 @@ class FilterParams(BaseModel):
     offset: int = Field(0, ge=0)
 
 
+# TODO: visibility checks
 @router.get("/", response_model=PostsPublic)
 def read_posts_feed(
     session: SessionDep,
@@ -47,7 +57,7 @@ def read_posts_feed(
     Retrieve feed posts for own user.
     """
     followed_user_ids = [f.user_id2 for f in current_user.following]
-
+    followed_user_ids.append(current_user.id)
     base_filter = Post.owner_id.in_(followed_user_ids)
     if last_post_created_at:
         base_filter = and_(base_filter, Post.created_at < last_post_created_at)
@@ -57,7 +67,7 @@ def read_posts_feed(
     )
     posts = session.scalars(statement).all()
 
-    return PostsPublic(data=posts)
+    return PostsPublic(data=posts, count=len(posts))
 
 
 @router.post("/", response_model=PostPublic)
@@ -133,3 +143,75 @@ def delete_post(
     session.commit()
 
     return Message(message="Post deleted succesfully")
+
+
+"""
+│   ├── GET /{post_id}/comments (Public/Authenticated: List comments on a post, pagination)
+│   ├── POST /{post_id}/comments (Authenticated: Create a comment on a post)
+│   │
+│   ├── GET /{post_id}/likes (Public/Authenticated: List users who liked a post, pagination)
+│   ├── POST /{post_id}/likes (Authenticated: Like a post)
+│   └── DELETE /{post_id}/likes (Authenticated: Unlike a post) # Or DELETE /posts/{post_id}/likes/me
+"""
+
+
+@router.get("/{post_id}/comments", response_model=CommentsPublic)
+def read_post_comments(
+    post_id: uuid.UUID,
+    session: SessionDep,
+    current_user: CurrentUser,
+    last_comment_created_at: datetime | None = None,
+    limit: Annotated[int, Query(gt=0, le=100)] = 20,
+    order_by: Literal[
+        "created_at", "likes"
+    ] = "created_at",  # likes only if if we add likes to comments
+) -> Any:
+    """
+    Retrieve comments for a post. Pagination by comment.created_at
+    """
+    post = session.get(Post, post_id)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    if not post.is_visible and (post.owner_id != current_user.id):
+        raise HTTPException(status_code=403, detail="This post is not visible to you")
+
+    base_filter = Comment.post_id == post.id
+    if last_comment_created_at:
+        base_filter = and_(base_filter, Comment.created_at < last_comment_created_at)
+
+    statement = (
+        select(Comment)
+        .where(base_filter)
+        .options(selectinload(Comment.owner))
+        .limit(limit)
+    )
+
+    if order_by == "created_at":
+        statement = statement.order_by(Comment.created_at.desc())
+    else:
+        statement = statement.order_by(Comment.num_likes.desc())
+
+    comments = session.scalars(statement).all()
+
+    return CommentsPublic(data=comments, count=len(comments))
+
+
+@router.post("/{post_id}/comments", response_model=CommentPublic)
+def create_post_comment(
+    post_id: uuid.UUID,
+    session: SessionDep,
+    current_user: CurrentUser,
+    comment_in: CommentCreate,
+) -> Any:
+    """
+    Create a comment for post.
+    """
+
+    comment = crud.create_post_comment(
+        session=session,
+        comment_in=comment_in,
+        owner_id=current_user.id,
+        post_id=post_id,
+    )
+
+    return comment

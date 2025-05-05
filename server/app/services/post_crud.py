@@ -2,8 +2,8 @@ from uuid import UUID
 from pydantic import HttpUrl
 from sqlalchemy.orm import Session
 
-from app.models.post import Post
-from app.schemas.posts import PostCreate, PostUpdate
+from app.models import Post, Comment
+from app.schemas.posts import CommentCreate, PostCreate, PostUpdate
 
 
 def create_post(*, session: Session, post_in: PostCreate, owner_id: UUID) -> Post:
@@ -31,3 +31,13 @@ def update_post(*, session: Session, db_post: Post, post_in: PostUpdate) -> Post
     session.commit()
     session.refresh(db_post)
     return db_post
+
+
+def create_post_comment(
+    *, session: Session, comment_in: CommentCreate, owner_id: UUID, post_id: UUID
+) -> Comment:
+    db_obj = Comment(post_id=post_id, owner_id=owner_id, content=comment_in.content)
+    session.add(db_obj)
+    session.commit()
+    session.refresh(db_obj)
+    return db_obj

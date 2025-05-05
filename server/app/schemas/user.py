@@ -60,6 +60,7 @@ class Message(BaseModel):
 class UserInfoBasic(BaseModel):
     id: uuid.UUID
     username: str
+    profile_picture_url: str | None
 
     class Config:
         from_attributes = True

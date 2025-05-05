@@ -5,8 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from app.models.base import Base
 from sqlalchemy import Boolean, String
 
-from app.models.follower import Follower
-from app.models.post import Post
+from app.models import Follower, Post, Comment
 
 
 class User(Base):
@@ -35,7 +34,13 @@ class User(Base):
 
     # Relationships
 
-    posts: Mapped[List["Post"]] = relationship(back_populates="owner")
+    posts: Mapped[List["Post"]] = relationship(
+        back_populates="owner", cascade="all, delete-orphan"
+    )
+
+    comments: Mapped[List["Comment"]] = relationship(
+        back_populates="owner", cascade="all, delete-orphan"
+    )
 
     followers: Mapped[List["Follower"]] = relationship(
         back_populates="followed",
