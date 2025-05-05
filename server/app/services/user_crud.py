@@ -1,5 +1,5 @@
 from typing import Any
-from sqlalchemy import UUID, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate

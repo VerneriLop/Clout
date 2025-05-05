@@ -1,9 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query
 from app.api.deps import SessionDep
 from app.models import User
-from app.schemas.user import UserPublic, UsersPublic
-from app.models.follower import Follower
-from sqlalchemy import select, func
+from app.schemas.user import UserPublicProfile, UsersPublic
 from app.services import user_crud as crud
 from app.services import follower_crud
 # from app.schemas.image import ImagePublic  # You will need this
@@ -12,7 +10,7 @@ from app.services import follower_crud
 router = APIRouter(prefix="/profiles", tags=["profiles"])
 
 
-@router.get("/{username}", response_model=UserPublic)
+@router.get("/{username}", response_model=UserPublicProfile)
 def get_public_profile(username: str, session: SessionDep) -> User:
     """
     Get profile by username
@@ -20,7 +18,19 @@ def get_public_profile(username: str, session: SessionDep) -> User:
     user = crud.get_user_by_username(session=session, username=username)
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
-    return user
+
+    follower_count = follower_crud.get_follower_count(session=session, user_id=user.id)
+
+    following_count = follower_crud.get_following_count(
+        session=session, user_id=user.id
+    )
+
+    return UserPublicProfile.model_validate(user).model_copy(
+        update={
+            "num_followers": follower_count,
+            "num_following": following_count,
+        }
+    )
 
 
 """
@@ -46,10 +56,7 @@ def get_user_followers(
         session=session, user_id=user.id, skip=skip, limit=limit
     )
 
-    count_stmt = (
-        select(func.count()).select_from(Follower).where(Follower.user_id2 == user.id)
-    )
-    count = session.scalar(count_stmt)
+    count = len(followers)
 
     return UsersPublic(data=followers, count=count)
 
@@ -72,9 +79,6 @@ def get_user_following(
         session=session, user_id=user.id, skip=skip, limit=limit
     )
 
-    count_stmt = (
-        select(func.count()).select_from(Follower).where(Follower.user_id1 == user.id)
-    )
-    count = session.scalar(count_stmt)
+    count = len(following_users)
 
     return UsersPublic(data=following_users, count=count)
