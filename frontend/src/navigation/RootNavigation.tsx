@@ -1,12 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 
 import {createStackNavigator} from '@react-navigation/stack';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 
 import globalStyle from '../assets/styles/globalStyle';
 import {ThemedView} from '../components/ui/themed-view';
-import {mockUser} from '../mock/mock';
-import {setCredentials} from '../redux/slices/authSlice';
 import {RootState} from '../redux/store/store';
 import {LoginScreen} from '../screens/LoginScreen/LoginScreen';
 import {RegisterScreen} from '../screens/RegisterScreen/RegisterScreen';

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {Alert, TouchableOpacity} from 'react-native';
 
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -22,7 +22,9 @@ export const LoginScreen = ({navigation}: LoginScreenProps): JSX.Element => {
   const [password, setPassword] = useState('');
   const insets = useSafeAreaInsets();
 
-  const [login, {isLoading}] = useLoginMutation();
+  const [login, {isLoading, error}] = useLoginMutation();
+
+  error && Alert.alert('Wrong credentials');
 
   const handleLogin = () => {
     login({username, password});
