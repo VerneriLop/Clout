@@ -18,9 +18,10 @@ export type CustomUser = {
   num_posts: number;
 };
 
-export type CustomImage = {
+export type PostType = {
   id: number;
-  user: CustomUser;
+  owner: CustomUser;
+  owner_id: string;
   image_url: string;
   thumbnail_url: string | null;
   caption: string | null;

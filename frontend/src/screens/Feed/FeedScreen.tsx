@@ -20,10 +20,10 @@ import {RootState} from '../../redux/store/store';
 import {CommentModal} from './CommentModal';
 import {FeedPost} from './FeedPost';
 
-import {CustomImage} from '../../types/types';
+import {PostType} from '../../types/types';
 
 export const FeedScreen = (): JSX.Element => {
-  const [selectedPost, setSelectedPost] = useState<CustomImage | null>(null);
+  const [selectedPost, setSelectedPost] = useState<PostType | null>(null);
   const likeSheetRef = useRef<BottomSheetModal>(null);
   const commentSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['50%', '90%'], []);
@@ -57,18 +57,18 @@ export const FeedScreen = (): JSX.Element => {
     },
   );
 
-  const handleShowLikes = (post: CustomImage) => {
+  const handleShowLikes = (post: PostType) => {
     setSelectedPost(post);
     likeSheetRef.current?.present();
   };
 
-  const handleShowComments = (post: CustomImage) => {
+  const handleShowComments = (post: PostType) => {
     setSelectedPost(post);
     commentSheetRef.current?.present();
   };
 
   const renderItem = useCallback(
-    ({item}: {item: CustomImage}) => (
+    ({item}: {item: PostType}) => (
       <FeedPost
         post={item}
         onShowLikes={handleShowLikes}
@@ -109,7 +109,7 @@ export const FeedScreen = (): JSX.Element => {
         commentSheetRef={commentSheetRef}
         snapPoints={snapPoints}
         onDismiss={() => setSelectedPost(null)}
-        selectedPost={selectedPost || ({} as CustomImage)}
+        selectedPost={selectedPost || ({} as PostType)}
       />
     </ThemedSafeAreaView>
   );

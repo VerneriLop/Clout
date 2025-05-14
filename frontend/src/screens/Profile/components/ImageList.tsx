@@ -1,21 +1,24 @@
 import React, {useState} from 'react';
 import {FlatList, Pressable, StyleSheet} from 'react-native';
-import {imageHeight, style} from '../style';
-import {scaleFontSize, verticalScale} from '../../../assets/styles/scaling';
+
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {ProfileStackParamList, Routes} from '../../../navigation/Routes';
+import FastImage, {FastImageProps} from 'react-native-fast-image';
+
+import {scaleFontSize, verticalScale} from '../../../assets/styles/scaling';
+import {Spinner} from '../../../components/Spinner/Spinner';
 import {ThemedView} from '../../../components/ui/themed-view';
 import {ThemedText} from '../../../components/ui/typography';
+import {ProfileStackParamList, Routes} from '../../../navigation/Routes';
+import {imageHeight, style} from '../style';
 import {ProfileInfoCard} from './ProfileInfoCard';
-import {Spinner} from '../../../components/Spinner/Spinner';
-import FastImage, {FastImageProps} from 'react-native-fast-image';
-import {CustomImage, CustomUser} from '../../../types/types';
+
+import {CustomUser, PostType} from '../../../types/types';
 
 const ITEM_HEIGHT = imageHeight;
 
 type ImageListProps = {
-  data: CustomImage[];
+  data: PostType[];
   user: CustomUser;
   isLoadingPosts: boolean;
   isErrorPosts: boolean;
@@ -38,14 +41,14 @@ export const ImageList = ({
     }, 1000);
   };
 
-  const handlePress = (item: CustomImage) => {
+  const handlePress = (item: PostType) => {
     navigation.navigate(Routes.ImageDetail, {
       imageId: item.id,
       userId: user.id,
     });
   };
 
-  const renderItem = ({item}: {item: CustomImage}) => {
+  const renderItem = ({item}: {item: PostType}) => {
     return <ImageListItem image={item} onPress={() => handlePress(item)} />;
   };
 
@@ -83,7 +86,7 @@ export const ImageList = ({
 };
 
 type ImageBoxProps = {
-  image: CustomImage;
+  image: PostType;
   onPress: () => void;
   imageStyle?: FastImageProps['style'];
 };

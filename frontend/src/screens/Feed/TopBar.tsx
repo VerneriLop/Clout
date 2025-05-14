@@ -11,10 +11,10 @@ import {ThemedView} from '../../components/ui/themed-view';
 import {ThemedText} from '../../components/ui/typography';
 import {FeedStackParamList, Routes} from '../../navigation/Routes';
 
-import {CustomImage} from '../../types/types';
+import {PostType} from '../../types/types';
 
 type Props = {
-  post: CustomImage;
+  post: PostType;
 };
 
 export const TopBar = ({post}: Props): JSX.Element => {

@@ -13,12 +13,12 @@ import {CommentList} from '../../components/Comment/CommentList';
 import {useAddCommentMutation} from '../../redux/slices/mockApiSlice';
 import {CommentInputFooter} from './CommentInputFooter';
 
-import {CommentType, CustomImage} from '../../types/types';
+import {CommentType, PostType} from '../../types/types';
 
 type CommentModalProps = Omit<BottomSheetModalProps, 'children'> & {
   comments: CommentType[];
   commentSheetRef: React.RefObject<BottomSheetModal>;
-  selectedPost: CustomImage;
+  selectedPost: PostType;
 };
 
 export const CommentModal = ({

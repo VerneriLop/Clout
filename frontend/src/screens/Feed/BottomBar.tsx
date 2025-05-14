@@ -23,12 +23,12 @@ import {
 } from '../../redux/slices/mockApiSlice';
 import {RootState} from '../../redux/store/store';
 
-import {CustomImage} from '../../types/types';
+import {PostType} from '../../types/types';
 
 type Props = {
-  post: CustomImage;
-  onShowLikes: (post: CustomImage) => void;
-  onShowComments: (post: CustomImage) => void;
+  post: PostType;
+  onShowLikes: (post: PostType) => void;
+  onShowComments: (post: PostType) => void;
 };
 
 export const BottomBar = ({
