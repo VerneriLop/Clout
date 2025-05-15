@@ -11,7 +11,6 @@ import {
   useGetProfileByUserNameQuery,
   useGetProfilePostsByUserNameQuery,
 } from '../../redux/api/endpoints/profiles';
-import {useGetPostsQuery} from '../../redux/slices/mockApiSlice';
 import {ImageList} from './components/ImageList';
 
 type ProfileProps = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;

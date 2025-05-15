@@ -24,7 +24,7 @@ export const ProfileStatsRow = ({
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
   const onPress = () => {
-    navigation.navigate('Followers', {userId: user.id});
+    navigation.navigate('Followers', {username: user.username});
   };
   return (
     <View style={styles.container}>

@@ -1,14 +1,16 @@
 import React from 'react';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
+
 import {useNavigation, useTheme} from '@react-navigation/native';
-import {View, StyleSheet, ActivityIndicator} from 'react-native';
-import {RootStackParamList, Routes} from '../../navigation/Routes';
-import {ThemedText} from '../ui/typography';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {ProfilePicture} from '../ProfilePicture/ProfilePicture';
+
+import {RootStackParamList, Routes} from '../../navigation/Routes';
+import {useGetUsersMeQuery} from '../../redux/api/endpoints/users';
 import {OpacityPressable} from '../OpacityPressable/OpacityPressable';
+import {ProfilePicture} from '../ProfilePicture/ProfilePicture';
+import {ThemedText} from '../ui/typography';
+
 import {CustomUser} from '../../types/types';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../redux/store/store';
 
 type UserListItemProps = {
   user: CustomUser;
@@ -29,7 +31,7 @@ export const UserListItem = ({
 }: UserListItemProps) => {
   const {colors} = useTheme();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const loggedInUser = useSelector((state: RootState) => state.user.user);
+  const {data: loggedInUser} = useGetUsersMeQuery();
 
   const handlePressProfile = () => {
     onItemPress?.();
