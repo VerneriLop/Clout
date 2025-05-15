@@ -27,6 +27,7 @@ from app.schemas.posts import (
     CommentCreate,
     CommentPublic,
     CommentsPublic,
+    LikeOwnerPublic,
     LikePublic,
     PostCreate,
     PostPublic,
@@ -299,7 +300,21 @@ def read_post_likes(
     statement = statement.order_by(Like.created_at.desc())
     likes = session.scalars(statement).all()
 
-    return LikesPublic(data=likes, count=len(likes))
+    current_user_following_ids = {f.user_id2 for f in current_user.following}
+
+    like_responses = []
+    for like in likes:
+        like_pydantic = LikePublic.model_validate(like)
+
+        enriched_owner = LikeOwnerPublic.model_validate(like.owner)
+        enriched_owner.is_followed_by_current_user = (
+            like.owner.id in current_user_following_ids
+        )
+
+        like_pydantic.owner = enriched_owner
+        like_responses.append(like_pydantic)
+
+    return LikesPublic(data=like_responses, count=len(likes))
 
 
 @router.post("/{post_id}/likes", response_model=LikePublic)

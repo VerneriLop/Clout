@@ -9,7 +9,6 @@ import {Spinner} from '../../components/Spinner/Spinner';
 import {ThemedView} from '../../components/ui/themed-view';
 import {ProfileStackParamList} from '../../navigation/Routes';
 import {useGetProfilePostsByUserNameQuery} from '../../redux/api/endpoints/profiles';
-import {useGetPostsQuery} from '../../redux/slices/mockApiSlice';
 import {FeedPost} from '../Feed/FeedPost';
 
 import {PostType} from '../../types/types';
