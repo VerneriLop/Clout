@@ -10,10 +10,10 @@ import {OpacityPressable} from '../OpacityPressable/OpacityPressable';
 import {ProfilePicture} from '../ProfilePicture/ProfilePicture';
 import {ThemedText} from '../ui/typography';
 
-import {CustomUser} from '../../types/types';
+import {CustomUser, ProfileFollowerType} from '../../types/types';
 
 type UserListItemProps = {
-  user: CustomUser;
+  user: CustomUser | ProfileFollowerType;
   isFollowedByLoggedInUser: boolean;
   onFollowToggle: (userId: number, currentlyFollowing: boolean) => void;
   isLoadingToggle?: boolean;

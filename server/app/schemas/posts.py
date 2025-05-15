@@ -81,10 +81,22 @@ class CommentCreate(BaseModel):
 
 
 # Response model for like
+class LikeOwnerPublic(BaseModel):
+    id: uuid.UUID
+    username: str
+    first_name: str
+    last_name: str
+    profile_picture_url: str | None
+    is_followed_by_current_user: bool | None = None
+
+    class Config:
+        from_attributes = True
+
+
 class LikePublic(BaseModel):
     id: uuid.UUID
     created_at: datetime
-    owner: UserInfoBasic
+    owner: LikeOwnerPublic
 
     class Config:
         from_attributes = True

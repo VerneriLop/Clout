@@ -3,17 +3,14 @@ import {FlatList, StyleSheet, TextInput} from 'react-native';
 
 import {BottomSheetFlatList, BottomSheetTextInput} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
-import {skipToken} from '@reduxjs/toolkit/query';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {verticalScale} from '../../assets/styles/scaling';
-import {useGetProfileFollowingQuery} from '../../redux/api/endpoints/profiles';
 import {useGetUsersMeQuery} from '../../redux/api/endpoints/users';
 import {
   useFollowUserMutation,
   useUnFollowUserMutation,
 } from '../../redux/slices/mockApiSlice';
-import {ThemedView} from '../ui/themed-view';
 import {ThemedText} from '../ui/typography';
 import {UserListItem} from './UserListItem';
 
@@ -33,37 +30,16 @@ export const UserList = ({
 }: UserListType): JSX.Element => {
   const [value, setValue] = useState('');
   const {colors} = useTheme();
-  const {data: loggedInUser, isLoading} = useGetUsersMeQuery();
+  const {data: loggedInUser} = useGetUsersMeQuery();
   const insets = useSafeAreaInsets();
-
   const [togglingUserId, setTogglingUserId] = useState<number | null>(null);
 
-  const {
-    data: loggedInUserFollowingData = [],
-    isLoading: isLoadingLoggedInUserFollowing,
-    isError: isErrorFollowing,
-  } = useGetProfileFollowingQuery(
-    !isLoading && loggedInUser ? loggedInUser.username : skipToken,
-  );
   console.log(data);
   const [followUser, {isLoading: isFollowingUser}] = useFollowUserMutation();
   const [unfollowUser, {isLoading: isUnfollowingUser}] =
     useUnFollowUserMutation();
 
   const isMutationLoading = isFollowingUser || isUnfollowingUser;
-
-  const followedUserIds = useMemo(() => {
-    if (
-      !loggedInUserFollowingData ||
-      isLoadingLoggedInUserFollowing ||
-      !Array.isArray(loggedInUserFollowingData)
-    ) {
-      return new Set<number>();
-    }
-    return new Set(
-      loggedInUserFollowingData.map((user: ProfileFollowerType) => user.id),
-    );
-  }, [loggedInUserFollowingData, isLoadingLoggedInUserFollowing]);
 
   const filteredList = useMemo(() => {
     const searchTerm = value.trim().toLowerCase();
@@ -108,8 +84,8 @@ export const UserList = ({
   );
 
   const renderItem = useCallback(
-    ({item}: {item: CustomUser}) => {
-      const isFollowed = followedUserIds.has(item.id);
+    ({item}: {item: ProfileFollowerType}) => {
+      const isFollowed = item.is_following;
       const isLoadingThisItem = isMutationLoading && togglingUserId === item.id;
 
       return (
@@ -122,13 +98,7 @@ export const UserList = ({
         />
       );
     },
-    [
-      followedUserIds,
-      handleFollowToggle,
-      isMutationLoading,
-      togglingUserId,
-      onItemPress,
-    ],
+    [handleFollowToggle, isMutationLoading, togglingUserId, onItemPress],
   );
 
   const SearchInput = onModal ? BottomSheetTextInput : TextInput;
@@ -152,21 +122,6 @@ export const UserList = ({
       placeholderTextColor={colors.border}
     />
   );
-  /*
-  if (isLoadingLoggedInUserFollowing && !loggedInUserFollowingData?.length) {
-    return (
-      <ThemedView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ThemedView>
-    );
-  }*/
-  if (isErrorFollowing) {
-    return (
-      <ThemedView style={styles.loadingContainer}>
-        <ThemedText>Error loading follow status.</ThemedText>
-      </ThemedView>
-    );
-  }
 
   const FlatListComponent = onModal ? BottomSheetFlatList : FlatList;
 
@@ -180,7 +135,6 @@ export const UserList = ({
       keyExtractor={item => String(item.id)}
       renderItem={renderItem}
       extraData={{
-        followedUserIds,
         togglingUserId,
         isMutationLoading,
       }}

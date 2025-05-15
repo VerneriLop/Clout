@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query
-from app.api.deps import SessionDep
+from app.api.deps import SessionDep, CurrentUser
 from app.models import User
-from app.schemas.user import UserPublicProfile, UsersPublic
+from app.schemas.user import UserPublic, UserPublicProfile, UsersPublic
 from app.services import user_crud as crud
 from app.services import post_crud
 from app.services import follower_crud
@@ -67,6 +67,7 @@ def get_user_posts(
 def get_user_followers(
     username: str,
     session: SessionDep,
+    current_user: CurrentUser,
     skip: int = Query(0, ge=0),
     limit: int = Query(15, ge=1, le=100),
 ) -> UsersPublic:
@@ -81,15 +82,30 @@ def get_user_followers(
         session=session, user_id=user.id, skip=skip, limit=limit
     )
 
-    count = len(followers)
+    current_user_following_ids = {f.user_id2 for f in current_user.following}
 
-    return UsersPublic(data=followers, count=count)
+    response_users = [
+        UserPublic(
+            id=u.id,
+            username=u.username,
+            first_name=u.first_name,
+            last_name=u.last_name,
+            email=u.email,
+            profile_picture_url=u.profile_picture_url,
+            is_following=u.id in current_user_following_ids,
+        )
+        for u in followers
+    ]
+
+    count = len(followers)
+    return UsersPublic(data=response_users, count=count)
 
 
 @router.get("/{username}/following", response_model=UsersPublic)
 def get_user_following(
     username: str,
     session: SessionDep,
+    current_user: CurrentUser,
     skip: int = Query(0, ge=0),
     limit: int = Query(15, ge=1, le=100),
 ) -> UsersPublic:
@@ -104,6 +120,20 @@ def get_user_following(
         session=session, user_id=user.id, skip=skip, limit=limit
     )
 
-    count = len(following_users)
+    current_user_following_ids = {f.user_id2 for f in current_user.following}
 
-    return UsersPublic(data=following_users, count=count)
+    response_users = [
+        UserPublic(
+            id=u.id,
+            username=u.username,
+            first_name=u.first_name,
+            last_name=u.last_name,
+            email=u.email,
+            profile_picture_url=u.profile_picture_url,
+            is_following=u.id in current_user_following_ids,
+        )
+        for u in following_users
+    ]
+
+    count = len(following_users)
+    return UsersPublic(data=response_users, count=count)
