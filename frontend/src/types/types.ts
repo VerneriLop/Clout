@@ -55,17 +55,26 @@ export type ProfilePostsType = {
   count: number;
 };
 
+export type ProfileFollowerType = {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  bio: string;
+  profile_picture_url: string;
+};
+
+export type ProfileFollowersType = {
+  data: ProfileFollowerType[];
+  count: number;
+};
 /*{
-  "data": [
-    {
-      "email": "user@example.com",
+"email": "user@example.com",
       "username": "string",
       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       "first_name": "string",
       "last_name": "string",
       "bio": "string",
       "profile_picture_url": "string"
-    }
-  ],
-  "count": 0
 }*/

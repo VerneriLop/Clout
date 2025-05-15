@@ -1,6 +1,11 @@
 import {apiSlice} from '../apiSlice';
 
-import {ProfilePostsType, ProfileType} from '../../../types/types';
+import {
+  CustomUser,
+  ProfileFollowersType,
+  ProfilePostsType,
+  ProfileType,
+} from '../../../types/types';
 
 export const profileApi = apiSlice.injectEndpoints({
   endpoints: builder => ({
@@ -16,13 +21,13 @@ export const profileApi = apiSlice.injectEndpoints({
         {type: 'ProfilePosts', id: username},
       ],*/
     }),
-    getProfileFollowers: builder.query<ProfilePostsType, string>({
+    getProfileFollowers: builder.query<ProfileFollowersType, string>({
       query: username => `profiles/${username}/followers`,
       /*providesTags: (result, error, username) => [
         {type: 'ProfilePosts', id: username},
       ],*/
     }),
-    getProfileFollowing: builder.query<ProfilePostsType, string>({
+    getProfileFollowing: builder.query<ProfileFollowersType, string>({
       query: username => `profiles/${username}/following`,
       /*providesTags: (result, error, username) => [
         {type: 'ProfilePosts', id: username},
@@ -31,5 +36,9 @@ export const profileApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const {useGetProfileByUserNameQuery, useGetProfilePostsByUserNameQuery} =
-  profileApi;
+export const {
+  useGetProfileByUserNameQuery,
+  useGetProfilePostsByUserNameQuery,
+  useGetProfileFollowersQuery,
+  useGetProfileFollowingQuery,
+} = profileApi;

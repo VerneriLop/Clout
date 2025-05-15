@@ -3,37 +3,37 @@ import {FlatList, StyleSheet, TextInput} from 'react-native';
 
 import {BottomSheetFlatList, BottomSheetTextInput} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
+import {skipToken} from '@reduxjs/toolkit/query';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useSelector} from 'react-redux';
 
 import {verticalScale} from '../../assets/styles/scaling';
+import {useGetProfileFollowingQuery} from '../../redux/api/endpoints/profiles';
+import {useGetUsersMeQuery} from '../../redux/api/endpoints/users';
 import {
   useFollowUserMutation,
-  useGetUserFollowingQuery,
   useUnFollowUserMutation,
 } from '../../redux/slices/mockApiSlice';
-import {RootState} from '../../redux/store/store';
 import {ThemedView} from '../ui/themed-view';
 import {ThemedText} from '../ui/typography';
 import {UserListItem} from './UserListItem';
 
-import {CustomUser} from '../../types/types';
+import {CustomUser, ProfileFollowerType} from '../../types/types';
 
 type UserListType = {
-  data: CustomUser[];
+  data: CustomUser[] | ProfileFollowerType[];
   onItemPress?: () => void;
-  onModal: boolean;
+  onModal?: boolean;
 };
 
 // todo: add options for size and searchbarvisible
 export const UserList = ({
   data,
   onItemPress,
-  onModal,
+  onModal = false,
 }: UserListType): JSX.Element => {
   const [value, setValue] = useState('');
   const {colors} = useTheme();
-  const loggedInUser = useSelector((state: RootState) => state.user.user);
+  const {data: loggedInUser, isLoading} = useGetUsersMeQuery();
   const insets = useSafeAreaInsets();
 
   const [togglingUserId, setTogglingUserId] = useState<number | null>(null);
@@ -42,10 +42,10 @@ export const UserList = ({
     data: loggedInUserFollowingData = [],
     isLoading: isLoadingLoggedInUserFollowing,
     isError: isErrorFollowing,
-  } = useGetUserFollowingQuery(loggedInUser?.id ?? -1, {
-    skip: !loggedInUser?.id,
-  });
-
+  } = useGetProfileFollowingQuery(
+    !isLoading && loggedInUser ? loggedInUser.username : skipToken,
+  );
+  console.log(data);
   const [followUser, {isLoading: isFollowingUser}] = useFollowUserMutation();
   const [unfollowUser, {isLoading: isUnfollowingUser}] =
     useUnFollowUserMutation();
@@ -61,7 +61,7 @@ export const UserList = ({
       return new Set<number>();
     }
     return new Set(
-      loggedInUserFollowingData.map((user: CustomUser) => user.id),
+      loggedInUserFollowingData.map((user: ProfileFollowerType) => user.id),
     );
   }, [loggedInUserFollowingData, isLoadingLoggedInUserFollowing]);
 

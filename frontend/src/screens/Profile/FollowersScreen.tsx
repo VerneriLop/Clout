@@ -1,17 +1,20 @@
-import {StyleSheet, useWindowDimensions, View} from 'react-native';
 import React, {memo, useCallback} from 'react';
-import {CustomUser} from '../../types/types';
+import {StyleSheet, View, useWindowDimensions} from 'react-native';
+
 import {useTheme} from '@react-navigation/native';
-import {TabView, TabBar} from 'react-native-tab-view';
-import {ProfileStackParamList} from '../../navigation/Routes';
 import {StackScreenProps} from '@react-navigation/stack';
+import {TabBar, TabView} from 'react-native-tab-view';
+
+import {Spinner} from '../../components/Spinner/Spinner';
 import {UserList} from '../../components/UserList/UserList';
 import {ThemedText} from '../../components/ui/typography';
-import {Spinner} from '../../components/Spinner/Spinner';
+import {ProfileStackParamList} from '../../navigation/Routes';
 import {
-  useGetUserFollowersQuery,
-  useGetUserFollowingQuery,
-} from '../../redux/slices/mockApiSlice';
+  useGetProfileFollowersQuery,
+  useGetProfileFollowingQuery,
+} from '../../redux/api/endpoints/profiles';
+
+import {ProfileFollowerType} from '../../types/types';
 
 type FollowersScreenProps = StackScreenProps<
   ProfileStackParamList,
@@ -26,30 +29,30 @@ const routes = [
 export const FollowersScreen = ({
   route: mainRoute,
 }: FollowersScreenProps): JSX.Element => {
-  const {userId} = mainRoute.params;
+  const {username} = mainRoute.params;
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
   const {colors} = useTheme();
 
   const {
-    data: following = [],
+    data: following = {data: [], count: 0},
     isLoading: isLoadingFollowing,
     isError: isErrorFollowing,
-  } = useGetUserFollowingQuery(userId);
+  } = useGetProfileFollowingQuery(username);
 
   const {
-    data: followers = [],
+    data: followers = {data: [], count: 0},
     isLoading: isLoadingFollowers,
     isError: isErrorFollowers,
-  } = useGetUserFollowersQuery(userId);
+  } = useGetProfileFollowersQuery(username);
 
   const renderScene = useCallback(
     ({route}: {route: {key: string}}) => {
       switch (route.key) {
         case 'followers':
-          return <FollowersList data={followers} />;
+          return <FollowersList data={followers.data} />;
         case 'following':
-          return <FollowingList data={following} />;
+          return <FollowingList data={following.data} />;
         default:
           return null;
       }
@@ -98,13 +101,13 @@ export const FollowersScreen = ({
 };
 
 export const FollowingList = memo(
-  ({data}: {data: CustomUser[]}): JSX.Element => {
+  ({data}: {data: ProfileFollowerType[]}): JSX.Element => {
     return <UserList data={data} />;
   },
 );
 
 export const FollowersList = memo(
-  ({data}: {data: CustomUser[]}): JSX.Element => {
+  ({data}: {data: ProfileFollowerType[]}): JSX.Element => {
     return <UserList data={data} />;
   },
 );

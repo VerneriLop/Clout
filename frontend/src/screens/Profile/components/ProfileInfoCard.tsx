@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 
 import {useTheme} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
 
 import globalStyle from '../../../assets/styles/globalStyle';
 import {
@@ -25,7 +24,6 @@ import {
   useGetUserFollowingQuery,
   useUnFollowUserMutation,
 } from '../../../redux/slices/mockApiSlice';
-import {RootState} from '../../../redux/store/store';
 import {ProfileStatsRow} from './ProfileStatsRow';
 
 import {CustomUser} from '../../../types/types';
@@ -38,7 +36,7 @@ export const ProfileInfoCard = ({
   num_posts: number;
 }): JSX.Element => {
   const {colors} = useTheme();
-  const {data: loggedInUser, isError, isLoading} = useGetUsersMeQuery();
+  const {data: loggedInUser} = useGetUsersMeQuery();
   const loggedInUserId = loggedInUser?.id;
 
   const {

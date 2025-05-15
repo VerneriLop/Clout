@@ -54,7 +54,7 @@ def get_user_posts(
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
 
-    posts = post_crud.get_posts_by_user(
+    posts = post_crud.get_posts_by_user(  # sorted by date
         session=session, user_id=user.id, skip=skip, limit=limit
     )
 
