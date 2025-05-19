@@ -1,31 +1,34 @@
-import React, {useState, useRef, useCallback} from 'react';
-import {View, TouchableOpacity, Image, Text, Alert} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Alert, Image, Text, TouchableOpacity, View} from 'react-native';
+
 import {
-  useCameraDevices,
-  useCameraPermission,
+  faArrowLeft,
+  faBolt,
+  faCamera,
+  faCheck,
+  faSlash,
+  faSync,
+  faTimes,
+} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import Reanimated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedProps,
+  useSharedValue,
+} from 'react-native-reanimated';
+import {
   Camera,
   CameraDevice,
   CameraProps,
+  useCameraDevices,
+  useCameraPermission,
 } from 'react-native-vision-camera';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {
-  faCamera,
-  faSync,
-  faCheck,
-  faTimes,
-  faArrowLeft,
-  faBolt,
-  faSlash,
-} from '@fortawesome/free-solid-svg-icons';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+
+import {Spinner} from '../../components/Spinner/Spinner';
 import {Style} from './style';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import Reanimated, {
-  useSharedValue,
-  useAnimatedProps,
-  interpolate,
-  Extrapolation,
-} from 'react-native-reanimated';
 
 Reanimated.addWhitelistedNativeProps({zoom: true});
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
@@ -41,10 +44,11 @@ export const CameraScreen = (): JSX.Element => {
   const devices = useCameraDevices();
   const frontCamera = devices.find(device => device.position === 'front');
   const backCamera = devices.find(device => device.position === 'back');
+
   const activeDevice: CameraDevice =
     cameraType === 'front'
-      ? frontCamera ?? backCamera!
-      : backCamera ?? frontCamera!;
+      ? (frontCamera ?? backCamera!)
+      : (backCamera ?? frontCamera!);
 
   const zoom = useSharedValue(activeDevice?.neutralZoom ?? 1);
   const animatedProps = useAnimatedProps<CameraProps>(
@@ -52,16 +56,36 @@ export const CameraScreen = (): JSX.Element => {
     [zoom],
   );
 
+  console.log(frontCamera, backCamera);
+
+  const [retryCount, setRetryCount] = useState(0);
+
+  const MAX_RETRIES = 3;
+  const RETRY_INTERVAL_MS = 1000;
+
   useFocusEffect(
     useCallback(() => {
-      if (!frontCamera && !backCamera) {
-        navigation.goBack();
-        Alert.alert('Camera not found');
-        return;
-      }
-      return;
-    }, [navigation, frontCamera, backCamera]),
+      setRetryCount(0); // reset on screen entry
+    }, []),
   );
+
+  useEffect(() => {
+    if (activeDevice) {
+      return;
+    }
+
+    if (retryCount < MAX_RETRIES) {
+      const timeout = setTimeout(() => {
+        setRetryCount(prev => prev + 1);
+      }, RETRY_INTERVAL_MS);
+
+      return () => clearTimeout(timeout);
+    } else {
+      Alert.alert('Error', 'No camera device found', [
+        {text: 'OK', onPress: () => navigation.goBack()},
+      ]);
+    }
+  }, [retryCount, activeDevice, navigation]);
 
   const cameraRef = useRef<Camera>(null);
   const {hasPermission, requestPermission} = useCameraPermission();
@@ -71,8 +95,8 @@ export const CameraScreen = (): JSX.Element => {
     return <Text>Requesting camera permission...</Text>;
   }
 
-  if (!frontCamera && !backCamera) {
-    return <></>;
+  if (!activeDevice) {
+    return <Spinner />;
   }
 
   const minZoom = activeDevice?.minZoom ?? 1;
@@ -106,6 +130,7 @@ export const CameraScreen = (): JSX.Element => {
   };
 
   const confirmPhoto = () => {
+    // TODO: logic
     console.log('Sending image:', photo);
     setPhoto(null);
   };
