@@ -1,6 +1,5 @@
 // === Updated CommentModal.tsx ===
 import React, {useCallback, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
 
 import {
   BottomSheetFooterProps,
@@ -61,11 +60,6 @@ export const CommentModal = ({
       topInset={insets.top}
       backdropComponent={Backdrop}
       footerComponent={renderFooter}>
-      {editingCommentId && (
-        <View style={StyleSheet.absoluteFill} pointerEvents="none">
-          <View style={styles.fullOverlay} />
-        </View>
-      )}
       <CommentList
         data={comments}
         onItemPress={() => {}}
@@ -76,10 +70,3 @@ export const CommentModal = ({
     </BottomSheetModal>
   );
 };
-
-const styles = StyleSheet.create({
-  fullOverlay: {
-    flex: 1,
-    zIndex: 2,
-  },
-});
