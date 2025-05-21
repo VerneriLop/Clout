@@ -11,7 +11,7 @@ import Toast from 'react-native-toast-message';
 import {Provider} from 'react-redux';
 
 import {NotificationListener} from './src/components/NotificationListener/NotificationListener';
-import {toastConfig} from './src/components/NotificationListener/toastConfig';
+import {toastConfig} from './src/components/Toast/toastConfig';
 import {MyDarkTheme} from './src/components/ui/themes';
 import {RootNavigation} from './src/navigation/RootNavigation';
 import store from './src/redux/store/store';

@@ -2,13 +2,12 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 
 import {useTheme} from '@react-navigation/native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {ThemedView} from '../ui/themed-view';
 import {ThemedText} from '../ui/typography';
 
 type Props = {
-  text1: string;
+  text1?: string;
   barColor: string;
   emoji: string;
 };

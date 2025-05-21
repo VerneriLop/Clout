@@ -20,6 +20,7 @@ export const LeaderboardScreen = (): JSX.Element => {
   );
 
   return (
+    // eslint-disable-next-line react-native/no-inline-styles
     <ThemedView style={[globalStyle.flex, {justifyContent: 'center'}]}>
       <ThemedText>moromoro tää on leaderboardscreen</ThemedText>
     </ThemedView>
