@@ -1,4 +1,5 @@
 import React, {useCallback, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 
 import {
   BottomSheetFooterProps,
@@ -58,14 +59,24 @@ export const CommentModal = ({
       handleIndicatorStyle={{backgroundColor: colors.border}}
       topInset={insets.top}
       backdropComponent={Backdrop}
+      onDismiss={() => setEditingCommentId(null)}
       footerComponent={renderFooter}>
-      <CommentList
-        data={comments}
-        onItemPress={() => {}}
-        editingCommentId={editingCommentId}
-        onStartEdit={id => setEditingCommentId(id)}
-        onStopEdit={() => setEditingCommentId(null)}
-      />
+      <View style={styles.container}>
+        <CommentList
+          data={comments}
+          editingCommentId={editingCommentId}
+          onStartEdit={id => setEditingCommentId(id)}
+          onStopEdit={() => setEditingCommentId(null)}
+          editingActive={!!editingCommentId}
+        />
+      </View>
     </BottomSheetModal>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'relative',
+  },
+});

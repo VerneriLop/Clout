@@ -38,6 +38,7 @@ type CommentListItemProps = {
   onStartEdit?: () => void;
   onStopEdit?: () => void;
   dimmed?: boolean;
+  editingActive?: boolean;
 };
 
 export const CommentListItem = ({
@@ -48,6 +49,7 @@ export const CommentListItem = ({
   onStartEdit,
   onStopEdit,
   dimmed = false,
+  editingActive,
 }: CommentListItemProps) => {
   const [editedContent, setEditedContent] = useState(comment.content);
   const {data: loggedInUser} = useGetUsersMeQuery();
@@ -78,18 +80,15 @@ export const CommentListItem = ({
         }
         onStartEdit?.();
         break;
-
       case 'Delete comment':
         if (!isOwner) {
           Alert.alert("You don't have the right's.");
         }
         deleteComment({post_id: comment.post_id, comment_id: comment.id});
         break;
-
       case 'Report comment':
         console.log('Report');
         break;
-
       default:
         break;
     }
@@ -116,11 +115,11 @@ export const CommentListItem = ({
     isEditing && {
       ...styles.elevated,
       borderColor: colors.border,
-      borderWidth: 1,
-      borderRadius: 8,
       backgroundColor: colors.highlighted,
     },
   ];
+
+  const shouldCapturePress = editingActive && !isEditing;
 
   return (
     <ContextMenu
@@ -132,7 +131,9 @@ export const CommentListItem = ({
       onPress={(event: NativeSyntheticEvent<ContextMenuOnPressNativeEvent>) =>
         handleMenuPress(event.nativeEvent.name)
       }>
-      <Pressable style={containerStyle}>
+      <Pressable
+        style={containerStyle}
+        onPress={shouldCapturePress ? onStopEdit : undefined}>
         <OpacityPressable onPress={handlePress}>
           <ProfilePicture uri={user?.profile_picture_url ?? ''} size={size} />
         </OpacityPressable>
@@ -160,7 +161,7 @@ export const CommentListItem = ({
               </OpacityPressable>
             </View>
           ) : (
-            <Pressable onPress={() => {}}>
+            <Pressable>
               <ThemedText numberOfLines={2}>{comment.content}</ThemedText>
             </Pressable>
           )}
@@ -184,6 +185,8 @@ const styles = StyleSheet.create({
   elevated: {
     zIndex: 2,
     opacity: 1,
+    borderWidth: 1,
+    borderRadius: 8,
   },
   textContainer: {
     flex: 1,

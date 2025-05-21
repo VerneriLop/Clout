@@ -14,6 +14,7 @@ type CommentListType = {
   editingCommentId?: string | null;
   onStartEdit?: (id: string) => void;
   onStopEdit?: () => void;
+  editingActive?: boolean;
 };
 
 export const CommentList = ({
@@ -22,6 +23,7 @@ export const CommentList = ({
   editingCommentId,
   onStartEdit,
   onStopEdit,
+  editingActive,
 }: CommentListType): JSX.Element => {
   const renderItem = useCallback(
     ({item}: {item: CommentType}) => (
@@ -32,9 +34,10 @@ export const CommentList = ({
         onStartEdit={() => onStartEdit?.(item.id)}
         onStopEdit={onStopEdit}
         dimmed={!!editingCommentId && editingCommentId !== item.id}
+        editingActive={editingActive}
       />
     ),
-    [onItemPress, editingCommentId, onStartEdit, onStopEdit],
+    [onItemPress, editingCommentId, onStartEdit, onStopEdit, editingActive],
   );
 
   return (
