@@ -1,10 +1,11 @@
 import React, {useCallback, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Keyboard, StyleSheet, View} from 'react-native';
 
 import {
   BottomSheetFooterProps,
   BottomSheetModal,
   BottomSheetModalProps,
+  TouchableWithoutFeedback,
 } from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -61,16 +62,22 @@ export const CommentModal = ({
       backdropComponent={Backdrop}
       onDismiss={() => setEditingCommentId(null)}
       footerComponent={!editingCommentId ? renderFooter : undefined}>
-      <View style={styles.container}>
-        <CommentList
-          data={comments}
-          onItemPress={() => {}}
-          editingCommentId={editingCommentId}
-          onStartEdit={id => setEditingCommentId(id)}
-          onStopEdit={() => setEditingCommentId(null)}
-          editingActive={!!editingCommentId}
-        />
-      </View>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          setEditingCommentId(null);
+          Keyboard.dismiss();
+        }}>
+        <View style={styles.container}>
+          <CommentList
+            data={comments}
+            onItemPress={() => {}}
+            editingCommentId={editingCommentId}
+            onStartEdit={id => setEditingCommentId(id)}
+            onStopEdit={() => setEditingCommentId(null)}
+            editingActive={!!editingCommentId}
+          />
+        </View>
+      </TouchableWithoutFeedback>
     </BottomSheetModal>
   );
 };

@@ -30,10 +30,10 @@ export const CommentList = ({
       <CommentListItem
         comment={item}
         onItemPress={onItemPress}
-        isEditing={editingCommentId === item.id}
+        commentIsUnderEditing={editingCommentId === item.id}
         onStartEdit={() => onStartEdit?.(item.id)}
         onStopEdit={onStopEdit}
-        dimmed={!!editingCommentId && editingCommentId !== item.id}
+        blurred={!!editingCommentId && editingCommentId !== item.id}
         editingActive={editingActive}
       />
     ),

@@ -34,10 +34,10 @@ type CommentListItemProps = {
   comment: CommentType;
   size?: 'small' | 'medium' | 'large';
   onItemPress?: () => void;
-  isEditing?: boolean;
+  commentIsUnderEditing?: boolean;
   onStartEdit?: () => void;
   onStopEdit?: () => void;
-  dimmed?: boolean;
+  blurred?: boolean;
   editingActive?: boolean;
 };
 
@@ -45,10 +45,10 @@ export const CommentListItem = ({
   comment,
   size = 'small',
   onItemPress,
-  isEditing,
+  commentIsUnderEditing,
   onStartEdit,
   onStopEdit,
-  dimmed = false,
+  blurred = false,
   editingActive,
 }: CommentListItemProps) => {
   const [editedContent, setEditedContent] = useState(comment.content);
@@ -62,12 +62,12 @@ export const CommentListItem = ({
   const inputRef = useRef<React.ElementRef<typeof BottomSheetTextInput>>(null);
 
   useEffect(() => {
-    if (isEditing) {
+    if (commentIsUnderEditing) {
       setTimeout(() => {
         inputRef.current?.focus();
       }, 50); // small delay ensures the input is rendered first
     }
-  }, [isEditing]);
+  }, [commentIsUnderEditing]);
 
   const handlePress = () => {
     onItemPress?.();
@@ -119,15 +119,15 @@ export const CommentListItem = ({
 
   const containerStyle: StyleProp<ViewStyle> = [
     styles.container,
-    dimmed && styles.dimmed,
-    isEditing && {
+    blurred && styles.blurred,
+    commentIsUnderEditing && {
       ...styles.elevated,
       borderColor: colors.border,
       backgroundColor: colors.highlighted,
     },
   ];
 
-  const notUnderEditing = editingActive && !isEditing;
+  const notUnderEditing = editingActive && !commentIsUnderEditing;
 
   return (
     <ContextMenu
@@ -149,7 +149,7 @@ export const CommentListItem = ({
           <OpacityPressable onPress={handlePress} disabled={notUnderEditing}>
             <ThemedText style={styles.username}>{user?.username}</ThemedText>
           </OpacityPressable>
-          {isEditing ? (
+          {commentIsUnderEditing ? (
             <View style={styles.commentAndButton}>
               <BottomSheetTextInput
                 ref={inputRef}
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     gap: 10,
     alignItems: 'center',
   },
-  dimmed: {
+  blurred: {
     opacity: 0.1,
   },
   elevated: {
