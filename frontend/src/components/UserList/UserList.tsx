@@ -10,13 +10,14 @@ import {
   useCreateFollowMutation,
   useDeleteFollowMutation,
 } from '../../redux/api/endpoints/users';
+import {Spinner} from '../Spinner/Spinner';
 import {ThemedText} from '../ui/typography';
 import {UserListItem} from './UserListItem';
 
-import {CustomUser, ProfileFollowerType} from '../../types/types';
+import {LikeOwner, ProfileFollowerType} from '../../types/types';
 
 type UserListType = {
-  data: CustomUser[] | ProfileFollowerType[];
+  data: LikeOwner[] | ProfileFollowerType[];
   onItemPress?: () => void;
   onModal?: boolean;
   currentProfileUserName?: string;
@@ -136,7 +137,11 @@ export const UserList = ({
   return (
     <FlatListComponent
       ListEmptyComponent={
-        <ThemedText style={styles.listEmptyText}>No users found</ThemedText>
+        data.length === 0 ? (
+          <Spinner size={'small'} />
+        ) : (
+          <ThemedText style={styles.listEmptyText}>No users found</ThemedText>
+        )
       }
       ListHeaderComponent={renderListHeader}
       data={filteredList ?? []}

@@ -55,7 +55,6 @@ export const CommentModal = ({
       {...props}
       ref={commentSheetRef}
       enablePanDownToClose
-      index={0}
       backgroundStyle={{backgroundColor: colors.card}}
       handleIndicatorStyle={{backgroundColor: colors.border}}
       topInset={insets.top}

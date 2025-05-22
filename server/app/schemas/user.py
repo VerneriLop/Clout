@@ -73,3 +73,20 @@ class UserInfoBasic(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ProfileFollowerUser(BaseModel):
+    id: uuid.UUID
+    username: str
+    first_name: str
+    last_name: str
+    profile_picture_url: str | None
+    is_followed_by_current_user: bool | None = None
+
+    class Config:
+        from_attributes = True
+
+
+class ProfileFollowerUsers(BaseModel):
+    data: list[ProfileFollowerUser]
+    count: int

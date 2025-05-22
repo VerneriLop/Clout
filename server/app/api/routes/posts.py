@@ -330,11 +330,26 @@ def read_post_likes(
         base_filter = and_(base_filter, Like.created_at < last_like_created_at)
 
     statement = (
-        select(Like).where(base_filter).options(selectinload(Like.owner)).limit(limit)
+        select(Like)
+        .where(Like.owner_id != current_user.id)
+        .where(base_filter)
+        .order_by(Like.created_at.desc())
+        .options(selectinload(Like.owner))
+        .limit(limit)
     )
 
-    statement = statement.order_by(Like.created_at.desc())
     likes = session.scalars(statement).all()
+
+    if not last_like_created_at:
+        current_user_like = session.scalar(
+            select(Like)
+            .where(Like.post_id == post.id)
+            .where(Like.owner_id == current_user.id)
+            .options(selectinload(Like.owner))
+        )
+        if current_user_like:
+            likes.insert(0, current_user_like)
+            likes.pop(-1)
 
     current_user_following_ids = {f.user_id2 for f in current_user.following}
 

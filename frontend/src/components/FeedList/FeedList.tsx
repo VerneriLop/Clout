@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {Dimensions, FlatList, View} from 'react-native';
+import {Dimensions, FlatList} from 'react-native';
 
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
@@ -14,7 +14,6 @@ import {
   useGetLikesQuery,
   useGetPostCommentsQuery,
 } from '../../redux/api/endpoints/posts';
-import {Spinner} from '../Spinner/Spinner';
 import {CommentModal} from './CommentModal';
 import {FeedPost} from './FeedPost';
 
@@ -30,6 +29,9 @@ export const FeedList = ({
   initalScrollIndex,
 }: FeedListProps): JSX.Element => {
   const [selectedPost, setSelectedPost] = useState<PostType | null>(null);
+  const [modalToRender, setModalToRender] = useState<
+    'likes' | 'comments' | null
+  >(null);
   const likeSheetRef = useRef<BottomSheetModal>(null);
   const commentSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['50%', '90%'], []);
@@ -41,22 +43,43 @@ export const FeedList = ({
 
   //const {data: posts = {data: [], count: 0}} = useGetFeedPostsQuery({});
 
-  const {data: likes = {data: [], count: 0}, isLoading: isLikesLoading} =
-    useGetLikesQuery(selectedPost ? {post_id: selectedPost.id} : skipToken);
-  const likedUsers = likes.data.map(like => like.owner);
+  const shouldRenderLikesModal = modalToRender === 'likes';
+  const shouldRenderCommentsModal = modalToRender === 'comments';
 
-  const {data: comments = {data: [], count: 0}, isLoading: isCommentsLoading} =
-    useGetPostCommentsQuery(
-      selectedPost ? {post_id: selectedPost.id} : skipToken,
-    );
+  const {data: likes = {data: [], count: 0}, isFetching} = useGetLikesQuery(
+    selectedPost && shouldRenderLikesModal
+      ? {post_id: selectedPost.id}
+      : skipToken,
+  );
+
+  const likedUsers =
+    selectedPost && likes.data && !isFetching
+      ? likes.data.map(like => like.owner)
+      : [];
+
+  const {
+    data: comments = {data: [], count: 0},
+    isFetching: isFetchingComments,
+  } = useGetPostCommentsQuery(
+    selectedPost && shouldRenderCommentsModal
+      ? {post_id: selectedPost.id}
+      : skipToken,
+  );
+  const commentList = !isFetchingComments ? comments.data : [];
+
+  console.log(`Liked users: ${likedUsers} \n selected post: ${selectedPost}`);
+
+  //console.log(`Liked users: ${likedUsers}`);
 
   const handleShowLikes = (post: PostType) => {
     setSelectedPost(post);
+    setModalToRender('likes');
     likeSheetRef.current?.present();
   };
 
   const handleShowComments = (post: PostType) => {
     setSelectedPost(post);
+    setModalToRender('comments');
     commentSheetRef.current?.present();
   };
 
@@ -91,7 +114,7 @@ export const FeedList = ({
         snapPoints={snapPoints}
         enablePanDownToClose
         onDismiss={() => setSelectedPost(null)}
-        index={0}
+        index={1}
         backgroundStyle={{backgroundColor: colors.card}}
         handleIndicatorStyle={{backgroundColor: colors.border}}
         topInset={insets.top}
@@ -104,11 +127,12 @@ export const FeedList = ({
       </BottomSheetModal>
 
       <CommentModal
-        comments={comments.data}
+        comments={commentList}
         commentSheetRef={commentSheetRef}
         snapPoints={snapPoints}
         onDismiss={() => setSelectedPost(null)}
         selectedPost={selectedPost || ({} as PostType)}
+        index={1}
       />
     </ThemedSafeAreaView>
   );
