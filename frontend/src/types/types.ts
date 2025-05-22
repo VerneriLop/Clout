@@ -1,6 +1,15 @@
+export type LikeOwner = {
+  id: string;
+  username: string;
+  first_name: string;
+  last_name: string;
+  profile_picture_url: string;
+  is_followed_by_current_user: boolean;
+};
+
 export type LikeType = {
   id: string;
-  owner: CustomUser;
+  owner: LikeOwner;
   image_id: string;
   created_at: string;
 };
@@ -16,6 +25,7 @@ export type CustomUser = {
   num_following: number;
   profile_picture_url: string;
   num_posts: number;
+  is_followed_by_current_user?: boolean;
 };
 
 export type PostType = {
@@ -119,8 +129,6 @@ export type ProfileFollowerType = {
   username: string;
   first_name: string;
   last_name: string;
-  email: string;
-  bio: string;
   profile_picture_url: string;
   is_followed_by_current_user: boolean;
 };

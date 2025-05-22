@@ -1,7 +1,13 @@
 from fastapi import APIRouter, HTTPException, Query
 from app.api.deps import SessionDep, CurrentUser
 from app.models import User
-from app.schemas.user import UserPublic, UserPublicProfile, UsersPublic
+from app.schemas.user import (
+    ProfileFollowerUser,
+    ProfileFollowerUsers,
+    UserPublic,
+    UserPublicProfile,
+    UsersPublic,
+)
 from app.services import user_crud as crud
 from app.services import post_crud
 from app.services import follower_crud
@@ -68,14 +74,14 @@ def get_user_posts(
     return ProfilePostsPublic(data=posts, count=count)
 
 
-@router.get("/{username}/followers", response_model=UsersPublic)
+@router.get("/{username}/followers", response_model=ProfileFollowerUsers)
 def get_user_followers(
     username: str,
     session: SessionDep,
     current_user: CurrentUser,
     skip: int = Query(0, ge=0),
     limit: int = Query(15, ge=1, le=100),
-) -> UsersPublic:
+) -> ProfileFollowerUsers:
     """
     Get followers for user by username
     """
@@ -90,12 +96,11 @@ def get_user_followers(
     current_user_following_ids = {f.user_id2 for f in current_user.following}
 
     response_users = [
-        UserPublic(
+        ProfileFollowerUser(
             id=u.id,
             username=u.username,
             first_name=u.first_name,
             last_name=u.last_name,
-            email=u.email,
             profile_picture_url=u.profile_picture_url,
             is_followed_by_current_user=u.id in current_user_following_ids,
         )
@@ -103,17 +108,17 @@ def get_user_followers(
     ]
 
     count = len(followers)
-    return UsersPublic(data=response_users, count=count)
+    return ProfileFollowerUsers(data=response_users, count=count)
 
 
-@router.get("/{username}/following", response_model=UsersPublic)
+@router.get("/{username}/following", response_model=ProfileFollowerUsers)
 def get_user_following(
     username: str,
     session: SessionDep,
     current_user: CurrentUser,
     skip: int = Query(0, ge=0),
     limit: int = Query(15, ge=1, le=100),
-) -> UsersPublic:
+) -> ProfileFollowerUsers:
     """
     Get users that this user is following
     """
@@ -128,12 +133,11 @@ def get_user_following(
     current_user_following_ids = {f.user_id2 for f in current_user.following}
 
     response_users = [
-        UserPublic(
+        ProfileFollowerUser(
             id=u.id,
             username=u.username,
             first_name=u.first_name,
             last_name=u.last_name,
-            email=u.email,
             profile_picture_url=u.profile_picture_url,
             is_followed_by_current_user=u.id in current_user_following_ids,
         )
@@ -141,4 +145,4 @@ def get_user_following(
     ]
 
     count = len(following_users)
-    return UsersPublic(data=response_users, count=count)
+    return ProfileFollowerUsers(data=response_users, count=count)

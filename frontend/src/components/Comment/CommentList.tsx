@@ -3,6 +3,7 @@ import {StyleSheet, View} from 'react-native';
 
 import {BottomSheetFlatList} from '@gorhom/bottom-sheet';
 
+import {Spinner} from '../Spinner/Spinner';
 import {ThemedText} from '../ui/typography';
 import {CommentListItem} from './CommentListItem';
 
@@ -44,11 +45,15 @@ export const CommentList = ({
     <View style={styles.container}>
       <BottomSheetFlatList
         ListEmptyComponent={
-          <View style={styles.noComments}>
-            <ThemedText style={styles.listEmptyText}>
-              No comments found
-            </ThemedText>
-          </View>
+          data.length === 0 ? (
+            <Spinner size={'small'} style={styles.spinnerPadding} />
+          ) : (
+            <View style={styles.noComments}>
+              <ThemedText style={styles.listEmptyText}>
+                No comments found
+              </ThemedText>
+            </View>
+          )
         }
         data={data}
         keyExtractor={item => String(item.id)}
@@ -73,5 +78,8 @@ const styles = StyleSheet.create({
   noComments: {
     alignItems: 'center',
     paddingTop: 40,
+  },
+  spinnerPadding: {
+    padding: 10,
   },
 });
