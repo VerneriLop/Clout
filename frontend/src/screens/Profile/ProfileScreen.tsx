@@ -6,11 +6,9 @@ import globalStyle from '../../assets/styles/globalStyle';
 import {Spinner} from '../../components/Spinner/Spinner';
 import {ThemedView} from '../../components/ui/themed-view';
 import {ThemedText} from '../../components/ui/typography';
+import {useProfilePosts} from '../../hooks/useProfilePosts';
 import {ProfileStackParamList} from '../../navigation/Routes';
-import {
-  useGetProfileByUserNameQuery,
-  useGetProfilePostsByUserNameQuery,
-} from '../../redux/api/endpoints/profiles';
+import {useGetProfileByUserNameQuery} from '../../redux/api/endpoints/profiles';
 import {ImageList} from './components/ImageList';
 
 type ProfileProps = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
@@ -19,17 +17,21 @@ export const ProfileScreen = ({route}: ProfileProps): JSX.Element => {
   const {username} = route.params;
 
   const {
-    data: postData = {data: [], count: 0},
-    isLoading: isPostsLoading,
-    //isSuccess: isPostsSuccess,
+    posts,
+    onRefresh,
+    isFetching: isPostsFetching,
+    handleEndReached,
     isError: isPostsError,
     error: postsError,
-  } = useGetProfilePostsByUserNameQuery(username);
+    refreshing,
+    isLoading: isPostsLoading,
+  } = useProfilePosts(username);
+
+  console.log({isPostsLoading, postsLength: posts.length});
 
   const {
     data: profileUser = null,
     isLoading: isUserLoading,
-    //isSuccess: isUserSuccess,
     isError: isUserError,
     error: userError,
   } = useGetProfileByUserNameQuery(username);
@@ -48,18 +50,20 @@ export const ProfileScreen = ({route}: ProfileProps): JSX.Element => {
   }
 
   if (isPostsError) {
-    if (isPostsError) {
-      console.error('Error fetching posts:', postsError);
-    }
+    console.error('Error fetching posts:', postsError);
   }
 
   return (
     <ThemedView style={[globalStyle.flex]}>
       <ImageList
-        postData={postData}
+        posts={posts}
         profileUser={profileUser}
+        isFetchingPosts={isPostsFetching}
         isLoadingPosts={isPostsLoading}
         isErrorPosts={isPostsError}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        handleEndReached={handleEndReached}
       />
     </ThemedView>
   );

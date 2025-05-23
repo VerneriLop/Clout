@@ -1,36 +1,51 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {StackScreenProps} from '@react-navigation/stack';
 
 import {FeedList} from '../../components/FeedList/FeedList';
-import {Spinner} from '../../components/Spinner/Spinner';
+import {useProfilePosts} from '../../hooks/useProfilePosts';
 import {ProfileStackParamList} from '../../navigation/Routes';
-import {useGetProfilePostsByUserNameQuery} from '../../redux/api/endpoints/profiles';
 
 type ImageDetailsProps = StackScreenProps<ProfileStackParamList, 'ProfileFeed'>;
 
 export const ProfileFeedScreen = ({route}: ImageDetailsProps): JSX.Element => {
   const {imageId, username} = route.params || {};
+  const [postIndex, setPostIndex] = useState<number | null>(null);
   const {
-    data: postData = {data: [], count: 0},
-    isLoading: isPostsLoading,
-    isError: isPostsError,
-    error: postsError,
-  } = useGetProfilePostsByUserNameQuery(username);
+    posts,
+    onRefresh,
+    isFetching,
+    refreshing,
+    handleEndReached,
+    isLoading,
+  } = useProfilePosts(username);
 
-  const {data: posts} = postData;
-
-  const postIndex = useMemo(() => {
-    return imageId ? posts.findIndex(image => image.id === imageId) : 0;
+  useEffect(() => {
+    if (imageId && posts.length > 0) {
+      const index = posts.findIndex(post => post.id === imageId);
+      if (index !== -1) {
+        setPostIndex(index);
+      }
+    }
   }, [imageId, posts]);
 
-  if (isPostsLoading) {
-    return <Spinner />;
+  const onRefreshPosts = () => {
+    setPostIndex(0);
+    onRefresh();
+  };
+
+  if (isLoading || (postIndex === null && imageId)) {
+    return <></>;
   }
 
-  if (isPostsError) {
-    console.error('Error fetching data:', postsError);
-  }
-
-  return <FeedList posts={postData} initalScrollIndex={postIndex} />;
+  return (
+    <FeedList
+      posts={posts}
+      initalScrollIndex={postIndex}
+      isFetchingPosts={isFetching}
+      refreshing={refreshing}
+      onRefresh={onRefreshPosts}
+      handleEndReached={handleEndReached}
+    />
+  );
 };

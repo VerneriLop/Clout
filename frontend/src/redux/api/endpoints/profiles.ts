@@ -1,6 +1,7 @@
 import {apiSlice} from '../apiSlice';
 
 import {
+  GetProfilePostRequestType,
   PostTypeWithCount,
   ProfileFollowersType,
   ProfileType,
@@ -14,9 +15,27 @@ export const profileApi = apiSlice.injectEndpoints({
         {type: 'Profile', id: username},
       ],
     }),
-    getProfilePostsByUserName: builder.query<PostTypeWithCount, string>({
-      query: username => `profiles/${username}/posts`,
-      providesTags: (result, error, username) => [
+    getProfilePostsByUserName: builder.query<
+      PostTypeWithCount,
+      GetProfilePostRequestType
+    >({
+      query: ({last_post_created_at, limit, username}) => {
+        const params = new URLSearchParams();
+
+        if (last_post_created_at) {
+          params.append('last_post_created_at', last_post_created_at);
+        }
+
+        if (limit) {
+          params.append('limit', limit.toString());
+        }
+
+        const queryString = params.toString();
+        return queryString
+          ? `profiles/${username}/posts?${queryString}`
+          : `profiles/${username}/posts`;
+      },
+      providesTags: (result, error, {username}) => [
         {type: 'ProfilePosts', id: username},
       ],
     }),

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {FlatList, Pressable, StyleSheet} from 'react-native';
 
 import {useNavigation, useTheme} from '@react-navigation/native';
@@ -13,34 +13,33 @@ import {ProfileStackParamList, Routes} from '../../../navigation/Routes';
 import {imageHeight, style} from '../style';
 import {ProfileInfoCard} from './ProfileInfoCard';
 
-import {PostType, ProfilePostsType, ProfileType} from '../../../types/types';
+import {PostType, ProfileType} from '../../../types/types';
 
 const ITEM_HEIGHT = imageHeight;
 
 type ImageListProps = {
-  postData: ProfilePostsType;
+  posts: PostType[];
   profileUser: ProfileType;
+  isFetchingPosts: boolean;
   isLoadingPosts: boolean;
   isErrorPosts: boolean;
+  refreshing: boolean;
+  onRefresh: () => void;
+  handleEndReached: () => void;
 };
 
 export const ImageList = ({
-  postData,
+  posts,
   profileUser,
+  isFetchingPosts,
   isLoadingPosts,
   isErrorPosts,
+  refreshing,
+  onRefresh,
+  handleEndReached,
 }: ImageListProps): JSX.Element => {
-  const [refreshing, setRefreshing] = useState(false);
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
-  const {data: posts, count} = postData;
-
-  const onRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
-  };
 
   const handlePress = (item: PostType) => {
     navigation.navigate(Routes.ProfileFeed, {
@@ -55,7 +54,7 @@ export const ImageList = ({
 
   const renderListEmptyComponent = () => {
     if (isLoadingPosts) {
-      return <Spinner />;
+      return <Spinner size={'small'} />;
     }
     if (isErrorPosts) {
       return (
@@ -70,9 +69,7 @@ export const ImageList = ({
   return (
     <FlatList
       ListHeaderComponent={
-        profileUser && (
-          <ProfileInfoCard profileUser={profileUser} num_posts={count} />
-        )
+        profileUser && <ProfileInfoCard profileUser={profileUser} />
       }
       ListEmptyComponent={renderListEmptyComponent()}
       getItemLayout={(_data, index) => ({
@@ -80,12 +77,15 @@ export const ImageList = ({
         offset: ITEM_HEIGHT * index,
         index,
       })}
-      data={isLoadingPosts ? [] : posts}
+      data={posts}
       renderItem={renderItem}
       keyExtractor={item => String(item.id)}
       numColumns={3}
+      onEndReachedThreshold={0}
+      onEndReached={() => handleEndReached()}
+      ListFooterComponent={isFetchingPosts ? <Spinner size={'small'} /> : null}
       refreshing={refreshing}
-      onRefresh={onRefresh}
+      onRefresh={() => onRefresh()}
     />
   );
 };

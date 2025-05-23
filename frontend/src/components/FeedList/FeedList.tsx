@@ -23,7 +23,7 @@ import {PostType} from '../../types/types';
 
 type FeedListProps = {
   posts: PostType[];
-  initalScrollIndex?: number;
+  initalScrollIndex?: number | null;
   handleEndReached: () => void;
   isFetchingPosts: boolean;
   refreshing: boolean;
