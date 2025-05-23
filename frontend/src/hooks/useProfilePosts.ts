@@ -5,7 +5,7 @@ import {useGetProfilePostsByUserNameQuery} from '../redux/api/endpoints/profiles
 
 import {PostType} from '../types/types';
 
-export const useProfilePosts = (username: string) => {
+export const useProfilePosts = (username: string, limit: number = 18) => {
   const [allPosts, setAllPosts] = useState<PostType[]>([]);
   const [lastPostDate, setLastPostDate] = useState<string>('');
   const [hasMore, setHasMore] = useState(true);
@@ -20,21 +20,21 @@ export const useProfilePosts = (username: string) => {
   } = useGetProfilePostsByUserNameQuery({
     username: username,
     last_post_created_at: lastPostDate,
-    limit: 5,
+    limit: limit,
   });
 
   useEffect(() => {
     if (!refreshing) {
       if (posts.count) {
         setAllPosts(prev => [...prev, ...posts.data]);
-        setHasMore(posts.count === 5);
+        setHasMore(posts.count === limit);
       } else {
         setHasMore(false);
       }
     } else {
       setRefreshing(false);
     }
-  }, [posts.count, posts.data, refreshing]);
+  }, [limit, posts.count, posts.data, refreshing]);
 
   const handleEndReached = () => {
     if (!isFetching && hasMore) {

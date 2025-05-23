@@ -1,21 +1,19 @@
 import React from 'react';
-import {FlatList, Pressable, StyleSheet} from 'react-native';
+import {Pressable, StyleSheet} from 'react-native';
 
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {FlashList} from '@shopify/flash-list';
 import FastImage, {FastImageProps} from 'react-native-fast-image';
 
-import {scaleFontSize, verticalScale} from '../../../assets/styles/scaling';
 import {Spinner} from '../../../components/Spinner/Spinner';
 import {ThemedView} from '../../../components/ui/themed-view';
 import {ThemedText} from '../../../components/ui/typography';
 import {ProfileStackParamList, Routes} from '../../../navigation/Routes';
-import {imageHeight, style} from '../style';
+import {style} from '../style';
 import {ProfileInfoCard} from './ProfileInfoCard';
 
 import {PostType, ProfileType} from '../../../types/types';
-
-const ITEM_HEIGHT = imageHeight;
 
 type ImageListProps = {
   posts: PostType[];
@@ -67,21 +65,16 @@ export const ImageList = ({
   };
 
   return (
-    <FlatList
+    <FlashList
       ListHeaderComponent={
         profileUser && <ProfileInfoCard profileUser={profileUser} />
       }
       ListEmptyComponent={renderListEmptyComponent()}
-      getItemLayout={(_data, index) => ({
-        length: ITEM_HEIGHT,
-        offset: ITEM_HEIGHT * index,
-        index,
-      })}
       data={posts}
       renderItem={renderItem}
       keyExtractor={item => String(item.id)}
       numColumns={3}
-      onEndReachedThreshold={0}
+      onEndReachedThreshold={0.3}
       onEndReached={() => handleEndReached()}
       ListFooterComponent={isFetchingPosts ? <Spinner size={'small'} /> : null}
       refreshing={refreshing}
@@ -120,14 +113,6 @@ const ImageListItem = ({
   );
 };
 
-/*
-const ListFooter = ({numPosts}: {numPosts: number}): JSX.Element => (
-  <View>
-    <Text style={style.boxText}>{`${numPosts} images`}</Text>
-  </View>
-);
-*/
-
 export const ListPlaceholder = () => (
   <ThemedView style={placeholderStyle.container}>
     <ThemedText style={placeholderStyle.text}>No posts yet</ThemedText>
@@ -138,16 +123,16 @@ const placeholderStyle = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    marginVertical: verticalScale(100),
+    marginVertical: 100,
   },
   text: {
-    fontSize: scaleFontSize(28),
+    fontSize: 28,
     fontWeight: 'bold',
   },
   icon: {
-    height: verticalScale(100),
-    width: verticalScale(100),
-    borderRadius: verticalScale(100),
+    height: 100,
+    width: 100,
+    borderRadius: 100,
     borderWidth: StyleSheet.hairlineWidth * 5,
     alignItems: 'center',
   },

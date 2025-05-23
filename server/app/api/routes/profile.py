@@ -26,7 +26,7 @@ router = APIRouter(prefix="/profiles", tags=["profiles"])
 @router.get("/{username}", response_model=UserPublicProfile)
 def get_public_profile(
     username: str, current_user: CurrentUser, session: SessionDep
-) -> User:
+) -> UserPublicProfile:
     """
     Get profile by username
     """
@@ -47,6 +47,7 @@ def get_public_profile(
             "num_followers": follower_count,
             "num_following": following_count,
             "is_followed_by_current_user": user.id in current_user_following_ids,
+            "num_posts": len(user.posts),
         }
     )
 
