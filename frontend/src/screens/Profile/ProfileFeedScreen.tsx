@@ -8,7 +8,7 @@ import {ProfileStackParamList} from '../../navigation/Routes';
 
 type ImageDetailsProps = StackScreenProps<ProfileStackParamList, 'ProfileFeed'>;
 
-export const ProfileFeedScreen = ({route}: ImageDetailsProps): JSX.Element => {
+export const ProfileFeedScreen = ({route}: ImageDetailsProps) => {
   const {imageId, username} = route.params || {};
   const [postIndex, setPostIndex] = useState<number | null>(null);
   const {

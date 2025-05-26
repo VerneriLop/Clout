@@ -5,7 +5,7 @@ import {useGetFeedPostsQuery} from '../../redux/api/endpoints/posts';
 
 import {PostType} from '../../types/types';
 
-export const FeedScreen = (): JSX.Element => {
+export const FeedScreen = () => {
   const [feedPosts, setFeedPosts] = useState<PostType[]>([]);
   const [lastPostDate, setLastPostDate] = useState<string>('');
   const [hasMore, setHasMore] = useState(true);
