@@ -109,7 +109,9 @@ const ImageListItem = ({image, onPress, imageStyle}: ImageBoxProps) => {
         style={({pressed}) => [{opacity: pressed ? 0.5 : 1}]}
         onPress={onPress}>
         <Image
-          source={{uri: image.image_url}}
+          source={{
+            uri: image.thumbnail_url ? image.thumbnail_url : image.image_url,
+          }}
           resizeMode="cover"
           style={[
             imageStyle ? imageStyle : style.imageBox,
