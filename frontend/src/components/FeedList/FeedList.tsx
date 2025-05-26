@@ -39,13 +39,13 @@ export const FeedList = ({
   refreshing,
   hasNextPage,
   onRefresh,
-}: FeedListProps): JSX.Element => {
+}: FeedListProps) => {
   const [selectedPost, setSelectedPost] = useState<PostType | null>(null);
   const [modalToRender, setModalToRender] = useState<
     'likes' | 'comments' | null
   >(null);
   const likeSheetRef = useRef<BottomSheetModal>(null);
-  const commentSheetRef = useRef<BottomSheetModal>(null);
+  const commentSheetRef = useRef<BottomSheetModal | null>(null);
   const snapPoints = useMemo(() => ['50%', '90%'], []);
   const {colors} = useTheme();
   const insets = useSafeAreaInsets();
@@ -104,6 +104,8 @@ export const FeedList = ({
   const ThemeViewComponent =
     route.name === Routes.ProfileFeed ? ThemedView : ThemedSafeAreaView;
 
+  console.log('Refreshing', refreshing);
+
   return (
     <ThemeViewComponent style={[globalStyle.flex]}>
       <FlashList
@@ -120,6 +122,7 @@ export const FeedList = ({
         refreshing={refreshing}
         estimatedItemSize={726}
         onRefresh={() => onRefresh()}
+        key={refreshing ? 'refreshing' : 'stable'}
         estimatedFirstItemOffset={0}
       />
 

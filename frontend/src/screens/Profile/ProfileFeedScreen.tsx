@@ -8,7 +8,7 @@ import {useGetProfilePostsInfiniteQuery} from '../../redux/api/endpoints/profile
 
 type ImageDetailsProps = StackScreenProps<ProfileStackParamList, 'ProfileFeed'>;
 
-export const ProfileFeedScreen = ({route}: ImageDetailsProps): JSX.Element => {
+export const ProfileFeedScreen = ({route}: ImageDetailsProps) => {
   const {imageId, username} = route.params || {};
   console.log(route.key);
 

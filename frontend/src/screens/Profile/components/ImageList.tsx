@@ -1,10 +1,9 @@
 import React from 'react';
-import {Pressable, StyleSheet} from 'react-native';
+import {Image, ImageProps, Pressable, StyleSheet} from 'react-native';
 
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {FlashList} from '@shopify/flash-list';
-import FastImage, {FastImageProps} from 'react-native-fast-image';
 
 import {Spinner} from '../../../components/Spinner/Spinner';
 import {ThemedView} from '../../../components/ui/themed-view';
@@ -37,7 +36,7 @@ export const ImageList = ({
   hasNextPage,
   onRefresh,
   handleEndReached,
-}: ImageListProps): JSX.Element => {
+}: ImageListProps) => {
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
 
@@ -82,6 +81,7 @@ export const ImageList = ({
       refreshing={refreshing}
       onRefresh={() => onRefresh()}
       estimatedItemSize={194}
+      key={refreshing ? 'refreshing' : 'stable'}
     />
   );
 };
@@ -89,21 +89,17 @@ export const ImageList = ({
 type ImageBoxProps = {
   image: PostType;
   onPress: () => void;
-  imageStyle?: FastImageProps['style'];
+  imageStyle?: ImageProps['style'];
 };
 
-const ImageListItem = ({
-  image,
-  onPress,
-  imageStyle,
-}: ImageBoxProps): JSX.Element => {
+const ImageListItem = ({image, onPress, imageStyle}: ImageBoxProps) => {
   const {colors} = useTheme();
   return (
     <>
       <Pressable
         style={({pressed}) => [{opacity: pressed ? 0.5 : 1}]}
         onPress={onPress}>
-        <FastImage
+        <Image
           source={{uri: image.image_url}}
           resizeMode="cover"
           style={[
