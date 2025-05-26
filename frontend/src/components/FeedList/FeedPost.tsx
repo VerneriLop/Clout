@@ -34,7 +34,7 @@ export const FeedPost = ({post, onShowLikes, onShowComments}: Props) => {
 
 const {width} = Dimensions.get('window');
 const IMAGE_WIDTH = Math.floor(width);
-const IMAGE_HEIGHT = Math.floor((IMAGE_WIDTH / 3) * 4);
+export const IMAGE_HEIGHT = Math.floor((IMAGE_WIDTH / 3) * 4);
 
 const style = StyleSheet.create({
   image: {

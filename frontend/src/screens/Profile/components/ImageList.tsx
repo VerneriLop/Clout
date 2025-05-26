@@ -1,5 +1,11 @@
 import React from 'react';
-import {Image, ImageProps, Pressable, StyleSheet} from 'react-native';
+import {
+  Dimensions,
+  Image,
+  ImageProps,
+  Pressable,
+  StyleSheet,
+} from 'react-native';
 
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -9,7 +15,6 @@ import {Spinner} from '../../../components/Spinner/Spinner';
 import {ThemedView} from '../../../components/ui/themed-view';
 import {ThemedText} from '../../../components/ui/typography';
 import {ProfileStackParamList, Routes} from '../../../navigation/Routes';
-import {style} from '../style';
 import {ProfileInfoCard} from './ProfileInfoCard';
 
 import {PostType, ProfileType} from '../../../types/types';
@@ -25,6 +30,10 @@ type ImageListProps = {
   onRefresh: () => void;
   handleEndReached: () => void;
 };
+
+const {width} = Dimensions.get('window');
+export const imageWidth = Math.ceil(width / 3);
+export const imageHeight = imageWidth * (4 / 3);
 
 export const ImageList = ({
   posts,
@@ -57,13 +66,13 @@ export const ImageList = ({
     }
     if (isErrorPosts) {
       return (
-        <ThemedText style={placeholderStyle.container}>
-          Error loading posts.
-        </ThemedText>
+        <ThemedText style={style.container}>Error loading posts.</ThemedText>
       );
     }
     return <ListPlaceholder />;
   };
+
+  const itemSize = imageHeight + StyleSheet.hairlineWidth * 2;
 
   return (
     <FlashList
@@ -80,7 +89,7 @@ export const ImageList = ({
       ListFooterComponent={isFetchingPosts ? <Spinner size={'small'} /> : null}
       refreshing={refreshing}
       onRefresh={() => onRefresh()}
-      estimatedItemSize={194}
+      estimatedItemSize={itemSize}
       key={refreshing ? 'refreshing' : 'stable'}
     />
   );
@@ -113,12 +122,12 @@ const ImageListItem = ({image, onPress, imageStyle}: ImageBoxProps) => {
 };
 
 export const ListPlaceholder = () => (
-  <ThemedView style={placeholderStyle.container}>
-    <ThemedText style={placeholderStyle.text}>No posts yet</ThemedText>
+  <ThemedView style={style.container}>
+    <ThemedText style={style.text}>No posts yet</ThemedText>
   </ThemedView>
 );
 
-const placeholderStyle = StyleSheet.create({
+const style = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
@@ -134,5 +143,11 @@ const placeholderStyle = StyleSheet.create({
     borderRadius: 100,
     borderWidth: StyleSheet.hairlineWidth * 5,
     alignItems: 'center',
+  },
+  imageBox: {
+    width: imageWidth,
+    height: imageHeight,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'white',
   },
 });

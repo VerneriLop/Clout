@@ -17,7 +17,7 @@ import {
 } from '../../redux/api/endpoints/posts';
 import {Spinner} from '../Spinner/Spinner';
 import {CommentModal} from './CommentModal';
-import {FeedPost} from './FeedPost';
+import {FeedPost, IMAGE_HEIGHT} from './FeedPost';
 
 import {PostType} from '../../types/types';
 
@@ -101,10 +101,10 @@ export const FeedList = ({
     [],
   );
 
+  const itemSize = 60 + IMAGE_HEIGHT + 100; //topbar + image + bottombar
+
   const ThemeViewComponent =
     route.name === Routes.ProfileFeed ? ThemedView : ThemedSafeAreaView;
-
-  console.log('Refreshing', refreshing);
 
   return (
     <ThemeViewComponent style={[globalStyle.flex]}>
@@ -120,7 +120,7 @@ export const FeedList = ({
           isFetchingPosts ? <Spinner size={'small'} /> : null
         }
         refreshing={refreshing}
-        estimatedItemSize={726}
+        estimatedItemSize={itemSize}
         onRefresh={() => onRefresh()}
         key={refreshing ? 'refreshing' : 'stable'}
         estimatedFirstItemOffset={0}

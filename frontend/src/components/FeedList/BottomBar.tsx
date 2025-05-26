@@ -26,11 +26,7 @@ type Props = {
   onShowComments: (post: PostType) => void;
 };
 
-export const BottomBar = ({
-  post,
-  onShowLikes,
-  onShowComments,
-}: Props): JSX.Element => {
+export const BottomBar = ({post, onShowLikes, onShowComments}: Props) => {
   const [expanded, setExpanded] = useState(false);
   const [isLiked, setIsLiked] = useState(post.is_liked_by_current_user);
   const [likeCount, setLikeCount] = useState(post.num_likes);
@@ -71,7 +67,7 @@ export const BottomBar = ({
   const openCommentSection = () => onShowComments(post);
 
   return (
-    <ThemedView style={[globalStyle.flex, styles.container]}>
+    <ThemedView style={styles.container}>
       <View style={styles.likeCommentDateContainer}>
         <View style={styles.likeCommentContainer}>
           <View style={styles.iconAndNumber}>
@@ -108,7 +104,7 @@ export const BottomBar = ({
       </View>
 
       {caption && (
-        <View style={styles.caption}>
+        <View>
           <Pressable
             onPress={() => !expanded && hasOverflowed && setExpanded(true)}>
             <ThemedText
@@ -137,13 +133,14 @@ export const BottomBar = ({
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'space-between',
     flexDirection: 'column',
     marginLeft: 10,
     gap: 8,
     paddingVertical: 3,
+    flex: 1,
+    minHeight: 100,
   },
-  caption: {minHeight: 65},
+  //caption: {minHeight: 65},
   likeCommentContainer: {
     flexDirection: 'row',
     gap: 15,
