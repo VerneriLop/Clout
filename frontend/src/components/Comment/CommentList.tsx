@@ -25,7 +25,7 @@ export const CommentList = ({
   onStartEdit,
   onStopEdit,
   editingActive,
-}: CommentListType): JSX.Element => {
+}: CommentListType) => {
   const renderItem = useCallback(
     ({item}: {item: CommentType}) => (
       <CommentListItem

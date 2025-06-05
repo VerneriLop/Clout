@@ -14,7 +14,7 @@ import {ThemedSafeAreaView, ThemedView} from '../../components/ui/themed-view';
 import {Routes} from '../../navigation/Routes';
 import {
   useGetLikesQuery,
-  useGetPostCommentsQuery,
+  useGetPostCommentsInfiniteQuery,
 } from '../../redux/api/endpoints/posts';
 import {Spinner} from '../Spinner/Spinner';
 import {Title1Text} from '../ui/typography';
@@ -75,15 +75,26 @@ export const FeedList = ({
       ? likes.data.map(like => like.owner)
       : [];
 
+  //TODO: move this to commentlist while refactoring to use customhook instead of using usestate for selected post and prop drilling.
   const {
-    data: comments = {data: [], count: 0},
+    data: comments,
     isFetching: isFetchingComments,
-  } = useGetPostCommentsQuery(
-    selectedPost && shouldRenderCommentsModal
-      ? {post_id: selectedPost.id}
-      : skipToken,
+    isLoading: isLoadingComments,
+    isError: isPostsError,
+    hasNextPage: hasNextCommentPage,
+    fetchNextPage: fetchNextCommentPage,
+    isFetchingNextPage: isFetchingNextCommentPage,
+    refetch: refetchComments,
+  } = useGetPostCommentsInfiniteQuery(
+    selectedPost && shouldRenderCommentsModal ? selectedPost.id : skipToken,
   );
-  const commentList = !isFetchingComments ? comments.data : [];
+
+  const commentList = React.useMemo(
+    () => comments?.pages?.flatMap(page => page.data) || [],
+    [comments],
+  );
+
+  console.log('Comments', comments);
 
   const handleShowLikes = (post: PostType) => {
     setSelectedPost(post);
@@ -139,7 +150,7 @@ export const FeedList = ({
         onRefresh={() => onRefresh()}
         key={refreshing ? 'refreshing' : 'stable'}
         estimatedFirstItemOffset={0}
-        ListEmptyComponent={EmptyList()}
+        ListEmptyComponent={!refreshing ? EmptyList() : null}
       />
 
       <BottomSheetModal
