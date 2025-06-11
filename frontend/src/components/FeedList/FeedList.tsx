@@ -76,27 +76,6 @@ export const FeedList = ({
       ? likes.data.map(like => like.owner)
       : [];
 
-  //TODO: move this to commentlist while refactoring to use customhook instead of using usestate for selected post and prop drilling.
-  const {
-    data: comments,
-    isFetching: isFetchingComments,
-    isLoading: isLoadingComments,
-    isError: isPostsError,
-    hasNextPage: hasNextCommentPage,
-    fetchNextPage: fetchNextCommentPage,
-    isFetchingNextPage: isFetchingNextCommentPage,
-    refetch: refetchComments,
-  } = useGetPostCommentsInfiniteQuery(
-    selectedPost && shouldRenderCommentsModal ? selectedPost.id : skipToken,
-  );
-
-  const commentList = React.useMemo(
-    () => comments?.pages?.flatMap(page => page.data) || [],
-    [comments],
-  );
-
-  console.log('Comments', comments);
-
   const handleShowLikes = (post: PostType) => {
     setSelectedPost(post);
     setModalToRender('likes');
@@ -119,6 +98,8 @@ export const FeedList = ({
     ),
     [],
   );
+
+  console.log('feedlistan selected post', selectedPost);
 
   const itemSize = 60 + IMAGE_HEIGHT + 100; //topbar + image + bottombar
 
@@ -174,7 +155,6 @@ export const FeedList = ({
       </BottomSheetModal>
 
       <CommentModal
-        comments={commentList}
         commentSheetRef={commentSheetRef}
         snapPoints={snapPoints}
         onDismiss={() => setSelectedPost(null)}

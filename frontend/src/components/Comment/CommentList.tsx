@@ -13,7 +13,6 @@ import {CommentListItem} from './CommentListItem';
 import {CommentType} from '../../types/types';
 
 type CommentListType = {
-  data: CommentType[];
   onItemPress?: () => void;
   editingCommentId?: string | null;
   onStartEdit?: (id: string) => void;
@@ -22,7 +21,6 @@ type CommentListType = {
 };
 
 export const CommentList = ({
-  //data,
   onItemPress,
   editingCommentId,
   onStartEdit,
@@ -31,8 +29,10 @@ export const CommentList = ({
 }: CommentListType) => {
   const {selectedPost} = useSelectedFeedPost();
 
+  console.log('comment list Selected postiii', selectedPost);
+
   const {
-    data,
+    data: comments,
     isFetching: isFetchingComments,
     isLoading: isLoadingComments,
     isError: isPostsError,
@@ -43,6 +43,15 @@ export const CommentList = ({
   } = useGetPostCommentsInfiniteQuery(
     selectedPost ? selectedPost.id : skipToken,
   );
+
+  const data = React.useMemo(
+    () => comments?.pages?.flatMap(page => page.data) || [],
+    [comments],
+  );
+
+  console.log('commentlist comments', comments);
+
+  console.log('commentlist data', data);
 
   const renderItem = useCallback(
     ({item}: {item: CommentType}) => (
@@ -76,6 +85,10 @@ export const CommentList = ({
         data={data}
         keyExtractor={item => String(item.id)}
         renderItem={renderItem}
+        onEndReached={
+          hasNextCommentPage ? () => fetchNextCommentPage() : undefined
+        }
+        onEndReachedThreshold={0.5}
       />
     </View>
   );

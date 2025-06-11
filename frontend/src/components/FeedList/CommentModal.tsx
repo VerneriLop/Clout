@@ -19,14 +19,10 @@ import {CommentInputFooter} from './CommentInputFooter';
 import {CommentType, PostType} from '../../types/types';
 
 export const CommentModal = ({
-  comments,
   commentSheetRef,
-  //selectedPost,
   ...props
 }: {
-  comments: CommentType[];
   commentSheetRef: React.RefObject<BottomSheetModal | null>;
-  //selectedPost: PostType;
 } & Omit<BottomSheetModalProps, 'children'>) => {
   const insets = useSafeAreaInsets();
   const {selectedPost} = useSelectedFeedPost();
@@ -72,7 +68,6 @@ export const CommentModal = ({
           style={styles.touchableWithoutFeedback}
           accessible={false}>
           <CommentList
-            data={comments}
             onItemPress={() => {}}
             editingCommentId={editingCommentId}
             onStartEdit={id => setEditingCommentId(id)}
@@ -82,7 +77,6 @@ export const CommentModal = ({
         </TouchableWithoutFeedback>
       ) : (
         <CommentList
-          data={comments}
           onItemPress={() => {}}
           editingCommentId={editingCommentId}
           onStartEdit={id => setEditingCommentId(id)}

@@ -3,6 +3,7 @@ import logging
 import os
 from pathlib import Path
 import random
+import time
 from uuid import UUID
 
 from sqlalchemy.orm import Session
@@ -151,7 +152,7 @@ def create_mock_follower_relations(session, max_relations_per_user: int = 10):
     logger.info(f"Created {len(followers_to_add)} follower relationships.")
 
 
-def create_mock_comments(session, base_dir, max_comments: int = 5):
+def create_mock_comments(session, base_dir, max_comments: int = 20):
     comments_json_path = base_dir / "comments.json"
     with open(comments_json_path) as f:
         comment_data = json.load(f)
@@ -164,7 +165,7 @@ def create_mock_comments(session, base_dir, max_comments: int = 5):
 
     all_comments_to_add = []
     for post in all_posts:
-        num_comments = random.randint(0, max_comments)
+        num_comments = random.randint(3, max_comments)
         if num_comments == 0:
             continue
 
@@ -182,8 +183,10 @@ def create_mock_comments(session, base_dir, max_comments: int = 5):
         session.commit()
         session.refresh(post)
 
-    session.add_all(all_comments_to_add)
-    session.commit()
+    for comment in all_comments_to_add:
+        session.add(comment)
+        session.commit()
+        time.sleep(0.001)
     logger.info(f"Created {len(all_comments_to_add)} comments.")
 
 
