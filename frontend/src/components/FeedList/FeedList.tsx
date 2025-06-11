@@ -11,6 +11,7 @@ import globalStyle from '../../assets/styles/globalStyle';
 import {Backdrop} from '../../components/Backdrop/Backdrop';
 import {UserList} from '../../components/UserList/UserList';
 import {ThemedSafeAreaView, ThemedView} from '../../components/ui/themed-view';
+import {useSelectedFeedPost} from '../../hooks/useSelectedFeedPost';
 import {Routes} from '../../navigation/Routes';
 import {
   useGetLikesQuery,
@@ -42,7 +43,7 @@ export const FeedList = ({
   hasNextPage,
   onRefresh,
 }: FeedListProps) => {
-  const [selectedPost, setSelectedPost] = useState<PostType | null>(null);
+  const {selectedPost, setSelectedPost} = useSelectedFeedPost(); //useState<PostType | null>(null);
   const [modalToRender, setModalToRender] = useState<
     'likes' | 'comments' | null
   >(null);
@@ -177,7 +178,7 @@ export const FeedList = ({
         commentSheetRef={commentSheetRef}
         snapPoints={snapPoints}
         onDismiss={() => setSelectedPost(null)}
-        selectedPost={selectedPost || ({} as PostType)}
+        //selectedPost={selectedPost || ({} as PostType)}
         index={1}
       />
     </ThemeViewComponent>

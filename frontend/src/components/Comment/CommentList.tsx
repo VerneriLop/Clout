@@ -2,7 +2,10 @@ import React, {useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
 
 import {BottomSheetFlatList} from '@gorhom/bottom-sheet';
+import {skipToken} from '@reduxjs/toolkit/query/react';
 
+import {useSelectedFeedPost} from '../../hooks/useSelectedFeedPost';
+import {useGetPostCommentsInfiniteQuery} from '../../redux/api/endpoints/posts';
 import {Spinner} from '../Spinner/Spinner';
 import {ThemedText} from '../ui/typography';
 import {CommentListItem} from './CommentListItem';
@@ -19,13 +22,28 @@ type CommentListType = {
 };
 
 export const CommentList = ({
-  data,
+  //data,
   onItemPress,
   editingCommentId,
   onStartEdit,
   onStopEdit,
   editingActive,
 }: CommentListType) => {
+  const {selectedPost} = useSelectedFeedPost();
+
+  const {
+    data,
+    isFetching: isFetchingComments,
+    isLoading: isLoadingComments,
+    isError: isPostsError,
+    hasNextPage: hasNextCommentPage,
+    fetchNextPage: fetchNextCommentPage,
+    isFetchingNextPage: isFetchingNextCommentPage,
+    refetch: refetchComments,
+  } = useGetPostCommentsInfiniteQuery(
+    selectedPost ? selectedPost.id : skipToken,
+  );
+
   const renderItem = useCallback(
     ({item}: {item: CommentType}) => (
       <CommentListItem
