@@ -1,13 +1,11 @@
 import json
 import logging
-import os
 from pathlib import Path
 import random
 import time
-from uuid import UUID
 
 from sqlalchemy.orm import Session
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, select
 
 from app.services.user_crud import create_user
 from app.core.config import settings

@@ -128,14 +128,13 @@ export const CommentListItem = ({
   ];
 
   const notUnderEditing = editingActive && !commentIsUnderEditing;
+  const contextMenuList = isOwner
+    ? [{title: 'Edit comment'}, {title: 'Delete comment', destructive: true}]
+    : [{title: 'Report comment'}];
 
   return (
     <ContextMenu
-      actions={[
-        {title: 'Edit comment'},
-        {title: 'Delete comment', destructive: true},
-        {title: 'Report comment'},
-      ]}
+      actions={contextMenuList}
       onPress={(event: NativeSyntheticEvent<ContextMenuOnPressNativeEvent>) =>
         handleMenuPress(event.nativeEvent.name)
       }>

@@ -143,7 +143,7 @@ export const postsApi = apiSlice.injectEndpoints({
           : `posts/${post_id}/comments`;
       },
       infiniteQueryOptions: {
-        initialPageParam: {last_created_at: '', limit: 5},
+        initialPageParam: {last_created_at: '', limit: 20},
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
           if (lastPage.count < lastPageParam.limit) {
             return undefined;
