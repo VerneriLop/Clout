@@ -78,6 +78,7 @@ const fonts = Platform.select({
 export type ExtendedTheme = Theme & {
   colors: Theme['colors'] & {
     highlighted: string;
+    warning: string;
   };
 };
 
@@ -87,6 +88,7 @@ export const MyLightTheme: ExtendedTheme = {
     ...DefaultTheme.colors,
     primary: '#E74C3C',
     highlighted: 'rgb(215, 193, 193)',
+    warning: 'rgb(255, 0, 52)',
   },
   fonts,
 };
@@ -97,6 +99,7 @@ export const MyDarkTheme: ExtendedTheme = {
     ...DarkTheme.colors,
     primary: '#E74C3C',
     highlighted: 'rgb(64, 64, 64)',
+    warning: 'rgb(255, 0, 52)',
   },
   fonts,
 };
