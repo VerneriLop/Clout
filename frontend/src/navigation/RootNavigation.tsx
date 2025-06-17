@@ -26,7 +26,8 @@ export const RootNavigation = () => {
 
   return (
     <ThemedView style={globalStyle.flex}>
-      {token ? <AppStack /> : <AuthStack />}
+      {/*token ? <AppStack /> : <AuthStack />*/}
+      <AppStack />
     </ThemedView>
   );
 };

@@ -13,6 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import {useDispatch} from 'react-redux';
 
 import {OpacityPressable} from '../../components/OpacityPressable/OpacityPressable';
@@ -44,11 +45,13 @@ export const SettingsScreen = () => {
   ];
 
   return (
-    <ThemedView style={styles.container}>
-      <SettingsCard header={'Account'} itemTitleList={titleList1} />
-      <SettingsCard header={'Help and policies'} itemTitleList={titleList2} />
-      <SettingsCard header={'Login'} itemTitleList={titleList3} />
-    </ThemedView>
+    <ScrollView>
+      <ThemedView style={styles.container}>
+        <SettingsCard header={'Account'} itemTitleList={titleList1} />
+        <SettingsCard header={'Help and policies'} itemTitleList={titleList2} />
+        <SettingsCard header={'Login'} itemTitleList={titleList3} />
+      </ThemedView>
+    </ScrollView>
   );
 };
 
