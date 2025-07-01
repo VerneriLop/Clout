@@ -1,15 +1,9 @@
 import {useState} from 'react';
-import {
-  Appearance,
-  StyleSheet,
-  Switch,
-  View,
-  useColorScheme,
-} from 'react-native';
+import {Appearance, Switch, useColorScheme} from 'react-native';
 
 import {useTheme} from '../../hooks/useTheme';
 
-export const DarkmodeToggle = () => {
+export const DarkmodeToggle = ({scaling = 0.8}: {scaling?: number}) => {
   const {colors} = useTheme();
   const scheme = useColorScheme();
   const [isEnabled, setIsEnabled] = useState(scheme === 'dark');
@@ -27,13 +21,9 @@ export const DarkmodeToggle = () => {
       ios_backgroundColor="#3e3e3e"
       onValueChange={toggleSwitch}
       value={isEnabled}
-      style={styles.switch}
+      style={{
+        transform: [{scaleX: scaling}, {scaleY: scaling}],
+      }}
     />
   );
 };
-
-const styles = StyleSheet.create({
-  switch: {
-    transform: [{scaleX: 0.8}, {scaleY: 0.8}],
-  },
-});

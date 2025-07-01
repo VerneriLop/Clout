@@ -93,6 +93,8 @@ export const MyLightTheme: ExtendedTheme = {
     warning: 'rgb(255, 0, 52)',
     iosBlue: '#007AFF',
     textSecondary: '#6e6e6e', // #999999 #8e8e93
+    //background: 'rgb(255, 255, 255)',
+    //card: 'rgb(242, 242, 242)',
   },
   fonts,
 };
@@ -108,6 +110,7 @@ export const MyDarkTheme: ExtendedTheme = {
     border: 'rgb(73, 73, 77)',
     iosBlue: '#007AFF',
     textSecondary: 'rgba(255, 255, 255, 0.6)',
+    card: 'rgb(23, 23, 23)',
   },
   fonts,
 };

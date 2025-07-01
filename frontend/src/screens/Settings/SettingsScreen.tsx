@@ -9,6 +9,7 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 import {
   faArrowRightFromBracket,
+  faChevronRight,
   faCircleInfo,
   faGear,
 } from '@fortawesome/free-solid-svg-icons';
@@ -35,14 +36,14 @@ import {DarkmodeToggle} from './DarkmodeToggle';
 
 export const SettingsScreen = () => {
   const profileCardItems: SettingsCardItemType[] = [
-    {icon: faGear, title: 'Account'},
+    {icon: faGear, title: 'Account', contentType: 'account'},
 
     //{icon: faGear, title: 'Privacy'},
     //{icon: faGear, title: 'Notifications'},
   ];
 
   const generalCardItems: SettingsCardItemType[] = [
-    {icon: faMoon, title: 'Dark mode'},
+    {icon: faMoon, title: 'Dark mode', contentType: 'toggle'},
   ];
 
   const helpCardItems: SettingsCardItemType[] = [
@@ -73,22 +74,26 @@ export const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    gap: 30,
+    marginHorizontal: 15,
+    marginTop: 15,
   },
 });
 
 type SettingsCardItemType = {
   icon: IconDefinition;
-  title:
-    | 'Account'
-    | 'Help'
-    | 'SendFeedback'
-    | 'About'
-    | 'Logout'
-    | 'Dark mode'
-    | string;
+  title: 'Account' | 'Help' | 'SendFeedback' | 'About' | 'Logout' | 'Dark mode';
+  //| string;
+  contentType?: 'toggle' | 'account';
+  isLastItem: boolean;
 };
 
-const SettingsCardItem = ({icon, title}: SettingsCardItemType) => {
+const SettingsCardItem = ({
+  icon,
+  title,
+  contentType,
+  isLastItem,
+}: SettingsCardItemType) => {
   const {colors} = useTheme();
   const dispatch = useDispatch();
   const navigation =
@@ -105,24 +110,24 @@ const SettingsCardItem = ({icon, title}: SettingsCardItemType) => {
         },
         {text: 'Logout', onPress: () => dispatch(logout())},
       ]);
-    } else {
+    } else if (title !== 'Dark mode') {
       navigation.navigate(title);
     }
   };
 
   const account = !isError ? currentUser?.username : 'Account settings';
 
-  return title === 'Dark mode' ? (
+  return contentType === 'toggle' ? (
     <View style={stylesItems.darkmode}>
-      <View style={stylesItems.container}>
+      <View style={stylesItems.subContainer}>
         <ThemedIcon icon={icon} />
-        <HeadlineText>{title}</HeadlineText>
+        <HeadlineText>Dark mode</HeadlineText>
       </View>
       <DarkmodeToggle />
     </View>
-  ) : title === 'Account' ? (
+  ) : contentType === 'account' ? (
     <OpacityPressable
-      style={stylesItems.container}
+      style={stylesItems.accountContainer}
       onPress={() => handlePress()}>
       <ProfilePicture uri={currentUser?.profile_picture_url} size="small" />
       <HeadlineText>{account}</HeadlineText>
@@ -135,9 +140,24 @@ const SettingsCardItem = ({icon, title}: SettingsCardItemType) => {
         icon={icon}
         color={title === 'Logout' ? colors.warning : undefined}
       />
-      <HeadlineText style={title === 'Logout' && {color: colors.warning}}>
-        {title === 'SendFeedback' ? 'Send feedback' : title}
-      </HeadlineText>
+      <View
+        style={[
+          stylesItems.divider,
+          !isLastItem && {
+            borderBottomColor: colors.border,
+            borderBottomWidth: StyleSheet.hairlineWidth,
+          },
+        ]}>
+        <HeadlineText style={title === 'Logout' && {color: colors.warning}}>
+          {title === 'SendFeedback' ? 'Send feedback' : title}
+        </HeadlineText>
+        <ThemedIcon
+          icon={faChevronRight}
+          size={15}
+          color={colors.border}
+          containerStyle={{paddingHorizontal: 10}}
+        />
+      </View>
     </OpacityPressable>
   );
 };
@@ -148,9 +168,28 @@ const stylesItems = StyleSheet.create({
     gap: 20,
     alignItems: 'center',
   },
-  darkmode: {
+  accountContainer: {
     flexDirection: 'row',
     gap: 20,
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  subContainer: {
+    flexDirection: 'row',
+    gap: 20,
+    alignItems: 'center',
+  },
+  darkmode: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingRight: 10,
+  },
+  divider: {
+    flex: 1,
+    paddingVertical: 10,
+    flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
@@ -158,27 +197,28 @@ const stylesItems = StyleSheet.create({
 
 type SettingsCardType = {
   header: string;
-  itemTitleList: {
-    icon: IconDefinition;
-    title:
-      | 'Account'
-      | 'Help'
-      | 'SendFeedback'
-      | 'About'
-      | 'Logout'
-      | 'Darkmode'
-      | string;
-  }[];
+  itemTitleList: SettingsCardItemType[];
 };
 
 const SettingsCard = ({header, itemTitleList}: SettingsCardType) => {
   const {colors} = useTheme();
 
   return (
-    <View style={[stylesCard.container, {borderBottomColor: colors.border}]}>
-      <Title2Text variant="bold">{header}</Title2Text>
-      {itemTitleList.map(item => (
-        <SettingsCardItem icon={item.icon} title={item.title} />
+    <View
+      style={[
+        stylesCard.container,
+        {borderBottomColor: colors.border, backgroundColor: colors.card},
+      ]}>
+      <Title2Text variant="bold" style={stylesCard.headerTextContainer}>
+        {header}
+      </Title2Text>
+      {itemTitleList.map((item, index) => (
+        <SettingsCardItem
+          icon={item.icon}
+          title={item.title}
+          contentType={item.contentType}
+          isLastItem={index === itemTitleList.length - 1}
+        />
       ))}
     </View>
   );
@@ -186,9 +226,10 @@ const SettingsCard = ({header, itemTitleList}: SettingsCardType) => {
 
 const stylesCard = StyleSheet.create({
   container: {
-    gap: 20,
-    paddingHorizontal: 10,
+    paddingLeft: 10,
+    borderRadius: 10,
+  },
+  headerTextContainer: {
     paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
   },
 });

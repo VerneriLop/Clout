@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import {
+  faArrowRightFromBracket,
   faChevronDown,
   faChevronRight,
   faChevronUp,
@@ -19,6 +20,7 @@ import {
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {useFormik} from 'formik';
 import {ScrollView} from 'react-native-gesture-handler';
+import {useDispatch} from 'react-redux';
 import * as Yup from 'yup';
 
 import {OpacityPressable} from '../../components/OpacityPressable/OpacityPressable';
@@ -26,15 +28,18 @@ import {ThemedView} from '../../components/ui/themed-view';
 import {
   BodyText,
   FootnoteText,
+  HeadlineText,
   ThemedIcon,
   Title2Text,
   Title3Text,
 } from '../../components/ui/typography';
 import {useTheme} from '../../hooks/useTheme';
+import {logout} from '../../redux/slices/authSlice';
 
 export const AccountScreen = () => {
   const {colors} = useTheme();
   const scheme = useColorScheme();
+  const dispatch = useDispatch();
 
   const [showFullDisclaimer, setShowFullDisclaimer] = useState(false);
 
@@ -45,6 +50,16 @@ export const AccountScreen = () => {
       : Appearance.setColorScheme('dark');
     setIsEnabled(!isEnabled);
   };
+
+  const handleLogout = () =>
+    Alert.alert('Logout', 'This action will log your account out.', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {text: 'Logout', onPress: () => dispatch(logout())},
+    ]);
 
   const [submitType, setSubmitType] = useState<'username' | 'password' | null>(
     null,
@@ -227,72 +242,93 @@ export const AccountScreen = () => {
             </View>
           )}
         </View>
-
-        <OpacityPressable
-          onPress={() =>
-            focusedCard === 'delete-account'
-              ? setFocusedCard(null)
-              : setFocusedCard('delete-account')
-          }
-          style={styles.headerStyle}>
-          <Title3Text variant="bold">Delete account</Title3Text>
-          <ThemedIcon
-            icon={
-              focusedCard === 'delete-account' ? faChevronDown : faChevronRight
+        <View
+          style={[styles.cardContainer, {borderBottomColor: colors.border}]}>
+          <OpacityPressable
+            onPress={() =>
+              focusedCard === 'delete-account'
+                ? setFocusedCard(null)
+                : setFocusedCard('delete-account')
             }
-            size={20}
-          />
-        </OpacityPressable>
-        {focusedCard === 'delete-account' && (
-          <View>
-            <BodyText style={{color: colors.textSecondary}}>
-              Permanently delete your user account and all associated data,
-              including your profile, settings, saved content, and interactions.
-              This action is irreversible and cannot be undone.
-            </BodyText>
+            style={styles.headerStyle}>
+            <Title3Text variant="bold">Delete account</Title3Text>
+            <ThemedIcon
+              icon={
+                focusedCard === 'delete-account'
+                  ? faChevronDown
+                  : faChevronRight
+              }
+              size={20}
+            />
+          </OpacityPressable>
+          {focusedCard === 'delete-account' && (
+            <View>
+              <BodyText style={{color: colors.textSecondary}}>
+                Permanently delete your user account and all associated data,
+                including your profile, settings, saved content, and
+                interactions. This action is irreversible and cannot be undone.
+              </BodyText>
 
-            {!showFullDisclaimer ? (
-              <OpacityPressable onPress={() => setShowFullDisclaimer(true)}>
-                <BodyText style={{color: colors.iosBlue}}>
-                  Show more...
+              {!showFullDisclaimer ? (
+                <OpacityPressable onPress={() => setShowFullDisclaimer(true)}>
+                  <BodyText style={{color: colors.iosBlue}}>
+                    Show more...
+                  </BodyText>
+                </OpacityPressable>
+              ) : (
+                <View>
+                  <BodyText />
+                  <BodyText style={{color: colors.textSecondary}}>
+                    Once your account is deleted, you will lose access to all
+                    services associated with your account. Your data will no
+                    longer be recoverable, and any content you’ve created may be
+                    removed or anonymized, in accordance with our data retention
+                    and privacy policies.
+                  </BodyText>
+                  <BodyText />
+                  <BodyText style={{color: colors.textSecondary}}>
+                    By proceeding, you acknowledge that you understand the
+                    consequences of deleting your account and agree to
+                    permanently remove your personal data from our systems,
+                    except where retention is required for legal or security
+                    purposes.
+                  </BodyText>
+                  <OpacityPressable
+                    onPress={() => setShowFullDisclaimer(false)}>
+                    <BodyText style={{color: colors.iosBlue}}>
+                      Show less
+                    </BodyText>
+                  </OpacityPressable>
+                </View>
+              )}
+              <OpacityPressable
+                onPress={() => console.log('deleter account')}
+                style={[
+                  styles.deleteAccountButton,
+                  {borderColor: colors.warning, marginTop: 20},
+                ]}>
+                <BodyText
+                  style={[styles.buttonText, {color: colors.warning}]}
+                  variant="bold">
+                  Delete Account
                 </BodyText>
               </OpacityPressable>
-            ) : (
-              <View>
-                <BodyText />
-                <BodyText style={{color: colors.textSecondary}}>
-                  Once your account is deleted, you will lose access to all
-                  services associated with your account. Your data will no
-                  longer be recoverable, and any content you’ve created may be
-                  removed or anonymized, in accordance with our data retention
-                  and privacy policies.
-                </BodyText>
-                <BodyText />
-                <BodyText style={{color: colors.textSecondary}}>
-                  By proceeding, you acknowledge that you understand the
-                  consequences of deleting your account and agree to permanently
-                  remove your personal data from our systems, except where
-                  retention is required for legal or security purposes.
-                </BodyText>
-                <OpacityPressable onPress={() => setShowFullDisclaimer(false)}>
-                  <BodyText style={{color: colors.iosBlue}}>Show less</BodyText>
-                </OpacityPressable>
-              </View>
-            )}
-            <OpacityPressable
-              onPress={() => console.log('deleter account')}
-              style={[
-                styles.deleteAccountButton,
-                {borderColor: colors.warning, marginVertical: 30},
-              ]}>
-              <BodyText
-                style={[styles.buttonText, {color: colors.warning}]}
-                variant="bold">
-                Delete Account
-              </BodyText>
-            </OpacityPressable>
-          </View>
-        )}
+            </View>
+          )}
+        </View>
+        <View
+          style={[styles.cardContainer, {borderBottomColor: colors.border}]}>
+          <OpacityPressable
+            style={styles.logout}
+            onPress={() => handleLogout()}>
+            <ThemedIcon
+              icon={faArrowRightFromBracket}
+              color={colors.warning}
+              size={20}
+            />
+            <Title3Text style={{color: colors.warning}}>Log out</Title3Text>
+          </OpacityPressable>
+        </View>
       </ThemedView>
     </ScrollView>
   );
@@ -403,5 +439,12 @@ const styles = StyleSheet.create({
   },
   subMenuContainer: {
     gap: 15,
+  },
+  logout: {
+    flexDirection: 'row',
+    //justifyContent: 'center',
+    gap: 10,
+    alignItems: 'center',
+    paddingRight: 10,
   },
 });
