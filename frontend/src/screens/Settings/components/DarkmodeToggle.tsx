@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {Appearance, Switch, useColorScheme} from 'react-native';
 
-import {useTheme} from '../../hooks/useTheme';
+import {useTheme} from '../../../hooks/useTheme';
 
 export const DarkmodeToggle = ({scaling = 0.8}: {scaling?: number}) => {
   const {colors} = useTheme();
