@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Alert, StyleSheet, View} from 'react-native';
 
 import {faChevronDown, faChevronRight} from '@fortawesome/free-solid-svg-icons';
 import {useFormik} from 'formik';
+import Toast from 'react-native-toast-message';
 import * as Yup from 'yup';
 
 import {InputWithButton} from '../../../components/InputWithButton';
@@ -48,14 +49,33 @@ export const UsernameForm = ({
         {
           text: 'Continue',
           onPress: async () => {
-            await updateUsername({
-              username: values.username,
-            });
+            try {
+              const response = await updateUsername({
+                username: values.username,
+              }).unwrap();
+
+              Toast.show({
+                type: 'success',
+                text1: 'Username changed successfully',
+              });
+              usernameFormik.resetForm();
+            } catch (error) {
+              Toast.show({
+                type: 'error',
+                text1: 'Something went wrong. Please try again later',
+              });
+            }
           },
         },
       ]);
     },
   });
+
+  useEffect(() => {
+    if (focusedCard !== 'username') {
+      usernameFormik.resetForm();
+    }
+  }, [focusedCard]);
 
   return (
     <View style={[styles.cardContainer, {borderBottomColor: colors.border}]}>
@@ -87,7 +107,11 @@ export const UsernameForm = ({
             onFocus={() => usernameFormik.setFieldTouched('username')}
             handleSubmit={usernameFormik.handleSubmit}
             placeholder="username"
-            disableButton={!!usernameFormik.errors.username || isLoading}
+            disableButton={
+              !!usernameFormik.errors.username ||
+              isLoading ||
+              !usernameFormik.values.username
+            }
           />
           {usernameFormik.touched.username &&
             usernameFormik.errors.username && (

@@ -1,7 +1,9 @@
+import {useEffect} from 'react';
 import {Alert, StyleSheet, View} from 'react-native';
 
 import {faChevronDown, faChevronRight} from '@fortawesome/free-solid-svg-icons';
 import {useFormik} from 'formik';
+import Toast from 'react-native-toast-message';
 import * as Yup from 'yup';
 
 import {InputWithButton} from '../../../components/InputWithButton';
@@ -54,15 +56,41 @@ export const PasswordForm = ({
         {text: 'Cancel', style: 'cancel'},
         {
           text: 'Confirm',
-          onPress: () =>
-            updatePassword({
-              current_password: values.currentPassword,
-              new_password: values.newPassword,
-            }),
+          onPress: async () => {
+            try {
+              const response = await updatePassword({
+                current_password: values.currentPassword,
+                new_password: values.newPassword,
+              }).unwrap();
+
+              Toast.show({
+                type: 'success',
+                text1: 'Password changed successfully',
+              });
+              passwordFormik.resetForm();
+            } catch (error: any) {
+              //console.log(error);
+              let messagetext = 'Something went wrong. Please try again later';
+              if (error.status === 400) {
+                messagetext = 'Invalid current password';
+              }
+              Toast.show({
+                type: 'error',
+                text1: messagetext,
+              });
+            }
+          },
         },
       ]);
     },
   });
+
+  useEffect(() => {
+    if (focusedCard !== 'password') {
+      passwordFormik.resetForm();
+    }
+  }, [focusedCard]);
+
   return (
     <View style={[styles.cardContainer, {borderBottomColor: colors.border}]}>
       <OpacityPressable
