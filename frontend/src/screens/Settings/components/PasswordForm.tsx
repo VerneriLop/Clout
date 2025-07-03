@@ -24,6 +24,7 @@ export const PasswordForm = ({
   focusedCard,
   setFocusedCard,
 }: PasswordFormProps) => {
+  const [updatePassword] = useUpdatePasswordMutation();
   const {colors} = useTheme();
 
   const PasswordSchema = Yup.object().shape({
@@ -53,10 +54,7 @@ export const PasswordForm = ({
         {
           text: 'Confirm',
           onPress: () =>
-            console.log('Change password:', {
-              current: values.currentPassword,
-              new: values.newPassword,
-            }),
+            updatePassword(values.currentPassword, values.newPassword),
         },
       ]);
     },

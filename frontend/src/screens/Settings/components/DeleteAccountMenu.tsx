@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Alert, StyleSheet, View} from 'react-native';
 
 import {faChevronDown, faChevronRight} from '@fortawesome/free-solid-svg-icons';
 
@@ -23,7 +23,18 @@ export const DeleteAccountMenu = ({
   setFocusedCard,
 }: DeleteAccountMenuProps) => {
   const [showFullDisclaimer, setShowFullDisclaimer] = useState(false);
+  const [deleteAccount] = useDeleteAccountMutation();
   const {colors} = useTheme();
+
+  const handleDeleteAccount = () =>
+    Alert.alert('Delete', 'This action will delete your account PERMANENTLY.', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {text: 'Delete', onPress: () => deleteAccount()},
+    ]);
 
   return (
     <View style={[styles.cardContainer, {borderBottomColor: colors.border}]}>
@@ -78,7 +89,7 @@ export const DeleteAccountMenu = ({
             </View>
           )}
           <OpacityPressable
-            onPress={() => console.log('deleter account')}
+            onPress={() => handleDeleteAccount()}
             style={[
               styles.deleteAccountButton,
               {borderColor: colors.warning, marginTop: 20},

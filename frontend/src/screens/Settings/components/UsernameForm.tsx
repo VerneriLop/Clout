@@ -27,6 +27,7 @@ export const UsernameForm = ({
   setFocusedCard,
 }: UsernameFormProps) => {
   const {colors} = useTheme();
+  const [updateUsername] = useUpdateUsernameMutation();
 
   const UsernameSchema = Yup.object().shape({
     username: Yup.string()
@@ -45,7 +46,7 @@ export const UsernameForm = ({
         {text: 'Cancel', style: 'cancel'},
         {
           text: 'Continue',
-          onPress: () => console.log('Username changed to:', values.username),
+          onPress: () => updateUsername(values.username),
         },
       ]);
     },
