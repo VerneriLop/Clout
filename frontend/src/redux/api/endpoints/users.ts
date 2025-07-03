@@ -1,6 +1,11 @@
 import {apiSlice} from '../apiSlice';
 
-import {CustomUser, FollowMutationPayload, Message} from '../../../types/types';
+import {
+  CustomUser,
+  FollowMutationPayload,
+  Message,
+  UpdateUserPayload,
+} from '../../../types/types';
 
 export const usersApi = apiSlice.injectEndpoints({
   endpoints: builder => ({
@@ -30,6 +35,14 @@ export const usersApi = apiSlice.injectEndpoints({
         {type: 'Profile', id: username},
       ],
     }),
+    updateUserMe: builder.mutation<CustomUser, UpdateUserPayload>({
+      query: body => ({
+        url: `users/me`,
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: ['Users'],
+    }),
   }),
 });
 
@@ -37,4 +50,5 @@ export const {
   useGetUsersMeQuery,
   useCreateFollowMutation,
   useDeleteFollowMutation,
+  useUpdateUserMeMutation,
 } = usersApi;
