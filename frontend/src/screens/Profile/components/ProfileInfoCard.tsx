@@ -1,6 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {
   ActivityIndicator,
+  Image,
   StyleProp,
   StyleSheet,
   View,
@@ -27,11 +28,7 @@ import {ProfileStatsRow} from './ProfileStatsRow';
 
 import {ProfileType} from '../../../types/types';
 
-export const ProfileInfoCard = ({
-  profileUser,
-}: {
-  profileUser: ProfileType;
-}): JSX.Element => {
+export const ProfileInfoCard = ({profileUser}: {profileUser: ProfileType}) => {
   const {colors} = useTheme();
   const {data: loggedInUser} = useGetUsersMeQuery();
   const loggedInUserId = loggedInUser?.id;
@@ -88,44 +85,59 @@ export const ProfileInfoCard = ({
     : [styles.buttonText, {color: colors.card}];
 
   return (
-    <ThemedView style={styles.container}>
-      <ProfileStatsRow user={profileUser} />
-      <View style={styles.defaultMargin}>
-        <ThemedText style={styles.name}>{profileUser.username}</ThemedText>
-        {profileUser.bio ? <ThemedText>{profileUser.bio}</ThemedText> : null}
+    <View style={[styles.container]}>
+      <View style={[styles.backgroundImage, {backgroundColor: colors.card}]}>
+        <Image
+          source={{
+            uri: 'https://i.guim.co.uk/img/media/b1c1caa029d6f186f9d6b3fabb7f02517eb9c33b/0_58_2528_1519/master/2528.jpg?width=1200&quality=85&auto=format&fit=max&s=a80cc1503df75e0c9d04b78ed226229e',
+          }}
+          style={{width: '100%', height: '100%'}}
+        />
       </View>
-      {showButton && (
-        <View style={styles.buttonContainer}>
-          <OpacityPressable
-            style={dynamicButtonStyle}
-            onPress={handleFollowToggle}
-            disabled={isMutationLoading}>
-            {isMutationLoading ? (
-              <ActivityIndicator
-                size="small"
-                color={isFollowing ? colors.primary : colors.card}
-              />
-            ) : (
-              <ThemedText style={dynamicButtonTextStyle}>
-                {buttonText}
-              </ThemedText>
-            )}
-          </OpacityPressable>
+      <View
+        style={{
+          backgroundColor: colors.background,
+        }}>
+        <ProfileStatsRow user={profileUser} />
+        <View style={styles.defaultMargin}>
+          <ThemedText style={styles.name}>{profileUser.username}</ThemedText>
+          {profileUser.bio ? <ThemedText>{profileUser.bio}</ThemedText> : null}
         </View>
-      )}
-    </ThemedView>
+        {showButton && (
+          <View style={styles.buttonContainer}>
+            <OpacityPressable
+              style={dynamicButtonStyle}
+              onPress={handleFollowToggle}
+              disabled={isMutationLoading}>
+              {isMutationLoading ? (
+                <ActivityIndicator
+                  size="small"
+                  color={isFollowing ? colors.primary : colors.card}
+                />
+              ) : (
+                <ThemedText style={dynamicButtonTextStyle}>
+                  {buttonText}
+                </ThemedText>
+              )}
+            </OpacityPressable>
+          </View>
+        )}
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
-    paddingHorizontal: globalStyle.defaultPadding.paddingHorizontal,
-    paddingVertical: 5,
+    //paddingHorizontal: 15,
+    //paddingVertical: 5,
+    //backgroundColor: 'tomato',
   },
+  backgroundImage: {height: 180, opacity: 0.8},
   button: {
-    paddingVertical: horizontalScale(5),
-    paddingHorizontal: horizontalScale(15),
+    paddingVertical: 5,
+    paddingHorizontal: 15,
     flexGrow: 1,
     maxWidth: '90%',
     alignSelf: 'center',
@@ -141,18 +153,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   buttonContainer: {
-    paddingBottom: verticalScale(10),
+    paddingBottom: 10,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
   },
   defaultMargin: {
-    marginVertical: verticalScale(10),
+    marginVertical: 10,
+    paddingHorizontal: 20,
   },
   name: {
     fontWeight: 'bold',
-    fontSize: scaleFontSize(16),
-    marginBottom: verticalScale(4),
+    fontSize: 16,
+    marginBottom: 4,
   },
 });

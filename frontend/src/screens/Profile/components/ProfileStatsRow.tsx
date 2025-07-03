@@ -44,8 +44,10 @@ export const ProfileStatsRow = ({user}: {user: ProfileType}) => {
   return (
     <View style={styles.container}>
       {user.username === currentUsername ? (
-        <OpacityPressable onPress={() => changeProfilePicture()}>
-          <ProfilePicture uri={user.profile_picture_url} />
+        <OpacityPressable
+          onPress={() => changeProfilePicture()}
+          style={styles.profilePicture}>
+          <ProfilePicture uri={user.profile_picture_url} size="large" />
           <View
             style={[
               styles.iconStyle,
@@ -55,16 +57,19 @@ export const ProfileStatsRow = ({user}: {user: ProfileType}) => {
           </View>
         </OpacityPressable>
       ) : (
-        <ProfilePicture uri={user.profile_picture_url} />
+        <View style={styles.profilePicture}>
+          <ProfilePicture uri={user.profile_picture_url} size="large" />
+        </View>
       )}
-
-      <ProfileStatItem value={user.num_posts} label={'posts'} />
-      <OpacityPressable onPress={onPressFollowing} style={styles.statItem}>
-        <ProfileStatItem value={user.num_following} label={'following'} />
-      </OpacityPressable>
-      <OpacityPressable onPress={onPressFollowers} style={styles.statItem}>
-        <ProfileStatItem value={user.num_followers} label={'followers'} />
-      </OpacityPressable>
+      <View style={styles.stats}>
+        <ProfileStatItem value={user.num_posts} label={'posts'} />
+        <OpacityPressable onPress={onPressFollowing}>
+          <ProfileStatItem value={user.num_following} label={'following'} />
+        </OpacityPressable>
+        <OpacityPressable onPress={onPressFollowers}>
+          <ProfileStatItem value={user.num_followers} label={'followers'} />
+        </OpacityPressable>
+      </View>
     </View>
   );
 };
@@ -81,13 +86,26 @@ const ProfileStatItem = ({value, label}: {value: number; label: string}) => {
 const styles = StyleSheet.create({
   container: {
     paddingBottom: 7,
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
+    gap: 25,
+  },
+  profilePicture: {position: 'absolute', top: -75},
+  stats: {
+    flexDirection: 'row',
+    width: '100%',
+    flex: 1,
+    justifyContent: 'space-between',
+    paddingTop: 90,
   },
   statItem: {
-    flex: 1,
+    //flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
+    //backgroundColor: 'tomato',
+    //borderColor: 'white',
+    //borderWidth: 2,
+    width: 80,
   },
   statValue: {
     textAlign: 'center',
@@ -99,8 +117,8 @@ const styles = StyleSheet.create({
   },
   iconStyle: {
     position: 'absolute',
-    bottom: -2,
-    right: 0,
+    bottom: 4,
+    right: 15,
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',

@@ -47,9 +47,9 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth * 3,
   },
   largeImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
     borderWidth: StyleSheet.hairlineWidth * 3,
     borderColor: '#dedede',
   },

@@ -1,13 +1,14 @@
 import React, {useEffect} from 'react';
+import {StyleSheet} from 'react-native';
 
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {skipToken} from '@reduxjs/toolkit/query';
 
 import globalStyle from '../../assets/styles/globalStyle';
 import {Spinner} from '../../components/Spinner/Spinner';
 import {ThemedView} from '../../components/ui/themed-view';
 import {ThemedText} from '../../components/ui/typography';
+import {useTheme} from '../../hooks/useTheme';
 import {ProfileStackParamList} from '../../navigation/Routes';
 import {
   useGetProfileByUserNameQuery,
@@ -19,6 +20,7 @@ import {ImageList} from './components/ImageList';
 type ProfileProps = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
 
 export const ProfileScreen = ({route, navigation}: ProfileProps) => {
+  const {colors} = useTheme();
   const {
     data: loggedInUser,
     isError,
@@ -77,7 +79,7 @@ export const ProfileScreen = ({route, navigation}: ProfileProps) => {
   }
 
   return (
-    <ThemedView style={[globalStyle.flex]}>
+    <ThemedView style={styles.container}>
       <ImageList
         posts={allPosts}
         profileUser={profileUser}
@@ -92,3 +94,9 @@ export const ProfileScreen = ({route, navigation}: ProfileProps) => {
     </ThemedView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
