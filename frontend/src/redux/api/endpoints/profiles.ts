@@ -18,6 +18,7 @@ export const profileApi = apiSlice.injectEndpoints({
       query: username => `profiles/${username}`,
       providesTags: (result, error, username) => [
         {type: 'Profile', id: username},
+        {type: 'Profile', id: 'All'},
       ],
     }),
     getProfilePosts: builder.infiniteQuery<

@@ -42,7 +42,11 @@ export const usersApi = apiSlice.injectEndpoints({
         method: 'PATCH',
         body,
       }),
-      invalidatesTags: [{type: 'Users'}, {type: 'Posts' as const, id: 'LIST'}],
+      invalidatesTags: [
+        {type: 'Users'},
+        {type: 'Posts' as const, id: 'LIST'},
+        {type: 'Profile', id: 'All'},
+      ],
     }),
     updatePassword: builder.mutation<Message, UpdatePasswordPayload>({
       query: body => ({
