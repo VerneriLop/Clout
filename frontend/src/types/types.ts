@@ -159,6 +159,11 @@ export type UpdateUserPayload = {
   bio?: string;
   profile_picture_url?: string;
 };
+
+export type UpdatePasswordPayload = {
+  current_password: string;
+  new_password: string;
+};
 /*{
 "email": "user@example.com",
       "username": "string",

@@ -12,6 +12,7 @@ import {
   ThemedIcon,
 } from '../../../components/ui/typography';
 import {useTheme} from '../../../hooks/useTheme';
+import {useUpdatePasswordMutation} from '../../../redux/api/endpoints/users';
 
 type PasswordFormProps = {
   focusedCard: string | null;
@@ -24,7 +25,7 @@ export const PasswordForm = ({
   focusedCard,
   setFocusedCard,
 }: PasswordFormProps) => {
-  //const [updatePassword] = useUpdatePasswordMutation();
+  const [updatePassword] = useUpdatePasswordMutation();
   const {colors} = useTheme();
 
   const PasswordSchema = Yup.object().shape({
@@ -53,8 +54,11 @@ export const PasswordForm = ({
         {text: 'Cancel', style: 'cancel'},
         {
           text: 'Confirm',
-          onPress: () => console.log(),
-          //updatePassword(values.currentPassword, values.newPassword),
+          onPress: () =>
+            updatePassword({
+              current_password: values.currentPassword,
+              new_password: values.newPassword,
+            }),
         },
       ]);
     },

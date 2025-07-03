@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {Alert, StyleSheet, View} from 'react-native';
 
 import {faChevronDown, faChevronRight} from '@fortawesome/free-solid-svg-icons';
+import {useDispatch} from 'react-redux';
 
 import {OpacityPressable} from '../../../components/OpacityPressable/OpacityPressable';
 import {
@@ -10,6 +11,9 @@ import {
   ThemedIcon,
 } from '../../../components/ui/typography';
 import {useTheme} from '../../../hooks/useTheme';
+import {useDeleteAccountMutation} from '../../../redux/api/endpoints/users';
+import {logoutAndReset} from '../../../redux/slices/authSlice';
+import {AppDispatch} from '../../../redux/store/store';
 
 type DeleteAccountMenuProps = {
   focusedCard: string | null;
@@ -23,8 +27,14 @@ export const DeleteAccountMenu = ({
   setFocusedCard,
 }: DeleteAccountMenuProps) => {
   const [showFullDisclaimer, setShowFullDisclaimer] = useState(false);
-  //const [deleteAccount] = useDeleteAccountMutation();
+  const [deleteAccount] = useDeleteAccountMutation();
   const {colors} = useTheme();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const confirmDelete = () => {
+    deleteAccount();
+    dispatch(logoutAndReset());
+  };
 
   const handleDeleteAccount = () =>
     Alert.alert('Delete', 'This action will delete your account PERMANENTLY.', [
@@ -33,7 +43,7 @@ export const DeleteAccountMenu = ({
         onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',
       },
-      {text: 'Delete', onPress: () => console.log()}, //deleteAccount()},
+      {text: 'Delete', onPress: () => confirmDelete()},
     ]);
 
   return (

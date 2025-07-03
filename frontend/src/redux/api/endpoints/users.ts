@@ -4,6 +4,7 @@ import {
   CustomUser,
   FollowMutationPayload,
   Message,
+  UpdatePasswordPayload,
   UpdateUserPayload,
 } from '../../../types/types';
 
@@ -43,6 +44,19 @@ export const usersApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [{type: 'Users'}, {type: 'Posts' as const, id: 'LIST'}],
     }),
+    updatePassword: builder.mutation<Message, UpdatePasswordPayload>({
+      query: body => ({
+        url: `users/me/password`,
+        method: 'PATCH',
+        body,
+      }),
+    }),
+    deleteAccount: builder.mutation<Message, void>({
+      query: () => ({
+        url: `users/me`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
@@ -51,4 +65,6 @@ export const {
   useCreateFollowMutation,
   useDeleteFollowMutation,
   useUpdateUserMeMutation,
+  useUpdatePasswordMutation,
+  useDeleteAccountMutation,
 } = usersApi;
