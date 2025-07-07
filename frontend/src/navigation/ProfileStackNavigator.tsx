@@ -86,7 +86,7 @@ export const SettingsButton = () => {
     });
   };
   return (
-    <View style={styles.button}>
+    <View>
       <OpacityPressable onPress={onPress}>
         <FontAwesomeIcon icon={faBars} size={20} color={colors.textSecondary} />
       </OpacityPressable>
@@ -108,15 +108,3 @@ const BackButton = () => {
     </OpacityPressable>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    //paddingVertical: 10,
-    alignContent: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    //backgroundColor: 'tomato',
-  },
-});

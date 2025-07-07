@@ -90,6 +90,8 @@ export const ProfileScreen = ({route, navigation}: ProfileProps) => {
     console.error('Error fetching posts:', error);
   }
 
+  console.log('profileuseri:', profileUser);
+
   return (
     <ImageList
       posts={allPosts}
