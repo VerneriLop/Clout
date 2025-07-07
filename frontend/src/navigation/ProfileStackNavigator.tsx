@@ -1,43 +1,39 @@
 import React, {useCallback} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
-import {faBars} from '@fortawesome/free-solid-svg-icons';
+import {faBars, faChevronLeft} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {useNavigation, useTheme} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {
-  StackNavigationProp,
-  createStackNavigator,
-} from '@react-navigation/stack';
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 
-import globalStyle from '../assets/styles/globalStyle';
 import {OpacityPressable} from '../components/OpacityPressable/OpacityPressable';
-import {ThemedView} from '../components/ui/themed-view';
-import {useGetUsersMeQuery} from '../redux/api/endpoints/users';
+import {useTheme} from '../hooks/useTheme';
 import {EditProfileScreen} from '../screens/Profile/EditProfileScreen';
 import {FollowersScreen} from '../screens/Profile/FollowersScreen';
 import {ProfileFeedScreen} from '../screens/Profile/ProfileFeedScreen';
 import {ProfileScreen} from '../screens/Profile/ProfileScreen';
-import {SettingsScreen} from '../screens/Settings/SettingsScreen';
 import {ProfileStackParamList, Routes} from './Routes';
 import {SettingsStackNavigator} from './SettingsStackNavigator';
 
-const ProfileStack = createStackNavigator<ProfileStackParamList>();
+const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
 
 export const ProfileStackNavigator = () => {
-  //const {data: loggedInUser, isError, isLoading} = useGetUsersMeQuery();
-  //console.log(loggedInUser);
   const theme = useTheme();
   const renderSettingsButton = useCallback(() => <SettingsButton />, []);
-  // TODO solve this better
-  /*if (isLoading && !isError) {
-    return;
-  }*/
+  const renderBackButton = useCallback(() => <BackButton />, []);
   return (
     <ProfileStack.Navigator
-      screenOptions={{
-        headerStyle: {backgroundColor: theme.colors.background},
+      screenOptions={({theme}) => ({
+        headerStyle: {
+          backgroundColor: theme.colors.background,
+        },
         headerBackButtonDisplayMode: 'minimal',
-      }}>
+        headerShadowVisible: false,
+        headerTitleAlign: 'left',
+      })}>
       <ProfileStack.Screen
         name={Routes.Profile}
         component={ProfileScreen}
@@ -45,12 +41,17 @@ export const ProfileStackNavigator = () => {
           headerRight: route.params?.username
             ? undefined
             : renderSettingsButton,
-          headerTitleAlign: 'left',
           title: route.params?.username || '',
+          headerLeft: route.params?.username ? renderBackButton : undefined,
+          //headerTitleStyle: {
+          //  fontSize: 20,
+          //  lineHeight: 25,
+          //},
+          //headerStyle: {justifyContent: 'center'},
+          headerLargeTitle: true,
+
+          //headerStyle: {backgroundColor: 'transparent'},
         })}
-        //initialParams={{
-        //  username: loggedInUser?.username,
-        //}}
       />
       <ProfileStack.Screen
         name={Routes.SettingsStack}
@@ -69,7 +70,7 @@ export const ProfileStackNavigator = () => {
       <ProfileStack.Screen
         name={Routes.ProfileFeed}
         component={ProfileFeedScreen}
-        options={{title: 'Posts', animation: 'scale_from_center'}}
+        options={{title: 'Posts'}}
       />
     </ProfileStack.Navigator>
   );
@@ -77,7 +78,7 @@ export const ProfileStackNavigator = () => {
 
 export const SettingsButton = () => {
   const navigation =
-    useNavigation<StackNavigationProp<ProfileStackParamList>>();
+    useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
   const {colors} = useTheme();
   const onPress = () => {
     navigation.navigate(Routes.SettingsStack, {
@@ -85,16 +86,37 @@ export const SettingsButton = () => {
     });
   };
   return (
-    <ThemedView style={styles.button}>
+    <View style={styles.button}>
       <OpacityPressable onPress={onPress}>
-        <FontAwesomeIcon icon={faBars} size={20} color={colors.text} />
+        <FontAwesomeIcon icon={faBars} size={20} color={colors.textSecondary} />
       </OpacityPressable>
-    </ThemedView>
+    </View>
+  );
+};
+
+const BackButton = () => {
+  const navigation = useNavigation();
+  const {colors} = useTheme();
+  return (
+    <OpacityPressable onPress={() => navigation.goBack()}>
+      <FontAwesomeIcon
+        icon={faChevronLeft}
+        size={20}
+        color={colors.textSecondary}
+        style={{paddingLeft: 0}}
+      />
+    </OpacityPressable>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    paddingHorizontal: globalStyle.defaultPadding.paddingHorizontal,
+    //paddingVertical: 10,
+    alignContent: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    //backgroundColor: 'tomato',
   },
 });

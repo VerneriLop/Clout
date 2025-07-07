@@ -5,6 +5,7 @@ import {
   ImageProps,
   Pressable,
   StyleSheet,
+  View,
 } from 'react-native';
 
 import {useNavigation, useTheme} from '@react-navigation/native';
@@ -12,6 +13,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {FlashList} from '@shopify/flash-list';
 
 import {Spinner} from '../../../components/Spinner/Spinner';
+import {TabBar} from '../../../components/TabBar';
 import {ThemedView} from '../../../components/ui/themed-view';
 import {ThemedText, Title1Text} from '../../../components/ui/typography';
 import {ProfileStackParamList, Routes} from '../../../navigation/Routes';
@@ -76,9 +78,13 @@ export const ImageList = ({
 
   return (
     <FlashList
-      ListHeaderComponent={
-        profileUser && <ProfileInfoCard profileUser={profileUser} />
-      }
+      contentInsetAdjustmentBehavior="automatic"
+      ListHeaderComponent={() => (
+        <>
+          <ProfileInfoCard profileUser={profileUser} />
+          <TabBar />
+        </>
+      )}
       ListEmptyComponent={renderListEmptyComponent()}
       data={posts}
       renderItem={renderItem}

@@ -1,15 +1,27 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View, useWindowDimensions} from 'react-native';
 
 import {faUserPen} from '@fortawesome/free-solid-svg-icons';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {launchImageLibrary} from 'react-native-image-picker';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import {useSelector} from 'react-redux';
 
 import {OpacityPressable} from '../../../components/OpacityPressable/OpacityPressable';
 import {ProfilePicture} from '../../../components/ProfilePicture/ProfilePicture';
-import {ThemedIcon, ThemedText} from '../../../components/ui/typography';
+import {
+  BodyText,
+  HeadlineText,
+  ThemedIcon,
+  ThemedText,
+} from '../../../components/ui/typography';
 import {useTheme} from '../../../hooks/useTheme';
 import {ProfileStackParamList} from '../../../navigation/Routes';
 import {useUpdateUserMeMutation} from '../../../redux/api/endpoints/users';
@@ -41,26 +53,61 @@ export const ProfileStatsRow = ({user}: {user: ProfileType}) => {
     }
   };
 
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{scale: scale.value}],
+    flex: 1,
+    opacity: scale.value,
+  }));
+
+  const handlePressIn = () => {
+    scale.value = withSpring(1.02, {stiffness: 100});
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1);
+  };
+
+  const handleProfilePicturePress = () => {
+    changeProfilePicture();
+  };
+
   return (
     <View style={styles.container}>
       {user.username === currentUsername ? (
-        <OpacityPressable
-          onPress={() => changeProfilePicture()}
-          style={styles.profilePicture}>
-          <ProfilePicture uri={user.profile_picture_url} size="large" />
-          <View
-            style={[
-              styles.iconStyle,
-              {backgroundColor: colors.card, shadowColor: colors.card},
-            ]}>
-            <ThemedIcon icon={faUserPen} size={15} />
-          </View>
-        </OpacityPressable>
+        <Animated.View style={[animatedStyle, styles.profilePicture]}>
+          <OpacityPressable
+            onPress={() => handleProfilePicturePress()}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            activeOpacity={1}
+            //style={styles.profilePicture}>
+          >
+            <ProfilePicture uri={user.profile_picture_url} size="large" />
+            <View
+              style={[
+                styles.iconStyle,
+                {
+                  backgroundColor: colors.background,
+                  shadowColor: colors.background,
+                },
+              ]}>
+              <ThemedIcon icon={faUserPen} size={15} />
+            </View>
+          </OpacityPressable>
+        </Animated.View>
       ) : (
         <View style={styles.profilePicture}>
           <ProfilePicture uri={user.profile_picture_url} size="large" />
         </View>
       )}
+      <View style={styles.userNameAndBio}>
+        <HeadlineText variant="bold">
+          {user.first_name} {user.last_name}
+        </HeadlineText>
+        {user.bio ? <BodyText>{user.bio}</BodyText> : null}
+      </View>
       <View style={styles.stats}>
         <ProfileStatItem value={user.num_posts} label={'posts'} />
         <OpacityPressable onPress={onPressFollowing}>
@@ -77,40 +124,36 @@ export const ProfileStatsRow = ({user}: {user: ProfileType}) => {
 const ProfileStatItem = ({value, label}: {value: number; label: string}) => {
   return (
     <View style={styles.statItem}>
-      <ThemedText style={styles.statValue}>{value}</ThemedText>
-      <ThemedText style={styles.statText}>{label}</ThemedText>
+      <HeadlineText style={styles.statValue}>{value}</HeadlineText>
+      <BodyText style={styles.statText}>{label}</BodyText>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  userNameAndBio: {paddingTop: 80, alignItems: 'center'},
   container: {
-    paddingBottom: 7,
     flexDirection: 'column',
     alignItems: 'center',
-    gap: 25,
   },
-  profilePicture: {position: 'absolute', top: -75},
+  profilePicture: {position: 'absolute', top: -75, zIndex: 10},
   stats: {
     flexDirection: 'row',
     width: '100%',
     flex: 1,
     justifyContent: 'space-between',
-    paddingTop: 90,
+    paddingHorizontal: 15,
+    paddingVertical: 15,
   },
   statItem: {
-    //flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
-    //backgroundColor: 'tomato',
-    //borderColor: 'white',
-    //borderWidth: 2,
+    borderColor: 'white',
     width: 80,
   },
   statValue: {
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 16,
   },
   statText: {
     textAlign: 'center',

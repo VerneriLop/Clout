@@ -1,7 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import {
   ActivityIndicator,
-  Image,
   StyleProp,
   StyleSheet,
   View,
@@ -9,15 +8,9 @@ import {
 } from 'react-native';
 
 import {useTheme} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
-import globalStyle from '../../../assets/styles/globalStyle';
-import {
-  horizontalScale,
-  scaleFontSize,
-  verticalScale,
-} from '../../../assets/styles/scaling';
 import {OpacityPressable} from '../../../components/OpacityPressable/OpacityPressable';
-import {ThemedView} from '../../../components/ui/themed-view';
 import {ThemedText} from '../../../components/ui/typography';
 import {
   useCreateFollowMutation,
@@ -73,7 +66,7 @@ export const ProfileInfoCard = ({profileUser}: {profileUser: ProfileType}) => {
   const dynamicButtonStyle: StyleProp<ViewStyle> = isFollowing
     ? [
         styles.button,
-        {borderColor: colors.primary, backgroundColor: colors.background},
+        {borderColor: colors.primary, backgroundColor: colors.card},
       ]
     : [
         styles.button,
@@ -86,22 +79,26 @@ export const ProfileInfoCard = ({profileUser}: {profileUser: ProfileType}) => {
 
   return (
     <View style={[styles.container]}>
-      <View style={[styles.backgroundImage, {backgroundColor: colors.card}]}>
-        <Image
+      <View
+        style={[styles.backgroundImage, {backgroundColor: colors.background}]}>
+        {/*<Image
           source={{
             uri: 'https://i.guim.co.uk/img/media/b1c1caa029d6f186f9d6b3fabb7f02517eb9c33b/0_58_2528_1519/master/2528.jpg?width=1200&quality=85&auto=format&fit=max&s=a80cc1503df75e0c9d04b78ed226229e',
           }}
           style={{width: '100%', height: '100%'}}
-        />
+        />*/}
       </View>
+      <LinearGradient
+        colors={[colors.background, colors.text]}
+        style={styles.gradient}
+        locations={[0, 1]}
+      />
       <View
         style={{
-          backgroundColor: colors.background,
+          backgroundColor: colors.card,
         }}>
-        <ProfileStatsRow user={profileUser} />
-        <View style={styles.defaultMargin}>
-          <ThemedText style={styles.name}>{profileUser.username}</ThemedText>
-          {profileUser.bio ? <ThemedText>{profileUser.bio}</ThemedText> : null}
+        <View>
+          <ProfileStatsRow user={profileUser} />
         </View>
         {showButton && (
           <View style={styles.buttonContainer}>
@@ -130,16 +127,20 @@ export const ProfileInfoCard = ({profileUser}: {profileUser: ProfileType}) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
-    //paddingHorizontal: 15,
-    //paddingVertical: 5,
-    //backgroundColor: 'tomato',
   },
-  backgroundImage: {height: 180, opacity: 0.8},
+  gradient: {
+    position: 'absolute',
+    height: 180,
+    width: '100%',
+    zIndex: 1,
+    opacity: 0.6,
+  },
+
+  backgroundImage: {height: 180},
   button: {
     paddingVertical: 5,
     paddingHorizontal: 15,
     flexGrow: 1,
-    maxWidth: '90%',
     alignSelf: 'center',
     borderRadius: 8,
     borderWidth: 1.5,
@@ -154,6 +155,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingBottom: 10,
+    paddingHorizontal: 15,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',

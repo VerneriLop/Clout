@@ -1,13 +1,22 @@
-import React, {useEffect} from 'react';
-import {StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, View, useWindowDimensions} from 'react-native';
 
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {skipToken} from '@reduxjs/toolkit/query';
+import {ScrollView} from 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 import globalStyle from '../../assets/styles/globalStyle';
+import {OpacityPressable} from '../../components/OpacityPressable/OpacityPressable';
 import {Spinner} from '../../components/Spinner/Spinner';
 import {ThemedView} from '../../components/ui/themed-view';
-import {ThemedText} from '../../components/ui/typography';
+import {BodyText, ThemedText} from '../../components/ui/typography';
 import {useTheme} from '../../hooks/useTheme';
 import {ProfileStackParamList} from '../../navigation/Routes';
 import {
@@ -16,6 +25,7 @@ import {
 } from '../../redux/api/endpoints/profiles';
 import {useGetUsersMeQuery} from '../../redux/api/endpoints/users';
 import {ImageList} from './components/ImageList';
+import {ProfileInfoCard} from './components/ProfileInfoCard';
 
 type ProfileProps = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
 
@@ -33,7 +43,9 @@ export const ProfileScreen = ({route, navigation}: ProfileProps) => {
 
   useEffect(() => {
     if (loggedInUser) {
-      navigation.setOptions({title: loggedInUser.username});
+      navigation.setOptions({
+        title: route.params?.username || loggedInUser.username,
+      });
     }
   }, [loggedInUser]);
 
@@ -79,24 +91,40 @@ export const ProfileScreen = ({route, navigation}: ProfileProps) => {
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <ImageList
-        posts={allPosts}
-        profileUser={profileUser}
-        isFetchingPosts={isFetchingNextPage}
-        isLoadingPosts={isLoading}
-        isErrorPosts={isPostsError}
-        refreshing={isLoading}
-        onRefresh={refetch}
-        hasNextPage={hasNextPage}
-        handleEndReached={fetchNextPage}
-      />
-    </ThemedView>
+    <ImageList
+      posts={allPosts}
+      profileUser={profileUser}
+      isFetchingPosts={isFetchingNextPage}
+      isLoadingPosts={isLoading}
+      isErrorPosts={isPostsError}
+      refreshing={isLoading}
+      onRefresh={refetch}
+      hasNextPage={hasNextPage}
+      handleEndReached={fetchNextPage}
+    />
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  tabBar: {
+    flex: 1,
+    width: '100%',
+    flexDirection: 'row',
+    //justifyContent: 'space-evenly',
+    borderBottomWidth: 1,
+    //borderBottomColor: '#ddd',
+    position: 'relative',
+    //backgroundColor: 'blue',
+  },
+  tab: {flex: 1, paddingVertical: 10, alignItems: 'center'},
+  underline: {
+    position: 'absolute',
+    bottom: 0,
+    height: 2,
+    width: '50%',
+    //backgroundColor: 'white',
   },
 });
