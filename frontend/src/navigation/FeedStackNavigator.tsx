@@ -1,7 +1,9 @@
 import React from 'react';
 
+import {faMagnifyingGlass, faSearch} from '@fortawesome/free-solid-svg-icons';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
+import {ThemedIcon} from '../components/ui/typography';
 import {FeedScreen} from '../screens/Feed/FeedScreen';
 import {ProfileStackNavigator} from './ProfileStackNavigator';
 import {FeedStackParamList, Routes} from './Routes';
@@ -14,7 +16,13 @@ export const FeedStackNavigator = () => {
       <FeedStack.Screen
         name={Routes.Feed}
         component={FeedScreen}
-        options={{headerShown: false}}
+        options={{
+          headerShown: false,
+          //headerSearchBarOptions: {},
+          //headerStyle: {paddingVertical: 100},
+          //headerRight: () => <ThemedIcon icon={faSearch} />,
+          //title: '',
+        }}
       />
       <FeedStack.Screen
         name={Routes.ProfileStack}

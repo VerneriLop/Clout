@@ -1,10 +1,19 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 
+import {faSearch} from '@fortawesome/free-solid-svg-icons';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {useRoute, useTheme} from '@react-navigation/native';
 import {skipToken} from '@reduxjs/toolkit/query';
-import {FlashList} from '@shopify/flash-list';
+import {AnimatedFlashList, FlashList} from '@shopify/flash-list';
+import Animated, {
+  Extrapolate,
+  Extrapolation,
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import globalStyle from '../../assets/styles/globalStyle';
@@ -18,7 +27,7 @@ import {
   useGetPostCommentsInfiniteQuery,
 } from '../../redux/api/endpoints/posts';
 import {Spinner} from '../Spinner/Spinner';
-import {Title1Text} from '../ui/typography';
+import {ThemedIcon, Title1Text} from '../ui/typography';
 import {CommentModal} from './CommentModal';
 import {FeedPost, IMAGE_HEIGHT} from './FeedPost';
 
@@ -114,9 +123,37 @@ export const FeedList = ({
     );
   };
 
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const headerAnimatedStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      scrollY.value,
+      [0, HEADER_HEIGHT],
+      [0, -HEADER_HEIGHT],
+      Extrapolation.CLAMP,
+    );
+    return {
+      transform: [{translateY}],
+    };
+  });
+
   return (
     <ThemeViewComponent style={[globalStyle.flex]}>
-      <FlashList
+      <Animated.View style={[style.header, headerAnimatedStyle]}>
+        <Header />
+      </Animated.View>
+      <AnimatedFlashList
+        overrideProps={{
+          onScroll: scrollHandler,
+          scrollEventThrottle: 16,
+        }}
+        contentInsetAdjustmentBehavior="automatic"
         data={posts}
         keyExtractor={item => String(item.id)}
         renderItem={renderItem}
@@ -165,10 +202,31 @@ export const FeedList = ({
   );
 };
 
+const Header = () => {
+  return (
+    //<View style={style.header}>
+    <ThemedIcon icon={faSearch} size={20} />
+    //</View>
+  );
+};
+
+const HEADER_HEIGHT = 40;
+
 const style = StyleSheet.create({
   emptyList: {
     alignItems: 'center',
     flex: 1,
     marginTop: 150,
+  },
+  header: {
+    //flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    width: '100%',
+    height: HEADER_HEIGHT,
+    //paddingVertical: 10,
+    paddingRight: 10,
+    backgroundColor: 'tomato',
   },
 });
