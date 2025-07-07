@@ -1,11 +1,11 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 
-import {faSearch} from '@fortawesome/free-solid-svg-icons';
+import {faChevronRight, faSearch} from '@fortawesome/free-solid-svg-icons';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
-import {useRoute, useTheme} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {skipToken} from '@reduxjs/toolkit/query';
-import {AnimatedFlashList, FlashList} from '@shopify/flash-list';
+import {FlashList} from '@shopify/flash-list';
 import Animated, {
   Extrapolate,
   Extrapolation,
@@ -13,6 +13,7 @@ import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
+  withTiming,
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
@@ -21,13 +22,21 @@ import {Backdrop} from '../../components/Backdrop/Backdrop';
 import {UserList} from '../../components/UserList/UserList';
 import {ThemedSafeAreaView, ThemedView} from '../../components/ui/themed-view';
 import {useSelectedFeedPost} from '../../hooks/useSelectedFeedPost';
+import {useTheme} from '../../hooks/useTheme';
 import {Routes} from '../../navigation/Routes';
 import {
   useGetLikesQuery,
   useGetPostCommentsInfiniteQuery,
 } from '../../redux/api/endpoints/posts';
+import {OpacityPressable} from '../OpacityPressable/OpacityPressable';
 import {Spinner} from '../Spinner/Spinner';
-import {ThemedIcon, Title1Text} from '../ui/typography';
+import {
+  BodyText,
+  ThemedIcon,
+  Title1Text,
+  Title2Text,
+  Title3Text,
+} from '../ui/typography';
 import {CommentModal} from './CommentModal';
 import {FeedPost, IMAGE_HEIGHT} from './FeedPost';
 
@@ -42,6 +51,8 @@ type FeedListProps = {
   hasNextPage: boolean;
   onRefresh: () => void;
 };
+
+const AnimatedFlashList = Animated.createAnimatedComponent(FlashList);
 
 export const FeedList = ({
   posts,
@@ -123,36 +134,39 @@ export const FeedList = ({
     );
   };
 
-  const scrollY = useSharedValue(0);
+  const translationY = useSharedValue(0);
+  const opacity = useSharedValue(1);
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: event => {
-      scrollY.value = event.contentOffset.y;
-    },
+  const scrollHandler = useAnimatedScrollHandler(event => {
+    if (event.contentOffset.y > HEADER_HEIGHT / 2) {
+      translationY.value = -HEADER_HEIGHT;
+      opacity.value = 0;
+    } else {
+      translationY.value = 0;
+      opacity.value = 1;
+    }
   });
 
   const headerAnimatedStyle = useAnimatedStyle(() => {
-    const translateY = interpolate(
-      scrollY.value,
-      [0, HEADER_HEIGHT],
-      [0, -HEADER_HEIGHT],
-      Extrapolation.CLAMP,
-    );
     return {
-      transform: [{translateY}],
+      transform: [
+        {translateY: withTiming(translationY.value, {duration: 200})},
+      ],
+      opacity: withTiming(opacity.value, {duration: 200}),
     };
   });
 
   return (
     <ThemeViewComponent style={[globalStyle.flex]}>
-      <Animated.View style={[style.header, headerAnimatedStyle]}>
-        <Header />
+      <Animated.View
+        pointerEvents={'box-none'}
+        style={[style.header, {top: insets.top}, headerAnimatedStyle]}>
+        {/*<Title1Text variant="heavy">Posts</Title1Text>*/}
+        <Header color={colors.primary} />
       </Animated.View>
       <AnimatedFlashList
-        overrideProps={{
-          onScroll: scrollHandler,
-          scrollEventThrottle: 16,
-        }}
+        onScroll={scrollHandler}
+        contentContainerStyle={{paddingTop: HEADER_HEIGHT}}
         contentInsetAdjustmentBehavior="automatic"
         data={posts}
         keyExtractor={item => String(item.id)}
@@ -202,10 +216,18 @@ export const FeedList = ({
   );
 };
 
-const Header = () => {
+const Header = ({color}: {color: string | undefined}) => {
+  const navigation = useNavigation();
+  const handlePress = () => {
+    navigation.navigate(Routes.Search);
+    console.log('search');
+  };
   return (
     //<View style={style.header}>
-    <ThemedIcon icon={faSearch} size={20} />
+    <OpacityPressable style={style.headerButton} onPress={handlePress}>
+      <ThemedIcon color={color} icon={faSearch} size={15} />
+      <BodyText style={{color: color}}>Search users</BodyText>
+    </OpacityPressable>
     //</View>
   );
 };
@@ -213,6 +235,11 @@ const Header = () => {
 const HEADER_HEIGHT = 40;
 
 const style = StyleSheet.create({
+  headerButton: {
+    flexDirection: 'row',
+    gap: 5,
+    alignItems: 'center',
+  },
   emptyList: {
     alignItems: 'center',
     flex: 1,
@@ -220,13 +247,19 @@ const style = StyleSheet.create({
   },
   header: {
     //flex: 1,
+    position: 'absolute',
+    zIndex: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    gap: 10,
+    //justifyContent: 'space-between',
+    justifyContent: 'center',
     width: '100%',
     height: HEADER_HEIGHT,
     //paddingVertical: 10,
-    paddingRight: 10,
-    backgroundColor: 'tomato',
+    paddingHorizontal: 10,
+    backgroundColor: 'transparent',
+    //borderBottomWidth: StyleSheet.hairlineWidth,
+    //borderBottomColor: 'gray',
   },
 });

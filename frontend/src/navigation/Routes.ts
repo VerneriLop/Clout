@@ -32,6 +32,7 @@ export type SettingsStackParamList = {
 export type FeedStackParamList = {
   Feed: undefined;
   ProfileStack: NavigatorScreenParams<ProfileStackParamList>;
+  Search: undefined;
 };
 
 export const Routes = {
@@ -54,4 +55,5 @@ export const Routes = {
   Help: 'Help',
   SendFeedBack: 'SendFeedback',
   About: 'About',
+  Search: 'Search',
 } as const;
