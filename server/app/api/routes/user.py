@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Annotated, Any
 import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, func
@@ -13,10 +13,17 @@ from app.schemas.user import (
     UsersPublic,
 )
 from app.services import user_crud as crud
-from app.api.deps import CurrentUser, SessionDep, get_current_active_superuser
+from app.api.deps import (
+    CurrentUser,
+    SessionDep,
+    get_current_active_superuser,
+    get_current_user,
+)
 from app.models import User
 from app.core.security import get_password_hash, verify_password
 from app.models.follower import Follower
+from fastapi import Query
+from sqlalchemy import or_
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -145,6 +152,39 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
     session.delete(current_user)
     session.commit()
     return Message(message="User deleted successfully")
+
+
+@router.get(
+    "/search", response_model=UsersPublic, dependencies=[Depends(get_current_user)]
+)
+def search_users(
+    session: SessionDep,
+    query: str = Query(..., min_length=1),
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+    skip: int = Query(0, ge=0),
+) -> UsersPublic:
+    """
+    Search users by username, first name or last name (case-insensitive).
+    """
+    search_term = f"%{query.lower()}%"
+
+    statement = (
+        select(User)
+        .where(
+            or_(
+                User.username.ilike(search_term),
+                User.first_name.ilike(search_term),
+                User.last_name.ilike(search_term),
+            )
+        )
+        .order_by(User.username)
+        .offset(skip)
+        .limit(limit)
+    )
+
+    users = session.scalars(statement).all()
+
+    return UsersPublic(data=users, count=len(users))
 
 
 @router.get("/{user_id}", response_model=UserPublic)
