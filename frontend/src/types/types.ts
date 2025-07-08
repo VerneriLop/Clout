@@ -148,7 +148,7 @@ export type Message = {
 
 export type FollowMutationPayload = {
   user_id: string;
-  username: string;
+  username?: string;
 };
 
 export type UpdateUserPayload = {
@@ -164,6 +164,18 @@ export type UpdatePasswordPayload = {
   current_password: string;
   new_password: string;
 };
+
+/*Search user query types*/
+export type SearchUserListType = {
+  data: ProfileFollowerType[];
+  count: number;
+};
+
+export type SearchUserPageParam = {
+  limit: number;
+  skip: number;
+};
+
 /*{
 "email": "user@example.com",
       "username": "string",

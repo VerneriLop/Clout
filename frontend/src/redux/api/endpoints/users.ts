@@ -4,6 +4,8 @@ import {
   CustomUser,
   FollowMutationPayload,
   Message,
+  SearchUserListType,
+  SearchUserPageParam,
   UpdatePasswordPayload,
   UpdateUserPayload,
 } from '../../../types/types';
@@ -19,22 +21,28 @@ export const usersApi = apiSlice.injectEndpoints({
         url: `users/${user_id}/followers`,
         method: 'POST',
       }),
-      invalidatesTags: (result, error, {username}) => [
-        {type: 'Followers', id: username},
-        {type: 'Following', id: username},
-        {type: 'Profile', id: username},
-      ],
+      invalidatesTags: (result, error, {username}) =>
+        username
+          ? [
+              {type: 'Followers', id: username},
+              {type: 'Following', id: username},
+              {type: 'Profile', id: username},
+            ]
+          : [],
     }),
     deleteFollow: builder.mutation<Message, FollowMutationPayload>({
       query: ({user_id}) => ({
         url: `users/${user_id}/followers`,
         method: 'DELETE',
       }),
-      invalidatesTags: (result, error, {username}) => [
-        {type: 'Following', id: username},
-        {type: 'Followers', id: username},
-        {type: 'Profile', id: username},
-      ],
+      invalidatesTags: (result, error, {username}) =>
+        username
+          ? [
+              {type: 'Followers', id: username},
+              {type: 'Following', id: username},
+              {type: 'Profile', id: username},
+            ]
+          : [],
     }),
     updateUserMe: builder.mutation<CustomUser, UpdateUserPayload>({
       query: body => ({
@@ -61,6 +69,55 @@ export const usersApi = apiSlice.injectEndpoints({
         method: 'DELETE',
       }),
     }),
+    searchUsers: builder.infiniteQuery<
+      SearchUserListType,
+      string,
+      SearchUserPageParam
+    >({
+      query: ({pageParam: {limit, skip}, queryArg: query}) => {
+        const params = new URLSearchParams();
+
+        if (skip) {
+          params.append('offset', skip.toString());
+        }
+
+        if (limit) {
+          params.append('limit', limit.toString());
+        }
+
+        const queryString = params.toString();
+        return queryString
+          ? `users/search?${query}${queryString}`
+          : `users/search?${query}`;
+      },
+      infiniteQueryOptions: {
+        initialPageParam: {limit: 20, skip: 0},
+        getNextPageParam: (
+          lastPage,
+          allPages,
+          lastPageParam,
+          //allPageParam,
+          //queryArg: string,
+        ) => {
+          if (lastPage.count < lastPageParam.limit) {
+            return undefined;
+          }
+          const lastPost = lastPage.data.at(-1);
+
+          if (!lastPost) {
+            console.warn(
+              'No last post found on the last page, stopping pagination.',
+            );
+            return undefined;
+          }
+
+          return {
+            limit: lastPageParam.limit,
+            skip: lastPageParam.skip + lastPage.count,
+          };
+        },
+      },
+    }),
   }),
 });
 
@@ -71,4 +128,5 @@ export const {
   useUpdateUserMeMutation,
   useUpdatePasswordMutation,
   useDeleteAccountMutation,
+  useSearchUsersInfiniteQuery,
 } = usersApi;

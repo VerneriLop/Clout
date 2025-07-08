@@ -5,6 +5,7 @@ from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
 from app.schemas.user import (
     Message,
+    SearchUsers,
     UpdatePassword,
     UserCreate,
     UserPublic,
@@ -155,14 +156,14 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
 
 
 @router.get(
-    "/search", response_model=UsersPublic, dependencies=[Depends(get_current_user)]
+    "/search", response_model=SearchUsers, dependencies=[Depends(get_current_user)]
 )
 def search_users(
     session: SessionDep,
     query: str = Query(..., min_length=1),
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
     skip: int = Query(0, ge=0),
-) -> UsersPublic:
+) -> SearchUsers:
     """
     Search users by username, first name or last name (case-insensitive).
     """
@@ -184,7 +185,7 @@ def search_users(
 
     users = session.scalars(statement).all()
 
-    return UsersPublic(data=users, count=len(users))
+    return SearchUsers(data=users, count=len(users))
 
 
 @router.get("/{user_id}", response_model=UserPublic)

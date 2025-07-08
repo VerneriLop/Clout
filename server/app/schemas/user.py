@@ -91,3 +91,7 @@ class ProfileFollowerUser(BaseModel):
 class ProfileFollowerUsers(BaseModel):
     data: list[ProfileFollowerUser]
     count: int
+
+
+class SearchUsers(ProfileFollowerUsers):
+    pass

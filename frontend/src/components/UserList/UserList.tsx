@@ -5,12 +5,14 @@ import {BottomSheetFlashList, BottomSheetTextInput} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useSelector} from 'react-redux';
 
 import {verticalScale} from '../../assets/styles/scaling';
 import {
   useCreateFollowMutation,
   useDeleteFollowMutation,
 } from '../../redux/api/endpoints/users';
+import {RootState} from '../../redux/store/store';
 import {ThemedText} from '../ui/typography';
 import {UserListItem} from './UserListItem';
 
@@ -38,6 +40,11 @@ export const UserList = ({
   const {colors} = useTheme();
   const insets = useSafeAreaInsets();
   const [togglingUserId, setTogglingUserId] = useState<string | null>(null);
+  const currentUserUsername = useSelector(
+    (state: RootState) => state.auth.username,
+  );
+
+  //const mutationPayloadUsername = currentProfileUserName !== currentUserUsername ? undefined : currentProfileUserName;
 
   const [followUser, {isLoading: isFollowingUser}] = useCreateFollowMutation();
   const [unfollowUser, {isLoading: isUnfollowingUser}] =
@@ -66,7 +73,7 @@ export const UserList = ({
       }
       const mutationPayload = {
         user_id,
-        username: currentProfileUserName ?? '', //invalidatetag
+        username: currentUserUsername, //invalidatetag
       };
       setTogglingUserId(user_id);
 
