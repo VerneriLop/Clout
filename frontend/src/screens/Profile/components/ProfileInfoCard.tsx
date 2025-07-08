@@ -88,11 +88,11 @@ export const ProfileInfoCard = ({profileUser}: {profileUser: ProfileType}) => {
           style={{width: '100%', height: '100%'}}
         />*/}
       </View>
-      <LinearGradient
+      {/*<LinearGradient
         colors={[colors.background, colors.text]}
         style={styles.gradient}
         locations={[0, 1]}
-      />
+      />*/}
       <View
         style={{
           backgroundColor: colors.card,
