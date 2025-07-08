@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 
 import {Search} from '../../components/Search/Search';
 import {InfiniteUserList} from '../../components/UserList/InfiniteUserList';
+import {useSearchUsersInfiniteQuery} from '../../redux/api/endpoints/users';
 
 export const SearchScreen = () => {
   const [value, setValue] = useState<string>('');
@@ -13,13 +14,22 @@ export const SearchScreen = () => {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useGetSearchUsersQuery();
+  } = useSearchUsersInfiniteQuery(value);
+
+  const userList = useMemo(
+    () => data?.pages?.flatMap(page => page.data) || [],
+    [data],
+  );
+
+  console.log('queryn data', data);
+  console.log('value', value);
+  console.log('Data', userList);
 
   return (
     <View style={styles.container}>
       <Search onModal={false} value={value} setValue={setValue} />
       <InfiniteUserList
-        data={data}
+        data={userList}
         refetch={refetch}
         isLoading={isLoading}
         hasNextPage={hasNextPage}

@@ -79,8 +79,8 @@ class UserInfoBasic(BaseModel):
 class ProfileFollowerUser(BaseModel):
     id: uuid.UUID
     username: str
-    first_name: str
-    last_name: str
+    first_name: str | None
+    last_name: str | None
     profile_picture_url: str | None
     is_followed_by_current_user: bool | None = None
 

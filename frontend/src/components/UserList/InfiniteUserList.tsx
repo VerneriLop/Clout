@@ -93,7 +93,7 @@ export const InfiniteUserList = ({
           <ThemedText style={styles.listEmptyText}>No users found</ThemedText>
         ) : null
       }
-      data={data ?? []}
+      data={data}
       keyExtractor={item => String(item.id)}
       renderItem={renderItem}
       keyboardDismissMode="on-drag"
@@ -104,6 +104,7 @@ export const InfiniteUserList = ({
       onEndReachedThreshold={0.2}
       refreshing={isLoading}
       onRefresh={() => refetch()}
+      estimatedItemSize={100}
     />
   );
 };
