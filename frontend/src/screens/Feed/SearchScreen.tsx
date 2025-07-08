@@ -1,24 +1,31 @@
-import React, {useMemo} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 
-import {faSearch} from '@fortawesome/free-solid-svg-icons';
-import {
-  useSafeAreaFrame,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-
-import {FeedList} from '../../components/FeedList/FeedList';
-import {
-  ThemedIcon,
-  Title1Text,
-  Title3Text,
-} from '../../components/ui/typography';
-import {useGetFeedPostsInfiniteQuery} from '../../redux/api/endpoints/posts';
+import {Search} from '../../components/Search/Search';
+import {InfiniteUserList} from '../../components/UserList/InfiniteUserList';
 
 export const SearchScreen = () => {
+  const [value, setValue] = useState<string>('');
+  const {
+    data,
+    refetch,
+    isLoading,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useGetSearchUsersQuery();
+
   return (
     <View style={styles.container}>
-      <Title1Text variant={'heavy'}> SEARCH</Title1Text>
+      <Search onModal={false} value={value} setValue={setValue} />
+      <InfiniteUserList
+        data={data}
+        refetch={refetch}
+        isLoading={isLoading}
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        fetchNextPage={fetchNextPage}
+      />
     </View>
   );
 };

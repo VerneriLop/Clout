@@ -45,7 +45,7 @@ export const FeedStackNavigator = () => {
           headerBackButtonDisplayMode: 'minimal',
           title: 'Search',
           headerShadowVisible: false,
-          headerSearchBarOptions: {},
+          //headerSearchBarOptions: {},
           //presentation: 'modal',
         })}
       />

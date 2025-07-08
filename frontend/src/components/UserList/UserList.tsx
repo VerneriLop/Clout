@@ -1,11 +1,7 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {FlatList, StyleSheet, TextInput} from 'react-native';
+import {StyleSheet, TextInput} from 'react-native';
 
-import {
-  BottomSheetFlashList,
-  BottomSheetFlatList,
-  BottomSheetTextInput,
-} from '@gorhom/bottom-sheet';
+import {BottomSheetFlashList, BottomSheetTextInput} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -15,7 +11,6 @@ import {
   useCreateFollowMutation,
   useDeleteFollowMutation,
 } from '../../redux/api/endpoints/users';
-import {Spinner} from '../Spinner/Spinner';
 import {ThemedText} from '../ui/typography';
 import {UserListItem} from './UserListItem';
 
@@ -163,7 +158,7 @@ export const UserList = ({
 };
 
 //TODO: check this value
-const ITEM_HEIGHT = verticalScale(50);
+const ITEM_HEIGHT = 50;
 
 const styles = StyleSheet.create({
   container: {
