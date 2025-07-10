@@ -3,6 +3,8 @@ import {
   Dimensions,
   Image,
   ImageProps,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   Pressable,
   StyleSheet,
   View,
@@ -11,6 +13,8 @@ import {
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {FlashList} from '@shopify/flash-list';
+import {Tabs} from 'react-native-collapsible-tab-view';
+import Animated, {ScrollHandler} from 'react-native-reanimated';
 
 import {Spinner} from '../../../components/Spinner/Spinner';
 import {TabBar} from '../../../components/TabBar';
@@ -20,6 +24,8 @@ import {ProfileStackParamList, Routes} from '../../../navigation/Routes';
 import {ProfileInfoCard} from './ProfileInfoCard';
 
 import {PostType, ProfileType} from '../../../types/types';
+
+const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<PostType>);
 
 type ImageListProps = {
   posts: PostType[];
@@ -31,6 +37,7 @@ type ImageListProps = {
   hasNextPage: boolean;
   onRefresh: () => void;
   handleEndReached: () => void;
+  onScroll?: ScrollHandler;
 };
 
 const {width} = Dimensions.get('window');
@@ -47,6 +54,7 @@ export const ImageList = ({
   hasNextPage,
   onRefresh,
   handleEndReached,
+  onScroll,
 }: ImageListProps) => {
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
@@ -77,15 +85,17 @@ export const ImageList = ({
   const itemSize = imageHeight + StyleSheet.hairlineWidth * 2;
 
   return (
-    <FlashList
+    <AnimatedFlashList
       contentInsetAdjustmentBehavior="automatic"
-      ListHeaderComponent={() => (
+      /*ListHeaderComponent={() => (
         <>
           <ProfileInfoCard profileUser={profileUser} />
           <TabBar />
         </>
-      )}
-      ListEmptyComponent={renderListEmptyComponent()}
+      )}*/
+      scrollEventThrottle={16}
+      onScroll={onScroll}
+      ListEmptyComponent={renderListEmptyComponent}
       data={posts}
       renderItem={renderItem}
       keyExtractor={item => String(item.id)}

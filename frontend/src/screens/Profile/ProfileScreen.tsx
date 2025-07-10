@@ -1,22 +1,20 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, useWindowDimensions} from 'react-native';
+import React, {useEffect} from 'react';
+import {StyleSheet, View} from 'react-native';
 
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {skipToken} from '@reduxjs/toolkit/query';
-import {ScrollView} from 'react-native-gesture-handler';
 import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
-  withTiming,
 } from 'react-native-reanimated';
 
-import globalStyle from '../../assets/styles/globalStyle';
-import {OpacityPressable} from '../../components/OpacityPressable/OpacityPressable';
 import {Spinner} from '../../components/Spinner/Spinner';
+import {TabBar} from '../../components/TabBar';
 import {ThemedView} from '../../components/ui/themed-view';
-import {BodyText, ThemedText} from '../../components/ui/typography';
+import {ThemedText} from '../../components/ui/typography';
 import {useTheme} from '../../hooks/useTheme';
 import {ProfileStackParamList} from '../../navigation/Routes';
 import {
@@ -31,6 +29,8 @@ type ProfileProps = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
 
 export const ProfileScreen = ({route, navigation}: ProfileProps) => {
   const {colors} = useTheme();
+  const scrollY = useSharedValue(0);
+
   const {
     data: loggedInUser,
     isError,
@@ -92,8 +92,19 @@ export const ProfileScreen = ({route, navigation}: ProfileProps) => {
 
   console.log('profileuseri:', profileUser);
 
-  return (
+  const renderHeader = () => {
+    return <ProfileInfoCard profileUser={profileUser} />;
+  };
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const renderPosts = () => (
     <ImageList
+      onScroll={scrollHandler}
       posts={allPosts}
       profileUser={profileUser}
       isFetchingPosts={isFetchingNextPage}
@@ -105,7 +116,31 @@ export const ProfileScreen = ({route, navigation}: ProfileProps) => {
       handleEndReached={fetchNextPage}
     />
   );
+
+  const renderStats = () => (
+    <View
+      style={{
+        width: '100%',
+        flex: 1,
+        backgroundColor: 'rgb(206, 172, 214)',
+      }}
+    />
+  );
+
+  //
+
+  return (
+    <TabBar
+      renderHeader={renderHeader}
+      renderPosts={renderPosts}
+      renderStats={renderStats}
+      scrollY={scrollY}
+    />
+  );
 };
+
+const AnimatedTabBar = Animated.createAnimatedComponent(TabBar);
+const AnimatedImageList = Animated.createAnimatedComponent(ImageList);
 
 const styles = StyleSheet.create({
   container: {

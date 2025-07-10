@@ -52,7 +52,7 @@ type FeedListProps = {
   onRefresh: () => void;
 };
 
-const AnimatedFlashList = Animated.createAnimatedComponent(FlashList);
+const AnimatedFlashList = Animated.createAnimatedComponent(FlashList<PostType>);
 
 export const FeedList = ({
   posts,
