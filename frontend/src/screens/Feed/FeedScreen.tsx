@@ -1,13 +1,6 @@
 import React, {useMemo} from 'react';
 
-import {faSearch} from '@fortawesome/free-solid-svg-icons';
-import {
-  useSafeAreaFrame,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-
 import {FeedList} from '../../components/FeedList/FeedList';
-import {ThemedIcon} from '../../components/ui/typography';
 import {useGetFeedPostsInfiniteQuery} from '../../redux/api/endpoints/posts';
 
 export const FeedScreen = () => {

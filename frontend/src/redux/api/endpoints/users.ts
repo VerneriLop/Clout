@@ -76,19 +76,11 @@ export const usersApi = apiSlice.injectEndpoints({
     >({
       query: ({pageParam: {limit, skip}, queryArg: query}) => {
         const params = new URLSearchParams();
+        params.append('query', query.toString());
+        if (skip) params.append('offset', skip.toString());
+        if (limit) params.append('limit', limit.toString());
 
-        if (skip) {
-          params.append('offset', skip.toString());
-        }
-
-        if (limit) {
-          params.append('limit', limit.toString());
-        }
-
-        const queryString = params.toString();
-        return queryString
-          ? `users/search?${query}${queryString}`
-          : `users/search?${query}`;
+        return `users/search?${params.toString()}`;
       },
       infiniteQueryOptions: {
         initialPageParam: {limit: 20, skip: 0},
