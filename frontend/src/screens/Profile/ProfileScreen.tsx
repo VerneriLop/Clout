@@ -31,6 +31,12 @@ export const ProfileScreen = ({route, navigation}: ProfileProps) => {
   const {colors} = useTheme();
   const scrollY = useSharedValue(0);
 
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
   const {
     data: loggedInUser,
     isError,
@@ -61,17 +67,17 @@ export const ProfileScreen = ({route, navigation}: ProfileProps) => {
     refetch,
   } = useGetProfilePostsInfiniteQuery(username ? username : skipToken);
 
-  const allPosts = React.useMemo(
-    () => data?.pages?.flatMap(page => page.data) || [],
-    [data],
-  );
-
   const {
     data: profileUser = null,
     isLoading: isUserLoading,
     isError: isUserError,
     error: userError,
   } = useGetProfileByUserNameQuery(username ? username : skipToken);
+
+  const allPosts = React.useMemo(
+    () => data?.pages?.flatMap(page => page.data) || [],
+    [data],
+  );
 
   if (isUserLoading) {
     return <Spinner />;
@@ -95,12 +101,6 @@ export const ProfileScreen = ({route, navigation}: ProfileProps) => {
   const renderHeader = () => {
     return <ProfileInfoCard profileUser={profileUser} />;
   };
-
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: event => {
-      scrollY.value = event.contentOffset.y;
-    },
-  });
 
   const renderPosts = () => (
     <ImageList

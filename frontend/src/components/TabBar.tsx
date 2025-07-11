@@ -131,8 +131,8 @@ export const TabBar = ({
         {
           translateY: interpolate(
             scrollY.value,
-            [0, 100],
-            [0, -100],
+            [0, layout.height / 2],
+            [0, -layout.height / 2],
             Extrapolation.CLAMP,
           ),
         },
@@ -145,8 +145,19 @@ export const TabBar = ({
   }));
 
   return (
-    <View style={{flex: 1, paddingTop: insets.top}}>
-      <Animated.View style={headerAnimatedStyle}>
+    <View style={{flex: 1}}>
+      <Animated.View
+        style={[
+          headerAnimatedStyle,
+          {
+            position: 'absolute',
+            //top: insets.top,
+            //zIndex: 1,
+            height: layout.height / 2 - insets.top - insets.bottom,
+            backgroundColor: 'tomato',
+            //pointerEvents: 'box-none',
+          },
+        ]}>
         {renderHeader()}
 
         <View
@@ -177,19 +188,20 @@ export const TabBar = ({
       </Animated.View>
       <Animated.View
         style={[
-          {flex: 1, flexDirection: 'row', width: layout.width * 2},
-          //tabContainerStyle,
-          containerPanStyle,
+          {
+            flex: 1,
+            flexDirection: 'row',
+            width: layout.width * 2,
+          },
         ]}
         layout={LinearTransition}>
         <Animated.View
           style={{
             width: layout.width,
             flex: 1,
-            //backgroundColor: 'rgb(206, 172, 214)',
+            zIndex: 2,
+            pointerEvents: 'box-none',
           }}
-          //exiting={FadeOutRight.duration(1000).easing(Easing.ease)}
-          //entering={FadeInLeft.duration(1000).easing(Easing.ease)}
           key="posts">
           {renderPosts()}
         </Animated.View>
@@ -200,8 +212,6 @@ export const TabBar = ({
             flex: 1,
             backgroundColor: 'rgb(182, 24, 222)',
           }}
-          //entering={FadeInRight.duration(1000).easing(Easing.ease)}
-          //exiting={FadeOutLeft.duration(1000).easing(Easing.ease)}
           key="stats">
           {renderStats()}
         </Animated.View>
@@ -212,43 +222,15 @@ export const TabBar = ({
 
 const styles = StyleSheet.create({
   tabBar: {
-    //flex: 1,
     width: '100%',
     flexDirection: 'row',
-    //justifyContent: 'space-evenly',
     borderBottomWidth: 1,
-    //borderBottomColor: '#ddd',
-    position: 'relative',
-    //backgroundColor: 'blue',
   },
-  tab: {flex: 1, paddingVertical: 10, alignItems: 'center'},
+  tab: {flex: 1, alignItems: 'center', justifyContent: 'center', height: 40},
   underline: {
     position: 'absolute',
     bottom: 0,
     height: 2,
     width: '50%',
-    //backgroundColor: 'white',
   },
 });
-
-/*
-  const renderScene = useCallback(({route}: {route: {key: string}}) => {
-    switch (route.key) {
-      case 'posts':
-        return (
-          <View style={{flex: 1, backgroundColor: 'rgb(206, 172, 214)'}} />
-        );
-      case 'stats':
-        return (
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: 'rgb(182, 24, 222)',
-            }}
-          />
-        );
-      default:
-        return null;
-    }
-  }, []);
-*/

@@ -5,10 +5,12 @@ import {
   StyleSheet,
   View,
   ViewStyle,
+  useWindowDimensions,
 } from 'react-native';
 
 import {useTheme} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {OpacityPressable} from '../../../components/OpacityPressable/OpacityPressable';
 import {ThemedText} from '../../../components/ui/typography';
@@ -22,6 +24,9 @@ import {ProfileStatsRow} from './ProfileStatsRow';
 import {ProfileType} from '../../../types/types';
 
 export const ProfileInfoCard = ({profileUser}: {profileUser: ProfileType}) => {
+  const layout = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+
   const {colors} = useTheme();
   const {data: loggedInUser} = useGetUsersMeQuery();
   const loggedInUserId = loggedInUser?.id;
@@ -78,48 +83,41 @@ export const ProfileInfoCard = ({profileUser}: {profileUser: ProfileType}) => {
     : [styles.buttonText, {color: colors.card}];
 
   return (
-    <View style={[styles.container]}>
-      <View
-        style={[styles.backgroundImage, {backgroundColor: colors.background}]}>
-        {/*<Image
-          source={{
-            uri: 'https://i.guim.co.uk/img/media/b1c1caa029d6f186f9d6b3fabb7f02517eb9c33b/0_58_2528_1519/master/2528.jpg?width=1200&quality=85&auto=format&fit=max&s=a80cc1503df75e0c9d04b78ed226229e',
-          }}
-          style={{width: '100%', height: '100%'}}
-        />*/}
-      </View>
-      {/*<LinearGradient
-        colors={[colors.background, colors.text]}
-        style={styles.gradient}
-        locations={[0, 1]}
-      />*/}
-      <View
-        style={{
+    <View
+      style={[
+        styles.container,
+        {
           backgroundColor: colors.card,
-        }}>
-        <View>
-          <ProfileStatsRow user={profileUser} />
+          height: layout.height / 2 - insets.top - insets.bottom - 40, // tabBar height fixed 40
+          //pointerEvents: 'box-none',
+        },
+      ]}>
+      <View
+        style={[
+          styles.backgroundImage,
+          {backgroundColor: colors.background},
+        ]}></View>
+
+      <ProfileStatsRow user={profileUser} />
+      {showButton && (
+        <View style={styles.buttonContainer}>
+          <OpacityPressable
+            style={dynamicButtonStyle}
+            onPress={handleFollowToggle}
+            disabled={isMutationLoading}>
+            {isMutationLoading ? (
+              <ActivityIndicator
+                size="small"
+                color={isFollowing ? colors.primary : colors.card}
+              />
+            ) : (
+              <ThemedText style={dynamicButtonTextStyle}>
+                {buttonText}
+              </ThemedText>
+            )}
+          </OpacityPressable>
         </View>
-        {showButton && (
-          <View style={styles.buttonContainer}>
-            <OpacityPressable
-              style={dynamicButtonStyle}
-              onPress={handleFollowToggle}
-              disabled={isMutationLoading}>
-              {isMutationLoading ? (
-                <ActivityIndicator
-                  size="small"
-                  color={isFollowing ? colors.primary : colors.card}
-                />
-              ) : (
-                <ThemedText style={dynamicButtonTextStyle}>
-                  {buttonText}
-                </ThemedText>
-              )}
-            </OpacityPressable>
-          </View>
-        )}
-      </View>
+      )}
     </View>
   );
 };
@@ -127,6 +125,7 @@ export const ProfileInfoCard = ({profileUser}: {profileUser: ProfileType}) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
+    flex: 1,
   },
   gradient: {
     position: 'absolute',
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
 
-  backgroundImage: {height: 180},
+  backgroundImage: {height: 99},
   button: {
     paddingVertical: 5,
     paddingHorizontal: 15,

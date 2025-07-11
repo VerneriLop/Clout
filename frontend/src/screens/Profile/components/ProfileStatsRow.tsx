@@ -131,10 +131,12 @@ const ProfileStatItem = ({value, label}: {value: number; label: string}) => {
 };
 
 const styles = StyleSheet.create({
-  userNameAndBio: {paddingTop: 80, alignItems: 'center'},
+  userNameAndBio: {paddingTop: 85, alignItems: 'center'},
   container: {
     flexDirection: 'column',
     alignItems: 'center',
+    //backgroundColor: 'red',
+    flex: 1,
   },
   profilePicture: {position: 'absolute', top: -75, zIndex: 10},
   stats: {
@@ -142,6 +144,8 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     justifyContent: 'space-between',
+    alignItems: 'center',
+    //backgroundColor: 'white',
     paddingHorizontal: 15,
     paddingVertical: 15,
   },

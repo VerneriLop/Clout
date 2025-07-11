@@ -6,8 +6,10 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   Pressable,
+  RefreshControl,
   StyleSheet,
   View,
+  useWindowDimensions,
 } from 'react-native';
 
 import {useNavigation, useTheme} from '@react-navigation/native';
@@ -15,6 +17,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {FlashList} from '@shopify/flash-list';
 import {Tabs} from 'react-native-collapsible-tab-view';
 import Animated, {ScrollHandler} from 'react-native-reanimated';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {Spinner} from '../../../components/Spinner/Spinner';
 import {TabBar} from '../../../components/TabBar';
@@ -58,6 +61,8 @@ export const ImageList = ({
 }: ImageListProps) => {
   const navigation =
     useNavigation<StackNavigationProp<ProfileStackParamList>>();
+  const layout = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
   const handlePress = (item: PostType) => {
     navigation.navigate(Routes.ProfileFeed, {
@@ -87,12 +92,18 @@ export const ImageList = ({
   return (
     <AnimatedFlashList
       contentInsetAdjustmentBehavior="automatic"
-      /*ListHeaderComponent={() => (
+      ListHeaderComponent={() => (
         <>
-          <ProfileInfoCard profileUser={profileUser} />
-          <TabBar />
+          <View
+            style={{
+              flex: 1,
+              height: layout.height / 2 - insets.top - insets.bottom,
+              backgroundColor: '',
+              pointerEvents: 'box-none',
+            }}
+          />
         </>
-      )}*/
+      )}
       scrollEventThrottle={16}
       onScroll={onScroll}
       ListEmptyComponent={renderListEmptyComponent}
@@ -104,7 +115,7 @@ export const ImageList = ({
       onEndReached={hasNextPage ? () => handleEndReached() : null}
       ListFooterComponent={isFetchingPosts ? <Spinner size={'small'} /> : null}
       refreshing={refreshing}
-      onRefresh={() => onRefresh()}
+      onRefresh={onRefresh}
       estimatedItemSize={itemSize}
       key={refreshing ? 'refreshing' : 'stable'}
     />
