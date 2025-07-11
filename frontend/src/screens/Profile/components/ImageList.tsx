@@ -90,9 +90,9 @@ export const ImageList = ({
   const itemSize = imageHeight + StyleSheet.hairlineWidth * 2;
 
   return (
-    <AnimatedFlashList
-      contentInsetAdjustmentBehavior="automatic"
-      ListHeaderComponent={() => (
+    <Tabs.FlashList
+      //contentInsetAdjustmentBehavior="automatic"
+      /*ListHeaderComponent={() => (
         <>
           <View
             style={{
@@ -103,9 +103,10 @@ export const ImageList = ({
             }}
           />
         </>
-      )}
+      )}*/
       scrollEventThrottle={16}
-      onScroll={onScroll}
+      //onScroll={onScroll}
+      nestedScrollEnabled
       ListEmptyComponent={renderListEmptyComponent}
       data={posts}
       renderItem={renderItem}
@@ -114,10 +115,11 @@ export const ImageList = ({
       onEndReachedThreshold={0.3}
       onEndReached={hasNextPage ? () => handleEndReached() : null}
       ListFooterComponent={isFetchingPosts ? <Spinner size={'small'} /> : null}
-      refreshing={refreshing}
-      onRefresh={onRefresh}
+      //refreshing={refreshing}
+      //onRefresh={onRefresh}
       estimatedItemSize={itemSize}
       key={refreshing ? 'refreshing' : 'stable'}
+      //refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} style={}/>}
     />
   );
 };

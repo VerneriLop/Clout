@@ -89,7 +89,7 @@ export const ProfileInfoCard = ({profileUser}: {profileUser: ProfileType}) => {
         {
           backgroundColor: colors.card,
           height: layout.height / 2 - insets.top - insets.bottom - 40, // tabBar height fixed 40
-          //pointerEvents: 'box-none',
+          pointerEvents: 'box-none',
         },
       ]}>
       <View

@@ -1,8 +1,15 @@
 import React, {useEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {skipToken} from '@reduxjs/toolkit/query';
+import {MaterialTabBar, Tabs} from 'react-native-collapsible-tab-view';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -14,7 +21,7 @@ import Animated, {
 import {Spinner} from '../../components/Spinner/Spinner';
 import {TabBar} from '../../components/TabBar';
 import {ThemedView} from '../../components/ui/themed-view';
-import {ThemedText} from '../../components/ui/typography';
+import {BodyText, ThemedText} from '../../components/ui/typography';
 import {useTheme} from '../../hooks/useTheme';
 import {ProfileStackParamList} from '../../navigation/Routes';
 import {
@@ -28,6 +35,7 @@ import {ProfileInfoCard} from './components/ProfileInfoCard';
 type ProfileProps = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
 
 export const ProfileScreen = ({route, navigation}: ProfileProps) => {
+  const layout = useWindowDimensions();
   const {colors} = useTheme();
   const scrollY = useSharedValue(0);
 
@@ -128,14 +136,47 @@ export const ProfileScreen = ({route, navigation}: ProfileProps) => {
   );
 
   //
+  const renderCustomTabBar = props => (
+    // You can add other components around the MaterialTabBar
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: colors.card,
+      }}>
+      <MaterialTabBar
+        {...props}
+        // You can still pass props here to style the default bar
+        indicatorStyle={{backgroundColor: colors.text}}
+        //style={{flex}} // Make it flexible if needed
+        labelStyle={{textTransform: 'lowercase'}}
+        activeColor={colors.text}
+        inactiveColor={colors.textSecondary}
+      />
+    </View>
+  );
 
   return (
-    <TabBar
-      renderHeader={renderHeader}
-      renderPosts={renderPosts}
-      renderStats={renderStats}
-      scrollY={scrollY}
-    />
+    <ScrollView
+      nestedScrollEnabled
+      scrollEnabled={false}
+      contentContainerStyle={{
+        flex: 1, // 56 is the naviagtion header height
+      }}
+      refreshControl={
+        <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+      }>
+      <Tabs.Container
+        renderHeader={renderHeader}
+        renderTabBar={renderCustomTabBar}>
+        <Tabs.Tab name="Posts">{renderPosts()}</Tabs.Tab>
+        <Tabs.Tab name="Statistics">
+          <Tabs.ScrollView>
+            <View style={StyleSheet.absoluteFill} />
+          </Tabs.ScrollView>
+        </Tabs.Tab>
+      </Tabs.Container>
+    </ScrollView>
   );
 };
 

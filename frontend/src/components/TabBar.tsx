@@ -1,11 +1,17 @@
 import {useCallback, useRef, useState} from 'react';
-import {StyleSheet, View, useWindowDimensions} from 'react-native';
+import {
+  RefreshControlProps,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 
 import {FlashList} from '@shopify/flash-list';
 import {
   Gesture,
   GestureDetector,
   RefreshControl,
+  ScrollView,
 } from 'react-native-gesture-handler';
 import Animated, {
   Easing,
@@ -50,6 +56,12 @@ type TabBarProps = {
   renderPosts: () => React.ReactNode;
   renderStats: () => React.ReactNode;
   renderHeader: () => React.ReactNode;
+  renderRefreshControl: () =>
+    | React.ReactElement<
+        RefreshControlProps,
+        string | React.JSXElementConstructor<any>
+      >
+    | undefined;
   scrollY: SharedValue<number>;
 };
 
@@ -57,9 +69,10 @@ export const TabBar = ({
   renderPosts,
   renderStats,
   renderHeader,
+  renderRefreshControl,
   scrollY,
 }: TabBarProps) => {
-  const [activeIndex, setActiveIndex] = useState(new Set([0]));
+  const [activeIndex, setActiveIndex] = useState(0); //useState(new Set([0]));
   //const [renderedTabs, setRenderedTabs] = useState<Set<number>>(new Set([0]));
 
   const {colors} = useTheme();
@@ -70,9 +83,10 @@ export const TabBar = ({
   const offset = useSharedValue(0);
 
   const handleTabPress = (index: number) => {
-    if (!activeIndex.has(index)) {
+    /*if (!activeIndex.has(index)) {
       setActiveIndex(prev => new Set([...prev, index]));
-    }
+    }*/
+    setActiveIndex(index);
     sharedActiveIndex.value = index;
     offset.value = withSpring(-layout.width * index, {damping: 30});
   };
@@ -145,21 +159,24 @@ export const TabBar = ({
   }));
 
   return (
-    <View style={{flex: 1}}>
+    <ScrollView
+      style={{}}
+      stickyHeaderIndices={[1]}
+      nestedScrollEnabled
+      refreshControl={renderRefreshControl()}>
+      {renderHeader()}
       <Animated.View
         style={[
           headerAnimatedStyle,
           {
-            position: 'absolute',
+            //position: 'absolute',
             //top: insets.top,
             //zIndex: 1,
-            height: layout.height / 2 - insets.top - insets.bottom,
-            backgroundColor: 'tomato',
+            //height: layout.height / 2 - insets.top - insets.bottom,
+            //backgroundColor: 'tomato',
             //pointerEvents: 'box-none',
           },
         ]}>
-        {renderHeader()}
-
         <View
           style={[
             styles.tabBar,
@@ -196,12 +213,15 @@ export const TabBar = ({
         ]}
         layout={LinearTransition}>
         <Animated.View
-          style={{
-            width: layout.width,
-            flex: 1,
-            zIndex: 2,
-            pointerEvents: 'box-none',
-          }}
+          style={[
+            {
+              width: layout.width,
+              flex: 1,
+              zIndex: 2,
+              pointerEvents: 'box-none',
+            },
+            containerPanStyle,
+          ]}
           key="posts">
           {renderPosts()}
         </Animated.View>
@@ -216,7 +236,7 @@ export const TabBar = ({
           {renderStats()}
         </Animated.View>
       </Animated.View>
-    </View>
+    </ScrollView>
   );
 };
 
