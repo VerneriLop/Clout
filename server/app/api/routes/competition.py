@@ -1,19 +1,13 @@
 from typing import Any
 import uuid
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select, func
-from sqlalchemy.exc import IntegrityError
+from fastapi import APIRouter, Depends
 
-from app.services import user_crud as crud
 from app.api.deps import (
     CurrentUser,
     SessionDep,
     get_current_active_superuser,
     get_current_user,
 )
-from app.models import User
-from app.core.security import get_password_hash, verify_password
-from app.models.follower import Follower
 
 
 router = APIRouter(prefix="/competition", tags=["competitions"])
@@ -25,6 +19,17 @@ router = APIRouter(prefix="/competition", tags=["competitions"])
 def read_competitions(session: SessionDep) -> Any:
     """
     Read all competitions.
+    """
+
+
+@router.get(
+    "/",
+    dependencies=[Depends(get_current_active_superuser)],
+    response_model=CompetitionsPublic,
+)
+def read_competitions_for_superuser(session: SessionDep) -> Any:
+    """
+    Read all competitions and return more data for superuser
     """
 
 
@@ -76,4 +81,18 @@ def read_current_competition(
 def read_latest_competition(session: SessionDep) -> Any:
     """
     Read results from latest competition. Leaderboard
+    """
+
+
+@router.get("/vote", dependencies=[Depends(get_current_user)], response_model=...)
+def read_entries_me(session: SessionDep) -> Any:
+    """
+    Get (NUMBER OF PAIRS) pairs of entries for voting.
+    """
+
+
+@router.post("/vote", response_model=...)
+def create_vote(session: SessionDep, currentUser: CurrentUser) -> Any:
+    """
+    Vote between one pair of posts.
     """

@@ -89,7 +89,7 @@ def create_post_me(
     post_in: PostCreate,
 ) -> Any:
     """
-    Create a post for own user.
+    Create post and competetition entry.
     """
     post = crud.create_post(session=session, post_in=post_in, owner_id=current_user.id)
     return post
