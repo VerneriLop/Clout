@@ -159,7 +159,7 @@ export const ProfileScreen = ({route, navigation}: ProfileProps) => {
   return (
     <ScrollView
       nestedScrollEnabled
-      scrollEnabled={false}
+      scrollEnabled
       contentContainerStyle={{
         flex: 1, // 56 is the naviagtion header height
       }}

@@ -48,7 +48,7 @@ export const ProfileStackNavigator = () => {
           //  lineHeight: 25,
           //},
           //headerStyle: {justifyContent: 'center'},
-          headerLargeTitle: true,
+          //headerLargeTitle: true,
 
           //headerStyle: {backgroundColor: 'transparent'},
         })}
