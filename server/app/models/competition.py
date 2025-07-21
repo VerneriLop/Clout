@@ -51,11 +51,11 @@ class Competition(Base):
         DateTime(timezone=True), nullable=False
     )
     end_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    # is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     competition_number: Mapped[int] = mapped_column(
         Integer,
-        Sequence("competition_number_seq", start=1),  # PostgreSQL only
+        Sequence("competition_number_seq", start=1),
         unique=True,
         nullable=False,
     )
