@@ -39,7 +39,7 @@ from app.schemas.user import Message
 from app.services import post_crud as crud
 from app.api.deps import CurrentCapturingCompetition, CurrentUser, SessionDep
 from app.models import Post, Comment, Like
-from server.app.models.competition import Competition
+from app.models.competition import Competition
 
 
 router = APIRouter(prefix="/posts", tags=["posts"])
