@@ -4,7 +4,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 
 from app.api.deps import (
-    CurrentCapturingCompetition,
     CurrentUser,
     CurrentVotingCompetition,
     SessionDep,
