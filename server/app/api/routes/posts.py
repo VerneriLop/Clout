@@ -40,6 +40,7 @@ from app.services import post_crud as crud
 from app.api.deps import CurrentCapturingCompetition, CurrentUser, SessionDep
 from app.models import Post, Comment, Like
 from app.models.competition import Competition
+from app.models.competition_entry import CompetitionEntry
 
 
 router = APIRouter(prefix="/posts", tags=["posts"])
@@ -94,7 +95,7 @@ def create_post_me(
     Create post and competetition entry.
     """
     post = crud.create_post(session=session, post_in=post_in, owner_id=current_user.id)
-    competition_entry = Competition(
+    competition_entry = CompetitionEntry(
         competition_id=current_competition.id,
         owner_id=current_user.id,
         post_id=post.id,
