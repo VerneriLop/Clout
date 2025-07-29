@@ -19,6 +19,7 @@ from app.schemas.competition import (
     CompetitionCreate,
     CompetitionEntriesAdmin,
     CompetitionReadAdmin,
+    CompetitionUpdate,
     CompetitionsReadAdmin,
     PairwiseVotesReadAdmin,
 )
@@ -292,3 +293,29 @@ def delete_pairwise_vote(
     session.commit()
 
     return Message(message="Deleted successfully.")
+
+
+@router.patch(
+    "/competition/{competition_id}",
+    dependencies=[Depends(get_current_active_superuser)],
+    response_model=CompetitionReadAdmin,
+)
+def update_competition(
+    competition_id: uuid.UUID,
+    competition_in: CompetitionUpdate,
+    session: SessionDep,
+) -> CompetitionReadAdmin:
+    """
+    Update competition
+    """
+    competition = session.get(Competition, competition_id)
+    if not competition:
+        raise HTTPException(status_code=404, detail="Competition not found")
+
+    for field, value in competition_in.model_dump(exclude_unset=True).items():
+        setattr(competition, field, value)
+
+    session.commit()
+    session.refresh(competition)
+
+    return competition
