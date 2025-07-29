@@ -62,13 +62,41 @@ export function Dashboard() {
   );
 
   return (
+    <main className="flex-1 flex flex-col bg-neutral-900 p-4 overflow-hidden">
+      {/* Large table on top */}
+      <div className="flex gap-4 pb-2 justify-between">
+        <h2 className=" font-semibold bg-stone-900">Competitions</h2>
+        <button
+          className="bg-blue-700 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
+          onClick={refetch}
+          disabled={isLoading}
+        >
+          Refresh
+        </button>
+      </div>
+      <div className="flex-1 mb-1 overflow-auto rounded border border-stone-700">
+        <DataGrid
+          rows={feedPosts}
+          columns={columns}
+          checkboxSelection
+          pageSizeOptions={[5, 10]}
+          sx={{
+            border: 0,
+          }}
+        />
+      </div>
+    </main>
+  );
+}
+
+/*
     <div className="flex flex-col h-screen">
       <div className="flex flex-1 overflow-hidden">
         <aside className="flex flex-col h-screen w-45 bg-stone-950 text-white p-4 border-r border-r-neutral-700">
           <h2 className="text-2xl font-semibold mb-4 text-left">Clout Admin</h2>
 
           <nav className="flex flex-col justify-between flex-1 ">
-            {/* Top group */}
+            
             <div>
               <NavLink
                 to="/dashboard"
@@ -104,7 +132,7 @@ export function Dashboard() {
               </NavLink>
             </div>
 
-            {/* Bottom group */}
+      
             <div className="flex flex-col space-y-2">
               <a href="/profile" className="hover:bg-stone-700 rounded">
                 Profile
@@ -121,32 +149,4 @@ export function Dashboard() {
             </div>
           </nav>
         </aside>
-
-        <main className="flex-1 flex flex-col bg-stone-900 p-4 overflow-hidden">
-          {/* Large table on top */}
-          <div className="flex gap-4 pb-2 justify-between">
-            <h2 className=" font-semibold bg-stone-900">Competitions</h2>
-            <button
-              className="bg-blue-700 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
-              onClick={refetch}
-              disabled={isLoading}
-            >
-              Refresh
-            </button>
-          </div>
-          <div className="flex-1 mb-1 overflow-auto rounded border border-stone-700">
-            <DataGrid
-              rows={feedPosts}
-              columns={columns}
-              checkboxSelection
-              pageSizeOptions={[5, 10]}
-              sx={{
-                border: 0,
-              }}
-            />
-          </div>
-        </main>
-      </div>
-    </div>
-  );
-}
+        */

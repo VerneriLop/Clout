@@ -25,5 +25,5 @@ export default function Home() {
     }
   }, [navigate, token]);
 
-  return <Dashboard />;
+  return <h1>Welcome to Dashboard</h1>;
 }
