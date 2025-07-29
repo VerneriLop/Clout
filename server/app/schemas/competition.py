@@ -1,12 +1,8 @@
 from datetime import datetime
-from typing import Literal
 import uuid
-from pydantic import BaseModel, EmailStr, Field, HttpUrl
+from pydantic import BaseModel, HttpUrl
 
 from app.models.competition import CompetitionStatus
-
-
-class Competition: ...
 
 
 class CompetitionPublic(BaseModel):
@@ -107,3 +103,12 @@ class CompetitionCreate(BaseModel):
     start_time: datetime
     vote_start_time: datetime
     end_time: datetime
+
+
+class CompetitionUpdate(BaseModel):
+    category: str | None = None
+    description: str | None = None
+    status: CompetitionStatus | None = None
+    start_time: datetime | None = None
+    vote_start_time: datetime | None = None
+    end_time: datetime | None = None
