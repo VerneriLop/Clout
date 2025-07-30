@@ -40,7 +40,7 @@ class CompetitionFilterParams(BaseModel):
 
 
 @router.get(
-    "/competition",
+    "/competitions",
     dependencies=[Depends(get_current_active_superuser)],
     response_model=CompetitionsReadAdmin,
 )
@@ -68,7 +68,7 @@ def read_competitions(
 
 
 @router.get(
-    "/competition/current",
+    "/competitions/current",
     dependencies=[Depends(get_current_active_superuser)],
     response_model=CompetitionsReadAdmin,
 )
@@ -94,7 +94,7 @@ class EntryFilterParams(BaseModel):
 
 
 @router.get(
-    "/competition/{competition_id}/entries",
+    "/competitions/{competition_id}/entries",
     dependencies=[Depends(get_current_active_superuser)],
     response_model=CompetitionEntriesAdmin,
 )
@@ -139,7 +139,7 @@ class VoteFilterParams(BaseModel):
 
 
 @router.get(
-    "competition/{competition_id}/votes",
+    "competitions/{competition_id}/votes",
     dependencies=[Depends(get_current_active_superuser)],
     response_model=PairwiseVotesReadAdmin,
 )
@@ -172,7 +172,7 @@ def get_pairwise_votes_by_competition_id(
 
 
 @router.post(
-    "/competition",
+    "/competitions",
     dependencies=[Depends(get_current_active_superuser)],
     response_model=CompetitionReadAdmin,
 )
@@ -207,7 +207,7 @@ def create_competition(
 
 
 @router.delete(
-    "/competition/{competition_id}",
+    "/competitions/{competition_id}",
     dependencies=[Depends(get_current_active_superuser)],
     response_model=Message,
 )
@@ -229,7 +229,7 @@ def delete_competition(
     return Message(message="Deleted successfully.")
 
 
-@router.post("/post", response_model=PostPublic)
+@router.post("/posts", response_model=PostPublic)
 def create_post_for_voting(
     session: SessionDep,
     current_user: CurrentUser,
@@ -252,7 +252,7 @@ def create_post_for_voting(
 
 
 @router.delete(
-    "/entry/{entry_id}",
+    "/entries/{entry_id}",
     dependencies=[Depends(get_current_active_superuser)],
     response_model=Message,
 )
@@ -274,7 +274,7 @@ def delete_competition_entry(
 
 
 @router.delete(
-    "/vote/{vote_id}",
+    "/votes/{vote_id}",
     dependencies=[Depends(get_current_active_superuser)],
     response_model=Message,
 )
@@ -296,7 +296,7 @@ def delete_pairwise_vote(
 
 
 @router.patch(
-    "/competition/{competition_id}",
+    "/competitions/{competition_id}",
     dependencies=[Depends(get_current_active_superuser)],
     response_model=CompetitionReadAdmin,
 )

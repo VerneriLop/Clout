@@ -80,6 +80,8 @@ export function Dashboard() {
           columns={columns}
           checkboxSelection
           pageSizeOptions={[5, 10]}
+          disableColumnMenu
+          disableColumnSorting
           sx={{
             border: 0,
           }}
