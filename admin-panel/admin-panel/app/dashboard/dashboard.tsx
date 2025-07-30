@@ -1,54 +1,58 @@
-import { useMemo, useState } from "react";
-import {
-  useGetCompetitionEntriesInfiniteQuery,
-  useGetCompetitionsInfiniteQuery,
-} from "~/redux/api/endpoints/competitions";
+import {useMemo, useState} from 'react';
 
-import { DataGrid } from "@mui/x-data-grid";
-import type { GridColDef, GridRowId } from "@mui/x-data-grid";
-import Paper from "@mui/material/Paper";
-import { NavLink, useNavigate } from "react-router";
+import {DataGrid} from '@mui/x-data-grid';
+import type {GridColDef, GridRowId} from '@mui/x-data-grid';
+import {useNavigate} from 'react-router';
+import {
+  type CompetitionResponse,
+  useGetCompetitionsInfiniteQuery,
+  useUpdateCompetitionMutation,
+} from '~/redux/api/endpoints/competitions';
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID" }, //, width: 250 },
-  { field: "category", headerName: "Category" }, //, width: 130 },
-  { field: "description", headerName: "Description" }, //, width: 200 },
-  { field: "status", headerName: "Status" }, //, width: 120 },
+  {field: 'id', headerName: 'ID'}, //, width: 250 },
+  {field: 'category', headerName: 'Category', editable: true}, //, width: 130 },
+  {field: 'description', headerName: 'Description', editable: true}, //, width: 200 },
+  {field: 'status', headerName: 'Status', editable: true}, //, width: 120 },
   {
-    field: "created_at",
-    headerName: "Created At",
+    field: 'created_at',
+    headerName: 'Created At',
     //width: 180,
-    valueFormatter: (params) => new Date(params).toLocaleString(),
+    valueFormatter: params => new Date(params).toLocaleString(),
   },
   {
-    field: "start_time",
-    headerName: "Start Time",
+    field: 'start_time',
+    headerName: 'Start Time',
     //width: 180,
-    valueFormatter: (params) => new Date(params).toLocaleString(),
+    valueFormatter: params => new Date(params).toLocaleString(),
+    editable: true,
   },
   {
-    field: "vote_start_time",
-    headerName: "Vote Start Time",
+    field: 'vote_start_time',
+    headerName: 'Vote Start Time',
     //width: 180,
-    valueFormatter: (params) => new Date(params).toLocaleString(),
+    valueFormatter: params => new Date(params).toLocaleString(),
+    editable: true,
   },
   {
-    field: "end_time",
-    headerName: "End Time",
+    field: 'end_time',
+    headerName: 'End Time',
     //width: 180,
-    valueFormatter: (params) => new Date(params).toLocaleString(),
+    valueFormatter: params => new Date(params).toLocaleString(),
+    editable: true,
   },
   {
-    field: "competition_number",
-    headerName: "Competition #",
+    field: 'competition_number',
+    headerName: 'Competition #',
     //width: 150,
-    type: "number",
+    type: 'number',
   },
 ];
 
 export function Dashboard() {
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<GridRowId>();
+  const [updateCompetition] = useUpdateCompetitionMutation();
 
   const {
     data,
@@ -59,13 +63,40 @@ export function Dashboard() {
     refetch,
   } = useGetCompetitionsInfiniteQuery();
 
-  const feedPosts = useMemo(
-    () => data?.pages?.flatMap((page) => page.data) || [],
-    [data]
+  const competitions = useMemo(
+    () => data?.pages?.flatMap(page => page.data) || [],
+    [data],
   );
 
   const handleEntriesClick = () => {
     navigate(`/competitions/${selectedId}/entries`);
+  };
+
+  const handleVotesClick = () => {
+    navigate(`/competitions/${selectedId}/votes`);
+  };
+
+  const handleUpdate = (
+    newRow: CompetitionResponse,
+    oldRow: CompetitionResponse,
+  ) => {
+    const changedFields: Partial<CompetitionResponse> = {};
+
+    //checking which cell is updated.
+    Object.keys(newRow).forEach(key => {
+      const typedKey = key as keyof CompetitionResponse;
+      const newValue = newRow[typedKey];
+      const oldValue = oldRow[typedKey];
+
+      if (newValue !== oldValue) {
+        (changedFields as any)[typedKey] = newValue;
+      }
+    });
+
+    updateCompetition({competition_id: oldRow.id, body: changedFields});
+    console.log('Muutetut kentät:', changedFields);
+
+    return newRow;
   };
 
   return (
@@ -76,25 +107,30 @@ export function Dashboard() {
         {selectedId && (
           <button
             className="bg-blue-700 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
-            onClick={() => handleEntriesClick()}
-          >
+            onClick={() => handleEntriesClick()}>
             Show selected entries
+          </button>
+        )}
+        {selectedId && (
+          <button
+            className="bg-blue-700 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
+            onClick={() => handleVotesClick()}>
+            Show selected votes
           </button>
         )}
         <button
           className="bg-blue-700 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
           onClick={refetch}
-          disabled={isLoading}
-        >
+          disabled={isLoading}>
           Refresh
         </button>
       </div>
       <div className="flex-1 mb-1 overflow-auto rounded border border-stone-700">
         <DataGrid
-          rows={feedPosts}
+          rows={competitions}
           columns={columns}
           checkboxSelection={false}
-          onRowSelectionModelChange={(newSelection) => {
+          onRowSelectionModelChange={newSelection => {
             const id = Array.from(newSelection.ids)[0];
             setSelectedId(id);
           }}
@@ -104,6 +140,7 @@ export function Dashboard() {
           sx={{
             border: 0,
           }}
+          processRowUpdate={handleUpdate}
         />
       </div>
     </main>
