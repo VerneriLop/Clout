@@ -16,10 +16,10 @@ export function meta({}: Route.MetaArgs) {
 }
 
 const columns: GridColDef[] = [
-  {field: 'id', headerName: 'ID'}, //, width: 250 },
-  {field: 'user_id', headerName: 'Voter id'}, //, width: 130 },
-  {field: 'winner_entry_id', headerName: 'Winner entry id'}, //, width: 200 },
-  {field: 'loser_entry_id', headerName: 'Loser entry id'}, //, width: 120 },
+  {field: 'id', headerName: 'ID'},
+  {field: 'user_id', headerName: 'Voter id'},
+  {field: 'winner_entry_id', headerName: 'Winner entry id'},
+  {field: 'loser_entry_id', headerName: 'Loser entry id'},
   {
     field: 'created_at',
     headerName: 'Created at',
