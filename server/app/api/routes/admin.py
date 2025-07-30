@@ -229,7 +229,11 @@ def delete_competition(
     return Message(message="Deleted successfully.")
 
 
-@router.post("/posts", response_model=PostPublic)
+@router.post(
+    "/posts",
+    dependencies=[Depends(get_current_active_superuser)],
+    response_model=PostPublic,
+)
 def create_post_for_voting(
     session: SessionDep,
     current_user: CurrentUser,

@@ -25,15 +25,51 @@ type CompetitionEntryResponse = {
   count: number;
 };
 
-type CompetitionResponse = {
+type CompetitionsResponse = {
   data: CompetitionEntry[];
   count: number;
+};
+
+type CreateCompetitionPayload = {
+  category: string;
+  description: string;
+  start_time: string;
+  vote_start_time: string;
+  end_time: string;
+};
+
+type CompetitionStatus = "pending" | "capturing" | "voting" | "finished";
+
+type CompetitionResponse = {
+  id: string;
+  category: string;
+  description: string;
+  created_at: string;
+  status: CompetitionStatus;
+  start_time: string;
+  vote_start_time: string;
+  end_time: string;
+  competition_number: number;
+};
+
+type CompetitionUpdate = {
+  category?: string;
+  description?: string;
+  status?: CompetitionStatus;
+  start_time?: string;
+  vote_start_time?: string;
+  end_time?: string;
+};
+
+type CompetitionUpdatePayload = {
+  competition_id: string;
+  body: CompetitionUpdate;
 };
 
 export const competitionsApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getCompetitions: builder.infiniteQuery<
-      CompetitionResponse,
+      CompetitionsResponse,
       void,
       GeneralPageParam
     >({
@@ -74,7 +110,9 @@ export const competitionsApi = apiSlice.injectEndpoints({
           };
         },
       },
+      providesTags: ["Competitions"],
     }),
+
     getCompetitionEntries: builder.infiniteQuery<
       CompetitionEntryResponse,
       string,
@@ -121,10 +159,41 @@ export const competitionsApi = apiSlice.injectEndpoints({
         },
       },
     }),
+
+    getCurrentCompetition: builder.query<CompetitionsResponse, void>({
+      query: () => "admin/competitions/current",
+    }),
+
+    createCompetition: builder.mutation<
+      CompetitionResponse,
+      CreateCompetitionPayload
+    >({
+      query: (newCompetition) => ({
+        url: "admin/competitions",
+        method: "POST",
+        body: newCompetition,
+      }),
+      invalidatesTags: ["Competitions"],
+    }),
+
+    updateCompetition: builder.mutation<
+      CompetitionResponse,
+      CompetitionUpdatePayload
+    >({
+      query: ({ competition_id, body }) => ({
+        url: `admin/competitions/${competition_id}`,
+        method: "PATCH",
+        body: body,
+      }),
+      invalidatesTags: ["Competitions"],
+    }),
   }),
 });
 
 export const {
   useGetCompetitionsInfiniteQuery,
   useGetCompetitionEntriesInfiniteQuery,
+  useGetCurrentCompetitionQuery,
+  useCreateCompetitionMutation,
+  useUpdateCompetitionMutation,
 } = competitionsApi;
