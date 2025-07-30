@@ -7,7 +7,7 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import type { GridColDef, GridRowId } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID" }, //, width: 250 },
@@ -47,7 +47,9 @@ const columns: GridColDef[] = [
 ];
 
 export function Dashboard() {
+  const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<GridRowId>();
+
   const {
     data,
     isLoading,
@@ -62,7 +64,9 @@ export function Dashboard() {
     [data]
   );
 
-  console.log(selectedId)
+  const handleEntriesClick = () => {
+    navigate(`/competitions/${selectedId}/entries`);
+  };
 
   return (
     <main className="flex-1 flex flex-col bg-neutral-900 p-4 overflow-hidden">
@@ -72,7 +76,7 @@ export function Dashboard() {
         {selectedId && (
           <button
             className="bg-blue-700 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
-            onClick={() => console.log("nav")}
+            onClick={() => handleEntriesClick()}
           >
             Show selected entries
           </button>
@@ -91,7 +95,7 @@ export function Dashboard() {
           columns={columns}
           checkboxSelection={false}
           onRowSelectionModelChange={(newSelection) => {
-            const id = Array.from(newSelection.ids)[0]
+            const id = Array.from(newSelection.ids)[0];
             setSelectedId(id);
           }}
           pageSizeOptions={[5, 10]}
