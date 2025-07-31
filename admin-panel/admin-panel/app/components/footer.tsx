@@ -35,31 +35,34 @@ export const Footer = ({
   };
 
   return (
-    <div className="flex justify-end items-center rounded border border-stone-700 py-1 px-1">
-      {selectedId && (
-        <>
+    <>
+      <div className="flex justify-between items-center rounded border border-stone-700 py-1 px-1">
+        <div className="flex items-center gap-4 px-2">
+          {selectedId && (
+            <button
+              className="bg-blue-700 disabled:bg-blue-950 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
+              onClick={handleDelete}
+              disabled={isMutationLoading}>
+              Delete selected
+            </button>
+          )}
+        </div>
+        <div className="flex items-center">
+          <p className="text-xs text-neutral-100 px-4">Page {page + 1}</p>
           <button
-            className="bg-blue-700 disabled:bg-blue-950 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
-            onClick={() => handleDelete()}
-            disabled={isMutationLoading}>
-            Delete selected
+            className="disabled:text-neutral-500 hover:bg-neutral-600 text-white font-medium text-xs px-2 py-1 rounded-md active:ring-1 active:ring-amber-600 transition-all duration-100"
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page === 0}>
+            <ChevronLeftIcon />
           </button>
-        </>
-      )}
-
-      <p className="text-xs text-neutral-100 px-4">Page {page + 1}</p>
-      <button
-        className=" disabled:text-neutral-500 hover:bg-neutral-600 text-white font-medium text-xs px-2 py-1 rounded-md active:ring-1 active:ring-amber-600 transition-all duration-100"
-        onClick={() => handlePageChange(page - 1)}
-        disabled={page === 0}>
-        <ChevronLeftIcon />
-      </button>
-      <button
-        className="disabled:text-neutral-500 hover:bg-neutral-600 text-white font-medium text-xs px-2 py-1 rounded-md active:ring-1 active:ring-amber-600 transition-all duration-100"
-        onClick={() => handlePageChange(page + 1)}
-        disabled={!hasNextPage && !pages.has(page + 1)}>
-        <ChevronRightIcon />
-      </button>
-    </div>
+          <button
+            className="disabled:text-neutral-500 hover:bg-neutral-600 text-white font-medium text-xs px-2 py-1 rounded-md active:ring-1 active:ring-amber-600 transition-all duration-100"
+            onClick={() => handlePageChange(page + 1)}
+            disabled={!hasNextPage && !pages.has(page + 1)}>
+            <ChevronRightIcon />
+          </button>
+        </div>
+      </div>
+    </>
   );
 };

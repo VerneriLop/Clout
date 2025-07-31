@@ -50,7 +50,7 @@ type CompetitionsResponse = {
   count: number;
 };
 
-type CreateCompetitionPayload = {
+export type CreateCompetitionPayload = {
   category: string;
   description: string;
   start_time: string;

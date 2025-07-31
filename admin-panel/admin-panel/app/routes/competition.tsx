@@ -1,14 +1,17 @@
 import {useMemo, useState} from 'react';
 
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import AddIcon from '@mui/icons-material/Add';
 import Alert from '@mui/material/Alert';
+import Modal from '@mui/material/Modal';
 import {DataGrid} from '@mui/x-data-grid';
 import type {GridColDef, GridRowId} from '@mui/x-data-grid';
 import {useNavigate} from 'react-router';
+import CompetitionModal from '~/components/competitionModal';
 import {Footer} from '~/components/footer';
 import {
   type CompetitionResponse,
+  type CreateCompetitionPayload,
+  useCreateCompetitionMutation,
   useDeleteCompetitionMutation,
   useGetCompetitionsInfiniteQuery,
   useUpdateCompetitionMutation,
@@ -66,6 +69,8 @@ const columns: GridColDef[] = [
 export default function Competition() {
   const [pages, setPages] = useState(new Set([0]));
   const [page, setPage] = useState(0);
+  const [showAddForm, setShowAddForm] = useState(false);
+
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<GridRowId>('');
   const [alert, setAlert] = useState<{
@@ -73,6 +78,7 @@ export default function Competition() {
     message: string;
   } | null>(null);
 
+  const [createCompetition] = useCreateCompetitionMutation();
   const [updateCompetition] = useUpdateCompetitionMutation();
   const [deleteCompetition, {isLoading: isMutationLoading}] =
     useDeleteCompetitionMutation();
@@ -97,6 +103,17 @@ export default function Competition() {
 
   const handleVotesClick = () => {
     navigate(`/competitions/${selectedId}/votes`);
+  };
+
+  const handleCreateCompetition = async (data: CreateCompetitionPayload) => {
+    try {
+      await createCompetition(data).unwrap();
+      setAlert({type: 'success', message: 'Competition created!'});
+      refetch(); // Refresh list
+    } catch (err: any) {
+      const message = err?.data?.detail || 'Error creating competition';
+      setAlert({type: 'error', message});
+    }
   };
 
   const handleUpdate = async (
@@ -155,19 +172,25 @@ export default function Competition() {
       <div className="flex gap-4 pb-2 justify-between">
         <h2 className=" font-semibold bg-stone-900">Competitions</h2>
         {selectedId && (
-          <button
-            className="bg-blue-700 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
-            onClick={() => handleEntriesClick()}>
-            Show selected entries
-          </button>
+          <>
+            <button
+              className="bg-blue-700 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
+              onClick={() => handleEntriesClick()}>
+              Show selected entries
+            </button>
+            <button
+              className="bg-blue-700 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
+              onClick={() => handleVotesClick()}>
+              Show selected votes
+            </button>
+          </>
         )}
-        {selectedId && (
-          <button
-            className="bg-blue-700 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
-            onClick={() => handleVotesClick()}>
-            Show selected votes
-          </button>
-        )}
+        <button
+          className="disabled:text-neutral-500 hover:bg-neutral-600 text-white font-medium text-xs px-2 py-1 rounded-md active:ring-1 active:ring-amber-600 transition-all duration-100 items-center flex gap-1"
+          onClick={() => setShowAddForm(prev => !prev)}>
+          {showAddForm ? 'Cancel' : 'Add new'}
+          <AddIcon fontSize="small" />
+        </button>
         <button
           className="bg-blue-700 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
           onClick={refetch}
@@ -204,6 +227,11 @@ export default function Competition() {
         setPage={setPage}
         pages={pages}
         setPages={setPages}
+      />
+      <CompetitionModal
+        showAddForm={showAddForm}
+        setShowAddForm={setShowAddForm}
+        onSubmit={handleCreateCompetition}
       />
     </main>
   );
