@@ -55,7 +55,6 @@ export default function Simulation() {
   const votingCompetition = competitionData?.data.find(
     comp => comp.status === 'voting',
   );
-  console.log(votingCompetition);
 
   const handleCreateEntry = async (data: CreatePostPayload) => {
     try {

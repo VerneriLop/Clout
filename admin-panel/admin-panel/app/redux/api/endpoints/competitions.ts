@@ -300,7 +300,7 @@ export const competitionsApi = apiSlice.injectEndpoints({
     }),
     createPost: builder.mutation<PostResponseType, Partial<PostRequestType>>({
       query: body => ({
-        url: 'admin/posts/',
+        url: 'admin/posts',
         method: 'POST',
         body,
       }),
