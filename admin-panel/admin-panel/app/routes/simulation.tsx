@@ -170,6 +170,11 @@ export default function Simulation() {
         pages={pages}
         setPages={setPages}
       />
+      <EntryModal
+        showAddForm={showAddForm}
+        setShowAddForm={setShowAddForm}
+        onSubmit={handleCreateEntry}
+      />
     </main>
   );
 }
