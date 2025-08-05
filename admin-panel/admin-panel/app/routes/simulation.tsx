@@ -138,8 +138,8 @@ export default function Simulation() {
         </button>
       </div>
       <div className="flex justify-evenly mt-4">
-        {/* Left Image */}
         <div className="flex flex-col items-center bg-stone-800 p-2 rounded-md">
+          <h3 className="py-1 text-xs">VotePair1 stats</h3>
           {!isLoadingPairs && (
             <img
               src={votePair?.entry_1.post.image_url}
@@ -163,6 +163,7 @@ export default function Simulation() {
 
         {/* Right Image */}
         <div className="flex flex-col items-center bg-stone-800 p-2 rounded-md">
+          <h3 className="py-1 text-xs">VotePair2 stats</h3>
           {!isLoadingPairs && (
             <img
               src={votePair?.entry_2.post.image_url}
