@@ -135,7 +135,7 @@ def read_entries(
 
 
 @router.patch(
-    "/competitions/currrent/entries",
+    "/competitions/current/entries",
     dependencies=[Depends(get_current_active_superuser)],
     response_model=Message,
 )

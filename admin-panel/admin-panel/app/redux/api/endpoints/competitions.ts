@@ -340,6 +340,7 @@ export const competitionsApi = apiSlice.injectEndpoints({
         url: 'admin/competitions/current/entries',
         method: 'PATCH',
       }),
+      invalidatesTags: ['Entries'],
     }),
   }),
 });
