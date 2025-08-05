@@ -1,9 +1,12 @@
 import {useMemo, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
+import Alert from '@mui/material/Alert';
 import {DataGrid, type GridColDef, type GridRowId} from '@mui/x-data-grid';
+import EntryModal, {type CreatePostPayload} from '~/components/entryModal';
 import {Footer} from '~/components/footer';
 import {
+  useCreatePostMutation,
   useDeleteEntryMutation,
   useGetCompetitionEntriesInfiniteQuery,
   useGetCurrentCompetitionQuery,
@@ -40,10 +43,26 @@ export default function Simulation() {
   const [pages, setPages] = useState(new Set([0]));
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<GridRowId>('');
+  const [alert, setAlert] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
 
   const {data, isLoading} = useGetCurrentCompetitionQuery();
+  const [createEntry] = useCreatePostMutation();
 
   console.log(data?.data);
+
+  const handleCreateEntry = async (data: CreatePostPayload) => {
+    try {
+      await createEntry(data).unwrap();
+      setAlert({type: 'success', message: 'Competition created!'});
+      //refetch(); // ADD THIS
+    } catch (err: any) {
+      const message = err?.data?.detail || 'Error creating competition';
+      setAlert({type: 'error', message});
+    }
+  };
 
   /*const {
     data,
@@ -66,11 +85,19 @@ export default function Simulation() {
 
   return (
     <main className="flex-1 flex flex-col bg-neutral-900 p-4 overflow-hidden">
+      {alert && (
+        <Alert
+          severity={alert.type}
+          onClose={() => setAlert(null)}
+          sx={{mb: 2}}>
+          {alert.message}
+        </Alert>
+      )}
       <div className="flex gap-4 pb-2 justify-between">
         <h2 className=" font-semibold bg-stone-900">Competitions</h2>
         <button
           className="disabled:text-neutral-500 hover:bg-neutral-600 text-white font-medium text-xs px-2 py-1 rounded-md active:ring-1 active:ring-amber-600 transition-all duration-100 items-center flex gap-1"
-          onClick={() => console.log}>
+          onClick={() => setShowAddForm(prev => !prev)}>
           {showAddForm ? 'Cancel' : 'Add new'}
           <AddIcon fontSize="small" />
         </button>
@@ -131,6 +158,13 @@ export default function Simulation() {
           pages={pages}
           setPages={setPages}
         />*/}
+        {showAddForm && (
+          <EntryModal
+            showAddForm={showAddForm}
+            setShowAddForm={setShowAddForm}
+            onSubmit={handleCreateEntry}
+          />
+        )}
       </div>
     </main>
   );
