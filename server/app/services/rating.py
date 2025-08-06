@@ -15,8 +15,17 @@ def sample_pair(
     if len(all_entries) < 2:
         raise ValueError("Need at least two entries.")
 
-    samples = [(entry, random.gauss(entry.mu, entry.sigma)) for entry in all_entries]
+    alpha = 0.7
+    # Alpha controls vote balancing: lower values (e.g. 0.3) allow bigger vote count differences,
+    # while values closer to 1.0 enforce more equal exposure across entries.
+
+    samples = [
+        (entry, random.gauss(entry.mu, entry.sigma) / (1 + entry.comparisons) ** alpha)
+        for entry in all_entries
+    ]
+
     top_two = sorted(samples, key=lambda x: x[1], reverse=True)[:2]
+
     return top_two[0][0], top_two[1][0]
 
 
