@@ -340,11 +340,11 @@ export const competitionsApi = apiSlice.injectEndpoints({
         url: 'admin/competitions/current/entries',
         method: 'PATCH',
       }),
-      invalidatesTags: ['Entries'],
+      invalidatesTags: ['Entries', 'Stats'],
     }),
     getStats: builder.query<StatsResponse, void>({
       query: () => 'admin/competitions/current/stats',
-      providesTags: ['Stats']
+      providesTags: ['Stats'],
     }),
   }),
 });
@@ -352,7 +352,7 @@ export const competitionsApi = apiSlice.injectEndpoints({
 type StatsResponse = {
   num_combinations: number;
   votes_count: number;
-}
+};
 
 export type CreateVotePayload = {
   winner_id: string;

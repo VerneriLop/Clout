@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
-from sqlalchemy import func, or_, select, update
+from sqlalchemy import delete, func, or_, select, update
 
 from app.api.deps import (
     CurrentUser,
@@ -157,6 +157,7 @@ def reset_entries(session: SessionDep, current_competition: CurrentVotingCompeti
             comparisons=0,
         )
     )
+    session.execute(delete(PairwiseVote))
     session.execute(stmt)
     session.commit()
 
