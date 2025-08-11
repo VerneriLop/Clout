@@ -124,7 +124,7 @@ export default function Simulation() {
   };
 
   return (
-    <main className="flex-1 flex flex-col bg-neutral-900 pb-4 overflow-hidden h-screen">
+    <main className="flex-1 flex flex-col bg-neutral-900  overflow-hidden h-screen">
       {alert && (
         <Alert
           severity={alert.type}
@@ -133,11 +133,13 @@ export default function Simulation() {
           {alert.message}
         </Alert>
       )}
-      <div className="py-2 border-b border-b-neutral-800">
-        <div className=" flex px-2 justify-between gap-4">
-          <h2 className=" font-semibold px-2">
-            Competition with category {votingCompetition?.category} and id
-            {votingCompetition?.id}
+      <div className="border-b border-b-neutral-800 items-center py-1">
+        <div className=" flex px-2 justify-between gap-4 items-center">
+          <h2 className="px-2">
+            Competition with category:{' '}
+            <span className="font-semibold">{votingCompetition?.category}</span>{' '}
+            and id:{' '}
+            <span className="font-semibold">{votingCompetition?.id}</span>
           </h2>
           <button
             className="disabled:text-neutral-500 hover:bg-neutral-600 text-white font-medium text-xs px-2 py-1 rounded-md active:ring-1 active:ring-amber-600 transition-all duration-100 items-center flex gap-1"
@@ -146,31 +148,34 @@ export default function Simulation() {
             <AddIcon fontSize="small" />
           </button>
           <button
-            className="bg-red-700 hover:bg-blue-800 text-white font-medium text-xs px-3 py-1 rounded-md active:ring-1 active:ring-blue-300 transition-all duration-100"
+            className="bg-red-700 hover:bg-red-800 text-white font-medium text-xs px-3 py-1 rounded-md transition-all duration-100"
             onClick={resetEntries}
             disabled={isLoading}>
             Reset
           </button>
         </div>
       </div>
+
       <div className="flex justify-evenly">
-        <div className="flex flex-col items-center  p-2 rounded-md">
-          <div className="py-1 text-xs flex-1 w-full">
-            <p>mu {entry1?.mu}</p>
-            <p>sigma {entry1?.sigma}</p>
-            <p>upvotes {entry1?.upvotes}</p>
-            <p>downvotes {entry1?.downvotes}</p>
-            <p>id {entry1?.id}</p>
+        <div className="flex flex-col items-center p-2 rounded-md gap-1">
+          <div className="relative">
+            {!isLoadingPairs && (
+              <img
+                src={votePair?.entry_1.post.image_url}
+                alt="Image 1"
+                className="w-75 h-100 object-cover rounded-md"
+              />
+            )}
+            <div className="bg-neutral-900/70 absolute top-0 left-0 text-white text-xs  rounded-md p-1 ">
+              <p>mu: {entry1?.mu.toFixed(2)}</p>
+              <p>sigma: {entry1?.sigma.toFixed(2)}</p>
+              <p>upvotes: {entry1?.upvotes}</p>
+              <p>downvotes: {entry1?.downvotes}</p>
+              <p>id: {entry1?.id.substring(0, 8)}...</p>
+            </div>
           </div>
-          {!isLoadingPairs && (
-            <img
-              src={votePair?.entry_1.post.image_url}
-              alt="Image 1"
-              className="w-75 h-100 object-cover rounded-md"
-            />
-          )}
           <button
-            className="mt-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-1 rounded text-sm"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded text-sm w-full"
             onClick={() =>
               votePair
                 ? handleVoteClick({
@@ -184,23 +189,25 @@ export default function Simulation() {
         </div>
 
         {/* Right Image */}
-        <div className="flex flex-col items-center p-2 rounded-md">
-          <div className="py-1 text-xs flex-1 w-full">
-            <p>mu {entry2?.mu}</p>
-            <p>sigma {entry2?.sigma}</p>
-            <p>upvotes {entry2?.upvotes}</p>
-            <p>downvotes {entry2?.downvotes}</p>
-            <p>id {entry2?.id}</p>
+        <div className="flex flex-col items-center p-2 rounded-md gap-1">
+          <div className="relative">
+            {!isLoadingPairs && (
+              <img
+                src={votePair?.entry_2.post.image_url}
+                alt="Image 1"
+                className="w-75 h-100 object-cover rounded-md"
+              />
+            )}
+            <div className="bg-neutral-900/70 absolute top-0 left-0 text-white text-xs  rounded-md p-1 ">
+              <p>mu: {entry2?.mu.toFixed(2)}</p>
+              <p>sigma: {entry2?.sigma.toFixed(2)}</p>
+              <p>upvotes: {entry2?.upvotes}</p>
+              <p>downvotes: {entry2?.downvotes}</p>
+              <p>id: {entry2?.id.substring(0, 8)}...</p>
+            </div>
           </div>
-          {!isLoadingPairs && (
-            <img
-              src={votePair?.entry_2.post.image_url}
-              alt="Image 1"
-              className="w-75 h-100 object-cover rounded-md"
-            />
-          )}
           <button
-            className="mt-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-1 rounded text-sm"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded text-sm w-full"
             onClick={() =>
               votePair
                 ? handleVoteClick({
