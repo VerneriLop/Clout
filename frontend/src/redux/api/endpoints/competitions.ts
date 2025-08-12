@@ -44,7 +44,7 @@ export const competitionsApi = apiSlice.injectEndpoints({
     }),
     createVote: builder.mutation<Message, CreateVotePayload>({
       query: body => ({
-        url: 'competition/vote',
+        url: 'competitions/vote',
         method: 'POST',
         body,
       }),
