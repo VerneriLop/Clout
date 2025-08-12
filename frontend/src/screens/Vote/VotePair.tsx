@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Dimensions, Image, View} from 'react-native';
 
 import {faArrowUp} from '@fortawesome/free-solid-svg-icons';
@@ -16,27 +16,16 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {shallowEqual, useDispatch, useSelector} from 'react-redux';
 
 import globalStyle from '../../assets/styles/globalStyle';
 import {horizontalScale, verticalScale} from '../../assets/styles/scaling';
 import {ThemedIcon, ThemedText} from '../../components/ui/typography';
-import extendedMockImageList from '../../mock/mock';
 import {
   PostMinimal,
+  useCreateVoteMutation,
   useGetVotePairQuery,
 } from '../../redux/api/endpoints/competitions';
-import {
-  setActiveVoteImages,
-  setNextVoteImages,
-  swapVoteImages,
-} from '../../redux/slices/voteImageSlice';
-import {RootState} from '../../redux/store/store';
 import {styles} from './style';
-
-import {PostType} from '../../types/types';
-
-type ImageTuple = [PostType, PostType];
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
@@ -59,8 +48,14 @@ export const VotePair = () => {
   const MAX_TRANSLATE_X = width * 0.6;
   const VOTE_THRESHOLD = -height * 0.2;
 
-  const {data: imagePair, isLoading: isLoadingImagePair} =
-    useGetVotePairQuery();
+  const {
+    data: imagePair,
+    isLoading: isLoadingImagePair,
+    error,
+  } = useGetVotePairQuery();
+
+  const [createVote, {isError: isCreateVoteError, error: createVoteError}] =
+    useCreateVoteMutation();
 
   useEffect(() => {
     arrowTranslateY.value = withRepeat(
@@ -94,6 +89,14 @@ export const VotePair = () => {
     setHasVoted(true);
 
     //TODO: API call for voting the image
+
+    if (imagePair) {
+      const payload = {
+        winner_id: image.id,
+        loser_id: imagePair.entry_2.id,
+      };
+      createVote(payload);
+    }
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -161,6 +164,8 @@ export const VotePair = () => {
   const rightImageGesture = imagePair
     ? createImageGesture(rightTranslateY, rightOpacity, imagePair?.entry_2)
     : undefined;
+
+  console.log(createVoteError);
 
   //Handles the horizontal swiping when finger swipes from background
   const backgroundGesture = Gesture.Pan()
@@ -253,6 +258,9 @@ export const VotePair = () => {
     ),
   }));
 
+  const leftImageUrl = imagePair?.entry_1.post.image_url;
+  const rightImageUrl = imagePair?.entry_2.post.image_url;
+
   return (
     <SafeAreaView style={globalStyle.flex}>
       {!isLoadingImagePair ? (
@@ -261,7 +269,7 @@ export const VotePair = () => {
             {leftImageGesture && (
               <GestureDetector gesture={leftImageGesture}>
                 <AnimatedImage
-                  source={{uri: imagePair?.entry_1.post.image_url}}
+                  source={{uri: leftImageUrl}}
                   style={[styles.image, leftImageStyle]}
                   resizeMode={'cover'}
                 />
@@ -270,7 +278,7 @@ export const VotePair = () => {
             {rightImageGesture && (
               <GestureDetector gesture={rightImageGesture}>
                 <AnimatedImage
-                  source={{uri: imagePair?.entry_2.post.image_url}}
+                  source={{uri: rightImageUrl}}
                   style={[styles.image, rightImageStyle]}
                   resizeMode={'cover'}
                 />
