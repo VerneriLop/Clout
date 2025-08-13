@@ -14,10 +14,20 @@ class CompetitionPublic(BaseModel):
     competition_number: int
     status: CompetitionStatus
 
+    class Config:
+        from_attributes = True
+
 
 class CompetitionsPublic(BaseModel):
     data: list[CompetitionPublic]
     count: int
+
+
+class CurrentCompetitionStats(BaseModel):
+    competition: CompetitionPublic
+    user_votes_count: int
+    all_votes_count: int
+    competers_count: int
 
 
 class PostData(BaseModel):

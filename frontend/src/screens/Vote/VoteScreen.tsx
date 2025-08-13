@@ -1,5 +1,5 @@
 import React, {useMemo, useRef} from 'react';
-import {Button, Dimensions, ScrollView, StyleSheet, View} from 'react-native';
+import {Button, Dimensions, ScrollView, View} from 'react-native';
 
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
