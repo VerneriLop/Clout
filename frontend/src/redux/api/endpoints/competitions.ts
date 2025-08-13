@@ -25,6 +25,13 @@ export type CompetitionResponse = {
   status: string;
 };
 
+export type CompetitionStatsResponse = {
+  competition: CompetitionResponse;
+  user_votes_count: number;
+  all_votes_count: number;
+  competers_count: number;
+};
+
 export type CreateVotePayload = {
   winner_id: string;
   loser_id: string;
@@ -37,10 +44,11 @@ export const competitionsApi = apiSlice.injectEndpoints({
       providesTags: ['VotePair'],
     }),
     getCurrentCompetition: builder.query<
-      CompetitionResponse,
+      CompetitionStatsResponse,
       CompetitionStatus
     >({
       query: status => `competitions/current?status=${status}`,
+      providesTags: ['Stats'],
     }),
     createVote: builder.mutation<Message, CreateVotePayload>({
       query: body => ({
@@ -48,7 +56,7 @@ export const competitionsApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: ['VotePair'],
+      invalidatesTags: ['VotePair', 'Stats'],
     }),
   }),
 });

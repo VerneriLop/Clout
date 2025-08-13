@@ -451,7 +451,10 @@ def read_current_competition_stats(
     votes_count_stmt = (
         select(func.count())
         .select_from(PairwiseVote)
-        .where(PairwiseVote.user_id == current_user.id)
+        .where(
+            CompetitionEntry.competition_id == current_competition.id,
+            PairwiseVote.user_id == current_user.id,
+        )
     )
     votes_count = session.execute(votes_count_stmt).scalar_one()
     return StatsResponse(num_combinations=num_combinations, votes_count=votes_count)
