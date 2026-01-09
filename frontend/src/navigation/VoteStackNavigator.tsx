@@ -24,11 +24,12 @@ export const VoteStackNavigator = () => {
         component={VotePair}
         options={{headerShown: true, headerLargeTitle: true}}
       />
+      {/*  
       <VoteStack.Screen
         name={'Vertical'}
         component={PairwiseScreenVertical}
         //options={{tabBarStyle: {display: 'none'}}}
-      />
+      />*/}
     </VoteStack.Navigator>
   );
 };
