@@ -80,19 +80,19 @@ def read_current_competition(
 
     all_votes_count = session.execute(all_votes_count_stmt).scalar_one()
 
-    competers_count_stmt = (
+    competitors_count_stmt = (
         select(func.count())
         .select_from(CompetitionEntry)
         .where(competition.id == CompetitionEntry.competition_id)
     )
 
-    competers_count = session.execute(competers_count_stmt).scalar_one()
+    competitors_count = session.execute(competitors_count_stmt).scalar_one()
 
     return CurrentCompetitionStats(
         competition=competition,
         user_votes_count=user_votes_count,
         all_votes_count=all_votes_count,
-        competers_count=competers_count,
+        competitors_count=competitors_count,
     )
 
 

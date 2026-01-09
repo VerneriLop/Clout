@@ -29,7 +29,7 @@ export type CompetitionStatsResponse = {
   competition: CompetitionResponse;
   user_votes_count: number;
   all_votes_count: number;
-  competers_count: number;
+  competitors_count: number;
 };
 
 export type CreateVotePayload = {

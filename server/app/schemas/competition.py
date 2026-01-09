@@ -27,7 +27,7 @@ class CurrentCompetitionStats(BaseModel):
     competition: CompetitionPublic
     user_votes_count: int
     all_votes_count: int
-    competers_count: int
+    competitors_count: int
 
 
 class PostData(BaseModel):

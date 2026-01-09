@@ -1,13 +1,13 @@
 import {useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import {ThemedSafeAreaView} from '../../components/ui/themed-view';
-import {BodyText, Title1Text, Title3Text} from '../../components/ui/typography';
+import {Title1Text} from '../../components/ui/typography';
 import {useTheme} from '../../hooks/useTheme';
 import {useGetCurrentCompetitionQuery} from '../../redux/api/endpoints/competitions';
+import {InfoBox} from './InfoBox';
 
 export const CompetitionInfo = () => {
-  const {colors} = useTheme();
   const {data: competitionData} = useGetCurrentCompetitionQuery('voting');
 
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
@@ -41,49 +41,49 @@ export const CompetitionInfo = () => {
           {competitionData?.competition.category}
         </Title1Text>
       </View>
-      <View style={[styles.infoBox, {backgroundColor: colors.card}]}>
-        <BodyText style={{color: colors.textSecondary}}>
-          {competitionData?.competition.description}
-        </BodyText>
-      </View>
 
       <View style={styles.statsContainer}>
-        <View style={styles.statsRow}>
-          <View style={[styles.statsBox, {backgroundColor: colors.card}]}>
-            <Title3Text style={{marginBottom: 30}}>Basic</Title3Text>
-            <BodyText>
-              Your votes: {competitionData?.user_votes_count}
-              {'\n'}
-              All votes: {competitionData?.all_votes_count}
-              {'\n'}
-              Competers: {competitionData?.competers_count}
-            </BodyText>
-          </View>
-          <View style={[styles.dailyStreak, {backgroundColor: colors.card}]}>
-            <Title3Text style={{color: colors.primary, marginBottom: 30}}>
-              Streak
-            </Title3Text>
-            <View style={styles.emojiAndNumber}>
-              <Text style={{fontSize: 30}}>🔥</Text>
-              <Title3Text>50</Title3Text>
-            </View>
-          </View>
+        <View style={styles.mainInfo}>
+          <InfoBox
+            title={'Info'}
+            icon={''}
+            mainInfo={competitionData?.competition.description}
+            footerText={'Sponsored by Clout'}
+            aspectRatio={2 / 1}
+            size="body"
+          />
         </View>
         <View style={styles.statsRow}>
-          <View style={[styles.statsBox, {backgroundColor: colors.card}]}>
-            <Title3Text style={{marginBottom: 30}}>Time left</Title3Text>
-            <View style={styles.emojiAndNumber}>
-              <Text style={{fontSize: 30}}>⏰</Text>
-              <Title3Text>{timeLeft}</Title3Text>
-            </View>
-          </View>
-          <View style={[styles.statsBox, {backgroundColor: colors.card}]}>
-            <Title3Text style={{marginBottom: 30}}>Current position</Title3Text>
-            <View style={styles.emojiAndNumber}>
-              <Text style={{fontSize: 30}}>📶</Text>
-              <Title3Text>9</Title3Text>
-            </View>
-          </View>
+          <InfoBox
+            title={'Votes'}
+            icon={''}
+            mainInfo={'50'}
+            footerText={`All votes: ${competitionData?.all_votes_count}`}
+            aspectRatio={1}
+          />
+          <InfoBox
+            title={'Streak'}
+            icon={''}
+            mainInfo={'50'}
+            footerText={'You have blaa blaa blaa'}
+            aspectRatio={1}
+          />
+        </View>
+        <View style={styles.statsRow}>
+          <InfoBox
+            title={'Time left'}
+            icon={''}
+            mainInfo={timeLeft}
+            footerText={'Time left for this competition'}
+            aspectRatio={1}
+          />
+          <InfoBox
+            title={'Current position'}
+            icon={''}
+            mainInfo={9}
+            footerText={'Your current position in this competition'}
+            aspectRatio={1}
+          />
         </View>
       </View>
     </ThemedSafeAreaView>
@@ -91,38 +91,16 @@ export const CompetitionInfo = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {gap: 15, flex: 1},
+  container: {gap: 15, flex: 1, marginHorizontal: 5},
   upperBox: {
-    marginHorizontal: 5,
     borderRadius: 5,
     justifyContent: 'center',
   },
-  infoBox: {
-    marginHorizontal: 5,
-    borderRadius: 5,
-    padding: 5,
-  },
   statsContainer: {flex: 1, gap: 15},
+  mainInfo: {flex: 1},
   statsRow: {
-    marginHorizontal: 5,
-    flex: 1,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     gap: 15,
-  },
-  statsBox: {
-    flex: 1,
-    borderRadius: 20,
-    padding: 10,
-  },
-  dailyStreak: {
-    flex: 1,
-    borderRadius: 20,
-    padding: 10,
-    //justifyContent: 'center',
-  },
-  emojiAndNumber: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
   },
 });
