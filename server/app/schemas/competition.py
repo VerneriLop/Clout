@@ -9,13 +9,25 @@ class CompetitionPublic(BaseModel):
     category: str
     description: str
     start_time: datetime
+    vote_start_time: datetime
     end_time: datetime
     competition_number: int
+    status: CompetitionStatus
+
+    class Config:
+        from_attributes = True
 
 
 class CompetitionsPublic(BaseModel):
     data: list[CompetitionPublic]
     count: int
+
+
+class CurrentCompetitionStats(BaseModel):
+    competition: CompetitionPublic
+    user_votes_count: int
+    all_votes_count: int
+    competitors_count: int
 
 
 class PostData(BaseModel):

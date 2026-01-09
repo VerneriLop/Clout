@@ -1,8 +1,9 @@
 import React from 'react';
 import {StyleProp, StyleSheet, View, ViewProps, ViewStyle} from 'react-native';
 
-import {useTheme} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+
+import {useTheme} from '../../hooks/useTheme';
 
 type ThemedViewProps = ViewProps & {
   children: React.ReactNode;

@@ -1,7 +1,6 @@
 from typing import Any
-import uuid
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.api.deps import (
     CurrentUser,
@@ -19,12 +18,13 @@ from app.schemas.competition import (
     CompetitionPublic,
     CompetitionsPublic,
     CreateVotePair,
+    CurrentCompetitionStats,
     VotePair,
 )
 from app.models.competition import Competition, CompetitionStatus
 
 
-router = APIRouter(prefix="/competition", tags=["competitions"])
+router = APIRouter(prefix="/competitions", tags=["competitions"])
 
 
 @router.get(
@@ -48,16 +48,52 @@ def read_competitions(session: SessionDep, skip: int = 0, limit: int = 100) -> A
 @router.get(
     "/current",
     dependencies=[Depends(get_current_user)],
-    response_model=CompetitionPublic,
+    response_model=CurrentCompetitionStats,
 )
 def read_current_competition(
-    session: SessionDep, status: CompetitionStatus = "capturing"
-) -> CompetitionPublic:
+    session: SessionDep,
+    current_user: CurrentUser,
+    status: CompetitionStatus = CompetitionStatus.CAPTURING,
+) -> CurrentCompetitionStats:
     """
-    Read current competition (status should be capturing or voting)
+    Read current competition with some statistics (status should be capturing or voting)
     """
     competition = get_competition_by_status(session=session, status=status)
-    return competition
+
+    user_votes_count_stmt = (
+        select(func.count())
+        .select_from(PairwiseVote)
+        .where(
+            PairwiseVote.competition_id == competition.id,
+            current_user.id == PairwiseVote.user_id,
+        )
+    )
+    user_votes_count = session.execute(user_votes_count_stmt).scalar_one()
+
+    all_votes_count_stmt = (
+        select(func.count())
+        .select_from(PairwiseVote)
+        .where(
+            PairwiseVote.competition_id == competition.id,
+        )
+    )
+
+    all_votes_count = session.execute(all_votes_count_stmt).scalar_one()
+
+    competitors_count_stmt = (
+        select(func.count())
+        .select_from(CompetitionEntry)
+        .where(competition.id == CompetitionEntry.competition_id)
+    )
+
+    competitors_count = session.execute(competitors_count_stmt).scalar_one()
+
+    return CurrentCompetitionStats(
+        competition=competition,
+        user_votes_count=user_votes_count,
+        all_votes_count=all_votes_count,
+        competitors_count=competitors_count,
+    )
 
 
 @router.get(
