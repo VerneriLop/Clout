@@ -7,6 +7,11 @@ import Toast from 'react-native-toast-message';
 
 import globalStyle from '../../assets/styles/globalStyle';
 import {ThemedView} from '../../components/ui/themed-view';
+import {ThemedText} from '../../components/ui/typography';
+import {
+  useGetFinishedCompetitionsQuery,
+  useGetLeaderboardQuery,
+} from '../../redux/api/endpoints/competitions';
 
 // adjust if needed
 
@@ -19,6 +24,11 @@ export const LeaderboardScreen = () => {
       });
     }, []),
   );
+
+  const {data: finishedCompetitions} = useGetFinishedCompetitionsQuery();
+
+  console.log('kisat jotka loppunu:', finishedCompetitions);
+  //const{data} = useGetLeaderboardQuery()
 
   const leaderboardData = [];
   const renderItem = useCallback(() => <LeaderboardItem />, []);
