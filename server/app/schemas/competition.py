@@ -78,6 +78,8 @@ class LeaderboardEntry(BaseModel):
 class LeaderboardPublic(BaseModel):
     competition: CompetitionBase
     leaderboard: list[LeaderboardEntry]
+    participant_count: int
+    current_user_rank: int | None
 
 
 ### ADMIN SCHEMAS ###

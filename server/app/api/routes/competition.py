@@ -50,13 +50,17 @@ def read_competitions(session: SessionDep, skip: int = 0, limit: int = 100) -> A
     return CompetitionsPublic(data=competitions, count=len(competitions))
 
 
+# TODO: refactor and check performance, current implementation repeats queries for no reason
 @router.get(
     "/leaderboard",
     dependencies=[Depends(get_current_user)],
     response_model=LeaderboardPublic,
 )
 def read_leaderboard(
-    session: SessionDep, competition_start_date: datetime, top_n: int = 100
+    session: SessionDep,
+    current_user: CurrentUser,
+    competition_start_date: datetime,
+    top_n: int = 100,
 ) -> Any:
     """
     Read leaderboard data given competition start time. Returns a list of top_n leaderboard entries,
@@ -93,7 +97,42 @@ def read_leaderboard(
         for username, image_url in rows
     ]
 
-    return LeaderboardPublic(competition=competition, leaderboard=leaderboard)
+    # num of participants
+    statement = (
+        select(func.count())
+        .select_from(CompetitionEntry)
+        .where(CompetitionEntry.competition_id == competition.id)
+    )
+
+    count = session.execute(statement).scalar()
+
+    user_entry_stmt = (
+        select(CompetitionEntry.mu)
+        .select_from(CompetitionEntry)
+        .where(CompetitionEntry.owner_id == current_user.id)
+    )
+
+    user_entry_mu = session.execute(user_entry_stmt).scalar()
+
+    rank = None
+    if user_entry_mu is not None:
+        rank_stmt = (
+            select(func.count())
+            .select_from(CompetitionEntry)
+            .where(
+                CompetitionEntry.competition_id == competition.id,
+                CompetitionEntry.mu > user_entry_mu,
+            )
+        )
+
+        rank = session.execute(rank_stmt).scalar() + 1
+
+    return LeaderboardPublic(
+        competition=competition,
+        leaderboard=leaderboard,
+        participant_count=count,
+        current_user_rank=rank,
+    )
 
 
 @router.get(
