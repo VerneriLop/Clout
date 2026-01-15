@@ -19,7 +19,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import RNFS from 'react-native-fs';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Reanimated, {
   Extrapolation,

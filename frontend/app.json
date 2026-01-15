@@ -1,6 +1,5 @@
 {
   "name": "frontend",
-  "displayName": "frontend",
   "android": {
     "package": "com.anonymous.frontend"
   },
