@@ -2,6 +2,7 @@ import React, {useCallback} from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 
 import {useFocusEffect} from '@react-navigation/native';
+import {skipToken} from '@reduxjs/toolkit/query';
 import {FlashList} from '@shopify/flash-list';
 import Toast from 'react-native-toast-message';
 
@@ -28,15 +29,17 @@ export const LeaderboardScreen = () => {
   const {data: finishedCompetitions} = useGetFinishedCompetitionsQuery();
 
   console.log('kisat jotka loppunu:', finishedCompetitions);
-  //const{data} = useGetLeaderboardQuery()
+  const mockId = finishedCompetitions?.data[0].id;
 
-  const leaderboardData = [];
+  const {data, error} = useGetLeaderboardQuery(mockId ? mockId : skipToken);
+  console.log('Leaderboard data: ', data, error);
+  //const leaderboardData = [];
   const renderItem = useCallback(() => <LeaderboardItem />, []);
 
   return (
     // eslint-disable-next-line react-native/no-inline-styles
     <ThemedView style={[globalStyle.flex, {justifyContent: 'center'}]}>
-      <PodiumView />
+      <></>
       {/*<FlashList
         data={[leaderboardData]}
         ListHeaderComponent={<PodiumView />}

@@ -93,7 +93,7 @@ export const competitionsApi = apiSlice.injectEndpoints({
       query: () => `competitions/`,
       providesTags: ['Competitions'],
     }),
-    getLeaderboard: builder.query<LeaderboardType, number>({
+    getLeaderboard: builder.query<LeaderboardType, string>({
       query: competition_id => `competitions/${competition_id}/leaderboard`,
       providesTags: ['Leaderboard'],
     }),

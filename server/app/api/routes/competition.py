@@ -53,7 +53,7 @@ def read_competitions(session: SessionDep, skip: int = 0, limit: int = 100) -> A
 
 # TODO: refactor and check performance, current implementation repeats queries for no reason
 @router.get(
-    "{competition_id}/leaderboard/",
+    "/{competition_id}/leaderboard",
     dependencies=[Depends(get_current_user)],
     response_model=LeaderboardPublic,
 )
