@@ -1,9 +1,10 @@
 import React, {useCallback} from 'react';
-import {Image, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import {useFocusEffect} from '@react-navigation/native';
 import {skipToken} from '@reduxjs/toolkit/query';
 import {FlashList} from '@shopify/flash-list';
+import {Image} from 'expo-image';
 import Toast from 'react-native-toast-message';
 
 import globalStyle from '../../assets/styles/globalStyle';
@@ -47,6 +48,20 @@ export const LeaderboardScreen = () => {
         {data?.competition.category}
       </LargeTitleText>
       <HeadlineText>{data?.competition.description}</HeadlineText>
+
+      <Image
+        style={{width: 256, height: 512}}
+        source={data?.leaderboard[0].image_url}
+      />
+
+      <View
+        style={{
+          backgroundColor: 'gray',
+          flex: 1,
+          borderTopEndRadius: 30,
+          borderTopStartRadius: 30,
+          marginTop: 64,
+        }}></View>
 
       {/*<FlashList
         data={[leaderboardData]}
