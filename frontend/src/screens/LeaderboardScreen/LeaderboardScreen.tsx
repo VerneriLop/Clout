@@ -7,8 +7,12 @@ import {FlashList} from '@shopify/flash-list';
 import Toast from 'react-native-toast-message';
 
 import globalStyle from '../../assets/styles/globalStyle';
-import {ThemedView} from '../../components/ui/themed-view';
-import {ThemedText} from '../../components/ui/typography';
+import {ThemedSafeAreaView, ThemedView} from '../../components/ui/themed-view';
+import {
+  HeadlineText,
+  LargeTitleText,
+  ThemedText,
+} from '../../components/ui/typography';
 import {
   useGetFinishedCompetitionsQuery,
   useGetLeaderboardQuery,
@@ -38,14 +42,18 @@ export const LeaderboardScreen = () => {
 
   return (
     // eslint-disable-next-line react-native/no-inline-styles
-    <ThemedView style={[globalStyle.flex, {justifyContent: 'center'}]}>
-      <></>
+    <ThemedSafeAreaView style={[globalStyle.flex, {}]}>
+      <LargeTitleText variant="heavy">
+        {data?.competition.category}
+      </LargeTitleText>
+      <HeadlineText>{data?.competition.description}</HeadlineText>
+
       {/*<FlashList
         data={[leaderboardData]}
         ListHeaderComponent={<PodiumView />}
         renderItem={renderItem}
       />*/}
-    </ThemedView>
+    </ThemedSafeAreaView>
   );
 };
 
