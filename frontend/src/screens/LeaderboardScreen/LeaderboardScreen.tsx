@@ -23,6 +23,8 @@ import {
   useGetLeaderboardQuery,
 } from '../../redux/api/endpoints/competitions';
 import style from '../LoginScreen/style';
+import {LeaderboardItem} from './LeaderboardItem';
+import {LeaderboardModal} from './LeaderboardModal';
 
 const LEADERBOARD_OFFSET = 4; // on which index lb starts
 
@@ -119,57 +121,11 @@ export const LeaderboardScreen = () => {
         renderItem={renderItem}
       />
 
-      <Modal
-        visible={!!selectedImage}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setSelectedImage(null)}>
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setSelectedImage(null)}>
-          <View style={styles.modalContent}>
-            {selectedImage && (
-              <Image
-                source={selectedImage}
-                style={styles.fullImage}
-                contentFit="contain"
-              />
-            )}
-            <FootnoteText style={{color: 'white', marginTop: 10}}>
-              Tap anywhere to close
-            </FootnoteText>
-          </View>
-        </Pressable>
-      </Modal>
+      <LeaderboardModal
+        onRequestClose={() => setSelectedImage(null)}
+        selectedImage={selectedImage}
+      />
     </ThemedSafeAreaView>
-  );
-};
-
-type LeaderBoardItemProps = {
-  data: LeaderboardEntryType;
-  index: number;
-  onImageLongPress: (url: string) => void;
-};
-
-const LeaderboardItem = ({
-  data,
-  index,
-  onImageLongPress,
-}: LeaderBoardItemProps) => {
-  const {colors} = useTheme();
-
-  return (
-    <View
-      style={[styles.leaderboardItemContainer, {backgroundColor: colors.card}]}>
-      <View style={{flexDirection: 'row', gap: 16, alignItems: 'center'}}>
-        <Title3Text variant="heavy">{index.toString()}</Title3Text>
-        <HeadlineText variant="medium">{data.username}</HeadlineText>
-      </View>
-
-      <OpacityPressable onLongPress={() => onImageLongPress(data.image_url)}>
-        <Image style={styles.itemImage} source={{uri: data.image_url}} />
-      </OpacityPressable>
-    </View>
   );
 };
 
@@ -225,21 +181,6 @@ const PODIUM_IMAGE_WIDTH = width * 0.25;
 const PODIUM_IMAGE_HEIGHT = (PODIUM_IMAGE_WIDTH / 3) * 4;
 
 const styles = StyleSheet.create({
-  leaderboardItemContainer: {
-    flexDirection: 'row',
-    paddingLeft: 16,
-    marginVertical: 3,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginHorizontal: 16,
-  },
-  itemImage: {
-    width: 50,
-    height: 50,
-    margin: 6,
-    borderRadius: 9,
-  },
   podiumColumnContainer: {
     //backgroundColor: 'red',
     flexDirection: 'column',
@@ -263,35 +204,5 @@ const styles = StyleSheet.create({
     width: PODIUM_IMAGE_WIDTH,
     height: PODIUM_IMAGE_HEIGHT,
     borderRadius: 5,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.85)', // Darken background
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    width: '90%',
-    height: '70%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  fullImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 12,
-  },
-  itemImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 8,
-  },
-  leaderboardItemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    marginVertical: 4,
-    borderRadius: 12,
   },
 });
