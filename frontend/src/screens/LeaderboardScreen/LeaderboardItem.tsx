@@ -8,13 +8,13 @@ import {LeaderboardEntryType} from '../../redux/api/endpoints/competitions';
 type LeaderBoardItemProps = {
   data: LeaderboardEntryType;
   index: number;
-  onImageLongPress: (url: string) => void;
+  onImagePress: (url: string) => void;
 };
 
 export const LeaderboardItem = ({
   data,
   index,
-  onImageLongPress,
+  onImagePress,
 }: LeaderBoardItemProps) => {
   const {colors} = useTheme();
 
@@ -26,7 +26,7 @@ export const LeaderboardItem = ({
         <HeadlineText variant="medium">{data.username}</HeadlineText>
       </View>
 
-      <OpacityPressable onLongPress={() => onImageLongPress(data.image_url)}>
+      <OpacityPressable onPress={() => onImagePress(data.image_url)}>
         <Image style={styles.itemImage} source={{uri: data.image_url}} />
       </OpacityPressable>
     </View>

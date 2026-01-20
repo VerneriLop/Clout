@@ -101,7 +101,7 @@ export const LeaderboardScreen = () => {
       <LeaderboardItem
         data={item}
         index={index + LEADERBOARD_OFFSET}
-        onImageLongPress={url => setSelectedImage(url)}
+        onImagePress={url => setSelectedImage(url)}
       />
     );
   };
