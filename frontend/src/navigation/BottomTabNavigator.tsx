@@ -20,6 +20,7 @@ import {CameraScreen} from '../screens/Camera/CameraScreen';
 import {LeaderboardScreen} from '../screens/LeaderboardScreen/LeaderboardScreen';
 import {VoteScreen} from '../screens/Vote/VoteScreen';
 import {FeedStackNavigator} from './FeedStackNavigator';
+import {LeaderboardStackNavigator} from './LeaderboardStackNavigator';
 import {ProfileStackNavigator} from './ProfileStackNavigator';
 import {RootStackParamList, Routes} from './Routes';
 import {VoteStackNavigator} from './VoteStackNavigator';
@@ -91,7 +92,10 @@ export const BottomTabNavigator = () => {
         tabBarShowLabel: false,
       })}>
       <Tab.Screen name={Routes.VoteStack} component={VoteStackNavigator} />
-      <Tab.Screen name={Routes.Leaderboard} component={LeaderboardScreen} />
+      <Tab.Screen
+        name={Routes.LeaderboardStack}
+        component={LeaderboardStackNavigator}
+      />
       <Tab.Screen
         name={Routes.Camera}
         component={CameraScreen}

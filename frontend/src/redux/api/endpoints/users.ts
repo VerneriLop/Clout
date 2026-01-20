@@ -57,6 +57,9 @@ export const usersApi = apiSlice.injectEndpoints({
         method: 'DELETE',
       }),
     }),
+    getProfilePictureByUsername: builder.query<string, string>({
+      query: username => `users/${username}/profilepicture`,
+    }),
   }),
 });
 
@@ -67,4 +70,5 @@ export const {
   useUpdateUserMeMutation,
   useUpdatePasswordMutation,
   useDeleteAccountMutation,
+  useGetProfilePictureByUsernameQuery,
 } = usersApi;

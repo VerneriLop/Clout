@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Any
 import uuid
 from fastapi import APIRouter, Depends, HTTPException
