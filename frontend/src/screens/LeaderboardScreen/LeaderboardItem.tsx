@@ -1,4 +1,4 @@
-import {Image, StyleSheet, View} from 'react-native';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 
 import {OpacityPressable} from '../../components/OpacityPressable/OpacityPressable';
 import {HeadlineText, Title3Text} from '../../components/ui/typography';
@@ -30,9 +30,11 @@ export const LeaderboardItem = ({
         </OpacityPressable>
       </View>
 
-      <OpacityPressable onPress={() => onImagePress(data.image_url)}>
+      <TouchableOpacity
+        onPress={() => onImagePress(data.image_url)}
+        style={styles.imageContainer}>
         <Image style={styles.itemImage} source={{uri: data.image_url}} />
-      </OpacityPressable>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -46,11 +48,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginHorizontal: 16,
+    // iOS
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    shadowOffset: {width: 0, height: 1},
+
+    // Android
+    elevation: 2,
   },
   itemImage: {
     width: 50,
     height: 50,
     margin: 6,
     borderRadius: 9,
+  },
+  imageContainer: {
+    // iOS
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+    shadowOffset: {width: 0, height: 1},
+
+    // Android
+    elevation: 2,
   },
 });

@@ -1,10 +1,9 @@
-import {Dimensions, StyleSheet, View} from 'react-native';
+import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 
 import {skipToken} from '@reduxjs/toolkit/query';
 import {Image} from 'expo-image';
 
 import {CloudBadge} from '../../components/Icons/CloudBadge';
-import {OpacityPressable} from '../../components/OpacityPressable/OpacityPressable';
 import {ProfilePicture} from '../../components/ProfilePicture/ProfilePicture';
 import {HeadlineText, Title1Text} from '../../components/ui/typography';
 import {useTheme} from '../../hooks/useTheme';
@@ -35,14 +34,16 @@ export const PodiumView = ({
     <View style={styles.podiumColumnContainer}>
       <View style={styles.winnerContainer}>
         <View>
-          <OpacityPressable onPress={() => onImagePress(firstPlace.image_url)}>
-            <Image
-              source={{
-                uri: firstPlace.image_url,
-              }}
-              style={styles.winnerImage}
-            />
-          </OpacityPressable>
+          <TouchableOpacity onPress={() => onImagePress(firstPlace.image_url)}>
+            <View style={styles.imageShadow}>
+              <Image
+                source={{
+                  uri: firstPlace.image_url,
+                }}
+                style={styles.winnerImage}
+              />
+            </View>
+          </TouchableOpacity>
           <View style={styles.numberOne}>
             <CloudBadge
               size={NUMBER_ONE}
@@ -53,25 +54,28 @@ export const PodiumView = ({
             />
           </View>
         </View>
-        <OpacityPressable onPress={() => handleNavigate(firstPlace.username)}>
+        <TouchableOpacity onPress={() => handleNavigate(firstPlace.username)}>
           <View style={styles.winnerName}>
             <ProfilePicture uri={data?.profile_picture_url} size="minimal" />
             <Title1Text variant="bold">{firstPlace.username}</Title1Text>
           </View>
-        </OpacityPressable>
+        </TouchableOpacity>
       </View>
       <View style={styles.podiumRowContainer}>
         <View style={styles.winnerContainer}>
           <View>
-            <OpacityPressable
+            <TouchableOpacity
               onPress={() => onImagePress(secondPlace.image_url)}>
-              <Image
-                source={{
-                  uri: secondPlace.image_url,
-                }}
-                style={styles.secondAndThirdPlaceImage}
-              />
-            </OpacityPressable>
+              <View style={styles.imageShadow}>
+                {' '}
+                <Image
+                  source={{
+                    uri: secondPlace.image_url,
+                  }}
+                  style={styles.secondAndThirdPlaceImage}
+                />
+              </View>
+            </TouchableOpacity>
             <View style={styles.numberTwoAndThree}>
               <CloudBadge
                 size={NUMBER_TWO_AND_THREE}
@@ -82,23 +86,25 @@ export const PodiumView = ({
               />
             </View>
           </View>
-          <OpacityPressable
+          <TouchableOpacity
             onPress={() => handleNavigate(secondPlace.username)}>
             <HeadlineText variant="bold">{secondPlace.username}</HeadlineText>
-          </OpacityPressable>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.winnerContainer}>
           <View>
-            <OpacityPressable
-              onPress={() => onImagePress(thirdPlace.image_url)}>
-              <Image
-                source={{
-                  uri: thirdPlace.image_url,
-                }}
-                style={styles.secondAndThirdPlaceImage}
-              />
-            </OpacityPressable>
+            <TouchableOpacity
+              onPress={() => onImagePress(secondPlace.image_url)}>
+              <View style={styles.imageShadow}>
+                <Image
+                  source={{
+                    uri: thirdPlace.image_url,
+                  }}
+                  style={styles.secondAndThirdPlaceImage}
+                />
+              </View>
+            </TouchableOpacity>
             <View style={styles.numberTwoAndThree}>
               <CloudBadge
                 size={NUMBER_TWO_AND_THREE}
@@ -109,9 +115,9 @@ export const PodiumView = ({
               />
             </View>
           </View>
-          <OpacityPressable onPress={() => handleNavigate(thirdPlace.username)}>
+          <TouchableOpacity onPress={() => handleNavigate(thirdPlace.username)}>
             <HeadlineText variant="bold">{thirdPlace.username}</HeadlineText>
-          </OpacityPressable>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -166,5 +172,15 @@ const styles = StyleSheet.create({
     width: PODIUM_IMAGE_WIDTH,
     height: PODIUM_IMAGE_HEIGHT,
     borderRadius: 5,
+  },
+  imageShadow: {
+    // iOS
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+    shadowOffset: {width: 0, height: 1},
+
+    // Android
+    elevation: 2,
   },
 });
