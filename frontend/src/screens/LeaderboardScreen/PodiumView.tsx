@@ -4,6 +4,7 @@ import {skipToken} from '@reduxjs/toolkit/query';
 import {Image} from 'expo-image';
 
 import {OpacityPressable} from '../../components/OpacityPressable/OpacityPressable';
+import {ProfilePicture} from '../../components/ProfilePicture/ProfilePicture';
 import {HeadlineText, Title1Text} from '../../components/ui/typography';
 import {LeaderboardEntryType} from '../../redux/api/endpoints/competitions';
 import {useGetProfilePictureByUsernameQuery} from '../../redux/api/endpoints/users';
@@ -18,10 +19,9 @@ export const PodiumView = ({podiumData, handleNavigate}: PodiumViewProps) => {
   const secondPlace = podiumData[1];
   const thirdPlace = podiumData[2];
 
-  const {data: profile_picture_url, error} =
-    useGetProfilePictureByUsernameQuery(
-      firstPlace.username ? firstPlace.username : skipToken,
-    );
+  const {data, error} = useGetProfilePictureByUsernameQuery(
+    firstPlace.username ? firstPlace.username : skipToken,
+  );
 
   return (
     <View style={styles.podiumColumnContainer}>
@@ -33,7 +33,11 @@ export const PodiumView = ({podiumData, handleNavigate}: PodiumViewProps) => {
           style={styles.winnerImage}
         />
         <OpacityPressable onPress={() => handleNavigate(firstPlace.username)}>
-          <Title1Text>1. {firstPlace.username}</Title1Text>
+          <View style={styles.winnerName}>
+            <Title1Text variant="bold">1.</Title1Text>
+            <ProfilePicture uri={data?.profile_picture_url} size="small" />
+            <Title1Text>{firstPlace.username}</Title1Text>
+          </View>
         </OpacityPressable>
       </View>
       <View style={styles.podiumRowContainer}>
@@ -85,12 +89,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-around',
   },
-  winnerContainer: {alignItems: 'center'},
+  winnerContainer: {alignItems: 'center', gap: 10},
   winnerImage: {
     width: WINNER_IMAGE_WIDTH,
     height: WINNER_IMAGE_HEIGHT,
     borderRadius: 5,
   },
+  winnerName: {flexDirection: 'row', alignItems: 'center', gap: 10},
   secondAndThirdPlaceImage: {
     width: PODIUM_IMAGE_WIDTH,
     height: PODIUM_IMAGE_HEIGHT,

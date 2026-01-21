@@ -24,7 +24,7 @@ export const LeaderboardItem = ({
     <View
       style={[styles.leaderboardItemContainer, {backgroundColor: colors.card}]}>
       <View style={{flexDirection: 'row', gap: 16, alignItems: 'center'}}>
-        <Title3Text variant="heavy">{index.toString()}</Title3Text>
+        <Title3Text variant="heavy">{index.toString()}.</Title3Text>
         <OpacityPressable onPress={() => handleNavigate(data.username)}>
           <HeadlineText variant="medium">{data.username}</HeadlineText>
         </OpacityPressable>
