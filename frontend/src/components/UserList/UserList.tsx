@@ -117,14 +117,14 @@ export const UserList = ({
       style={[
         styles.input,
         {
-          backgroundColor: colors.card,
+          backgroundColor: colors.border,
           color: colors.text,
           borderColor: colors.border,
         },
       ]}
       value={value}
       onChangeText={setValue}
-      placeholderTextColor={colors.border}
+      placeholderTextColor={colors.card}
     />
   );
 
