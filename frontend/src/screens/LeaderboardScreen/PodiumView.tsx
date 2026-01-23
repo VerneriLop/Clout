@@ -1,4 +1,10 @@
-import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Dimensions,
+  StyleSheet,
+  TouchableHighlight,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import {skipToken} from '@reduxjs/toolkit/query';
 import {Image} from 'expo-image';
@@ -34,7 +40,11 @@ export const PodiumView = ({
     <View style={styles.podiumColumnContainer}>
       <View style={styles.winnerContainer}>
         <View>
-          <TouchableOpacity onPress={() => onImagePress(firstPlace.image_url)}>
+          <TouchableHighlight
+            style={{
+              borderRadius: styles.winnerImage.borderRadius,
+            }}
+            onPress={() => onImagePress(firstPlace.image_url)}>
             <View style={styles.imageShadow}>
               <Image
                 source={{
@@ -43,7 +53,8 @@ export const PodiumView = ({
                 style={styles.winnerImage}
               />
             </View>
-          </TouchableOpacity>
+          </TouchableHighlight>
+
           <View style={styles.numberOne}>
             <CloudBadge
               size={NUMBER_ONE}
@@ -64,7 +75,10 @@ export const PodiumView = ({
       <View style={styles.podiumRowContainer}>
         <View style={styles.winnerContainer}>
           <View>
-            <TouchableOpacity
+            <TouchableHighlight
+              style={{
+                borderRadius: styles.secondAndThirdPlaceImage.borderRadius,
+              }}
               onPress={() => onImagePress(secondPlace.image_url)}>
               <View style={styles.imageShadow}>
                 <Image
@@ -74,7 +88,7 @@ export const PodiumView = ({
                   style={styles.secondAndThirdPlaceImage}
                 />
               </View>
-            </TouchableOpacity>
+            </TouchableHighlight>
             <View style={styles.numberTwoAndThree}>
               <CloudBadge
                 size={NUMBER_TWO_AND_THREE}
@@ -93,7 +107,10 @@ export const PodiumView = ({
 
         <View style={styles.winnerContainer}>
           <View>
-            <TouchableOpacity
+            <TouchableHighlight
+              style={{
+                borderRadius: styles.secondAndThirdPlaceImage.borderRadius,
+              }}
               onPress={() => onImagePress(secondPlace.image_url)}>
               <View style={styles.imageShadow}>
                 <Image
@@ -103,7 +120,7 @@ export const PodiumView = ({
                   style={styles.secondAndThirdPlaceImage}
                 />
               </View>
-            </TouchableOpacity>
+            </TouchableHighlight>
             <View style={styles.numberTwoAndThree}>
               <CloudBadge
                 size={NUMBER_TWO_AND_THREE}

@@ -1,4 +1,4 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import {FlashList} from '@shopify/flash-list';
 
@@ -24,7 +24,9 @@ export const CompetitionBar = ({
     const formattedDate = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 
     return (
-      <TouchableOpacity onPress={() => onPress(item.id)}>
+      <TouchableHighlight
+        style={{borderRadius: styles.barItem.borderRadius, marginHorizontal: 8}}
+        onPress={() => onPress(item.id)}>
         <View
           style={[
             styles.barItem,
@@ -38,7 +40,7 @@ export const CompetitionBar = ({
             {formattedDate}
           </FootnoteText>
         </View>
-      </TouchableOpacity>
+      </TouchableHighlight>
     );
   };
   return (
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
     minWidth: 96,
     paddingHorizontal: 12,
     paddingVertical: 4,
-    marginHorizontal: 8,
+    //marginHorizontal: 8,
     borderRadius: 18,
   },
 });

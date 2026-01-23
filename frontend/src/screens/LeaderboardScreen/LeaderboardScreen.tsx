@@ -1,25 +1,20 @@
 import React, {useState} from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import {View} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {skipToken} from '@reduxjs/toolkit/query';
 import {FlashList} from '@shopify/flash-list';
 
-import globalStyle from '../../assets/styles/globalStyle';
 import {Spinner} from '../../components/Spinner/Spinner';
 import {ThemedSafeAreaView} from '../../components/ui/themed-view';
 import {
-  BodyText,
-  FootnoteText,
   HeadlineText,
   LargeTitleText,
   Title3Text,
 } from '../../components/ui/typography';
-import {useTheme} from '../../hooks/useTheme';
 import {LeaderboardStackParamList, Routes} from '../../navigation/Routes';
 import {
-  CompetitionType,
   LeaderboardEntryType,
   useGetFinishedCompetitionsQuery,
   useGetLeaderboardQuery,
