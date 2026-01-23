@@ -1,6 +1,11 @@
-import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  TouchableHighlight,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
-import {OpacityPressable} from '../../components/OpacityPressable/OpacityPressable';
 import {HeadlineText, Title3Text} from '../../components/ui/typography';
 import {useTheme} from '../../hooks/useTheme';
 import {LeaderboardEntryType} from '../../redux/api/endpoints/competitions';
@@ -25,16 +30,16 @@ export const LeaderboardItem = ({
       style={[styles.leaderboardItemContainer, {backgroundColor: colors.card}]}>
       <View style={{flexDirection: 'row', gap: 16, alignItems: 'center'}}>
         <Title3Text variant="heavy">{index.toString()}.</Title3Text>
-        <OpacityPressable onPress={() => handleNavigate(data.username)}>
+        <TouchableOpacity onPress={() => handleNavigate(data.username)}>
           <HeadlineText variant="medium">{data.username}</HeadlineText>
-        </OpacityPressable>
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
+      <TouchableHighlight
         onPress={() => onImagePress(data.image_url)}
         style={styles.imageContainer}>
         <Image style={styles.itemImage} source={{uri: data.image_url}} />
-      </TouchableOpacity>
+      </TouchableHighlight>
     </View>
   );
 };
@@ -60,11 +65,8 @@ const styles = StyleSheet.create({
   itemImage: {
     width: 50,
     height: 50,
-    margin: 6,
     borderRadius: 9,
-  },
-  imageContainer: {
-    // iOS
+
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 2,
@@ -72,5 +74,10 @@ const styles = StyleSheet.create({
 
     // Android
     elevation: 2,
+  },
+  imageContainer: {
+    // iOS
+    margin: 6,
+    borderRadius: 9,
   },
 });
