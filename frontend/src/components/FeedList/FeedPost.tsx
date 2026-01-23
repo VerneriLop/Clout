@@ -1,5 +1,7 @@
 import React from 'react';
-import {Dimensions, Image, StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
+
+import {Image} from 'expo-image';
 
 import globalStyle from '../../assets/styles/globalStyle';
 import {ThemedView} from '../ui/themed-view';
@@ -20,7 +22,7 @@ export const FeedPost = ({post, onShowLikes, onShowComments}: Props) => {
       <TopBar post={post} />
       <Image
         source={{uri: post.image_url}}
-        resizeMode="cover"
+        contentFit="cover"
         style={[style.image]}
       />
       <BottomBar

@@ -1,29 +1,24 @@
-import React, {useCallback, useState} from 'react';
-import {Keyboard, StyleSheet} from 'react-native';
+import React, {Dispatch, SetStateAction, useCallback, useState} from 'react';
+import {Modal, ModalProps, StyleSheet, View} from 'react-native';
 
-import {
-  BottomSheetFooterProps,
-  BottomSheetModal,
-  BottomSheetModalProps,
-  TouchableWithoutFeedback,
-} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {useSelectedFeedPost} from '../../hooks/useSelectedFeedPost';
 import {useCreateCommentMutation} from '../../redux/api/endpoints/posts';
-import {Backdrop} from '../Backdrop/Backdrop';
 import {CommentList} from '../Comment/CommentList';
 import {CommentInputFooter} from './CommentInputFooter';
 
-import {CommentType, PostType} from '../../types/types';
+type CommentModalProps = {
+  commentModalVisible: boolean;
+  setCommentModalVisible: Dispatch<SetStateAction<boolean>>;
+};
 
 export const CommentModal = ({
-  commentSheetRef,
+  commentModalVisible,
+  setCommentModalVisible,
   ...props
-}: {
-  commentSheetRef: React.RefObject<BottomSheetModal | null>;
-} & Omit<BottomSheetModalProps, 'children'>) => {
+}: CommentModalProps & Omit<ModalProps, 'children'>) => {
   const insets = useSafeAreaInsets();
   const {selectedPost} = useSelectedFeedPost();
   const {colors} = useTheme();
@@ -37,8 +32,8 @@ export const CommentModal = ({
     [addComment, selectedPost?.id],
   );
 
-  const renderFooter = useCallback(
-    (footerProps: BottomSheetFooterProps) => (
+  const Footer = useCallback(
+    (footerProps: any) => (
       <CommentInputFooter
         {...footerProps}
         handleAddComment={handleAddComment}
@@ -49,33 +44,16 @@ export const CommentModal = ({
   );
 
   return (
-    <BottomSheetModal
+    <Modal
       {...props}
-      ref={commentSheetRef}
-      enablePanDownToClose
-      backgroundStyle={{backgroundColor: colors.card}}
-      handleIndicatorStyle={{backgroundColor: colors.border}}
-      topInset={insets.top}
-      backdropComponent={Backdrop}
-      onDismiss={() => setEditingCommentId(null)}
-      footerComponent={!editingCommentId ? renderFooter : undefined}>
+      animationType="slide"
+      visible={commentModalVisible}
+      onRequestClose={() => {
+        setCommentModalVisible(false);
+      }}
+      allowSwipeDismissal
+      presentationStyle="pageSheet">
       {editingCommentId ? (
-        <TouchableWithoutFeedback
-          onPress={() => {
-            setEditingCommentId(null);
-            Keyboard.dismiss();
-          }}
-          style={styles.touchableWithoutFeedback}
-          accessible={false}>
-          <CommentList
-            onItemPress={() => {}}
-            editingCommentId={editingCommentId}
-            onStartEdit={id => setEditingCommentId(id)}
-            onStopEdit={() => setEditingCommentId(null)}
-            editingActive={!!editingCommentId}
-          />
-        </TouchableWithoutFeedback>
-      ) : (
         <CommentList
           onItemPress={() => {}}
           editingCommentId={editingCommentId}
@@ -83,14 +61,20 @@ export const CommentModal = ({
           onStopEdit={() => setEditingCommentId(null)}
           editingActive={!!editingCommentId}
         />
+      ) : (
+        <View style={{flex: 1, backgroundColor: colors.card}}>
+          <CommentList
+            onItemPress={() => {}}
+            editingCommentId={editingCommentId}
+            onStartEdit={id => setEditingCommentId(id)}
+            onStopEdit={() => setEditingCommentId(null)}
+            editingActive={!!editingCommentId}
+          />
+          <Footer />
+        </View>
       )}
-    </BottomSheetModal>
+    </Modal>
   );
 };
 
-const styles = StyleSheet.create({
-  touchableWithoutFeedback: {
-    flex: 1,
-    minHeight: '100%',
-  },
-});
+const styles = StyleSheet.create({});

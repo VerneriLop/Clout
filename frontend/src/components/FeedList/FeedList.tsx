@@ -1,26 +1,20 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useCallback, useState} from 'react';
+import {StyleSheet} from 'react-native';
 
-import {BottomSheetModal} from '@gorhom/bottom-sheet';
-import {useRoute, useTheme} from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import {skipToken} from '@reduxjs/toolkit/query';
 import {FlashList} from '@shopify/flash-list';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import globalStyle from '../../assets/styles/globalStyle';
-import {Backdrop} from '../../components/Backdrop/Backdrop';
-import {UserList} from '../../components/UserList/UserList';
 import {ThemedSafeAreaView, ThemedView} from '../../components/ui/themed-view';
 import {useSelectedFeedPost} from '../../hooks/useSelectedFeedPost';
 import {Routes} from '../../navigation/Routes';
-import {
-  useGetLikesQuery,
-  useGetPostCommentsInfiniteQuery,
-} from '../../redux/api/endpoints/posts';
+import {useGetLikesQuery} from '../../redux/api/endpoints/posts';
 import {Spinner} from '../Spinner/Spinner';
 import {Title1Text} from '../ui/typography';
 import {CommentModal} from './CommentModal';
 import {FeedPost, IMAGE_HEIGHT} from './FeedPost';
+import {LikeModal} from './LikeModal';
 
 import {PostType} from '../../types/types';
 
@@ -47,11 +41,9 @@ export const FeedList = ({
   const [modalToRender, setModalToRender] = useState<
     'likes' | 'comments' | null
   >(null);
-  const likeSheetRef = useRef<BottomSheetModal>(null);
-  const commentSheetRef = useRef<BottomSheetModal | null>(null);
-  const snapPoints = useMemo(() => ['50%', '90%'], []);
-  const {colors} = useTheme();
-  const insets = useSafeAreaInsets();
+  const [commentModalVisible, setCommentModalVisible] =
+    useState<boolean>(false);
+  const [likeModalVisible, setLikeModalVisible] = useState<boolean>(false);
   const route = useRoute();
 
   //TODO: if feed downloads for example 20 images
@@ -79,13 +71,13 @@ export const FeedList = ({
   const handleShowLikes = (post: PostType) => {
     setSelectedPost(post);
     setModalToRender('likes');
-    likeSheetRef.current?.present();
+    setLikeModalVisible(true);
   };
 
   const handleShowComments = (post: PostType) => {
     setSelectedPost(post);
     setModalToRender('comments');
-    commentSheetRef.current?.present();
+    setCommentModalVisible(true);
   };
 
   const renderItem = useCallback(
@@ -98,8 +90,6 @@ export const FeedList = ({
     ),
     [],
   );
-
-  console.log('feedlistan selected post', selectedPost);
 
   const itemSize = 60 + IMAGE_HEIGHT + 100; //topbar + image + bottombar
 
@@ -135,31 +125,17 @@ export const FeedList = ({
         ListEmptyComponent={!refreshing ? EmptyList() : null}
       />
 
-      <BottomSheetModal
-        ref={likeSheetRef}
-        snapPoints={snapPoints}
-        enablePanDownToClose
-        onDismiss={() => setSelectedPost(null)}
-        index={1}
-        backgroundStyle={{backgroundColor: colors.card}}
-        handleIndicatorStyle={{backgroundColor: colors.border}}
-        topInset={insets.top}
-        backdropComponent={Backdrop}>
-        <UserList
-          data={likedUsers}
-          onItemPress={() => likeSheetRef.current?.dismiss()}
-          onModal
-          onRefresh={refetchLikes}
-          isFetchingData={isLoadingLikes}
-        />
-      </BottomSheetModal>
+      <LikeModal
+        likeModalVisible={likeModalVisible}
+        setLikeModalVisible={setLikeModalVisible}
+        likedUsers={likedUsers}
+        refetchLikes={refetchLikes}
+        isLoadingLikes={isLoadingLikes}
+      />
 
       <CommentModal
-        commentSheetRef={commentSheetRef}
-        snapPoints={snapPoints}
-        onDismiss={() => setSelectedPost(null)}
-        //selectedPost={selectedPost || ({} as PostType)}
-        index={1}
+        commentModalVisible={commentModalVisible}
+        setCommentModalVisible={setCommentModalVisible}
       />
     </ThemeViewComponent>
   );

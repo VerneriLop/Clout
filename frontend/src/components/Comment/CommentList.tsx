@@ -1,10 +1,11 @@
 import React, {useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
 
-import {BottomSheetFlatList} from '@gorhom/bottom-sheet';
 import {skipToken} from '@reduxjs/toolkit/query/react';
+import {FlashList} from '@shopify/flash-list';
 
 import {useSelectedFeedPost} from '../../hooks/useSelectedFeedPost';
+import {useTheme} from '../../hooks/useTheme';
 import {useGetPostCommentsInfiniteQuery} from '../../redux/api/endpoints/posts';
 import {Spinner} from '../Spinner/Spinner';
 import {ThemedText} from '../ui/typography';
@@ -28,6 +29,7 @@ export const CommentList = ({
   editingActive,
 }: CommentListType) => {
   const {selectedPost} = useSelectedFeedPost();
+  const {colors} = useTheme();
 
   const {
     data: comments,
@@ -63,8 +65,8 @@ export const CommentList = ({
   );
 
   return (
-    <View style={styles.container}>
-      <BottomSheetFlatList
+    <View style={[styles.container, {backgroundColor: colors.card}]}>
+      <FlashList
         ListEmptyComponent={
           data.length === 0 ? (
             <Spinner size={'small'} style={styles.spinnerPadding} />
@@ -92,7 +94,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    paddingBottom: 80,
   },
   listEmptyText: {
     fontSize: 17,

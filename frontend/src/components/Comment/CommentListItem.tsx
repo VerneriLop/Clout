@@ -4,6 +4,7 @@ import {
   Pressable,
   StyleProp,
   StyleSheet,
+  TextInput,
   View,
   ViewStyle,
 } from 'react-native';
@@ -11,7 +12,6 @@ import type {NativeSyntheticEvent} from 'react-native';
 
 import {faCircleUp} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {BottomSheetTextInput} from '@gorhom/bottom-sheet';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import ContextMenu from 'react-native-context-menu-view';
@@ -60,8 +60,7 @@ export const CommentListItem = ({
 
   const user = comment.owner;
   const isOwner = user.id === loggedInUser?.id;
-  const inputRef =
-    useRef<React.ComponentRef<typeof BottomSheetTextInput>>(null);
+  const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
 
   useEffect(() => {
     if (commentIsUnderEditing) {
@@ -129,8 +128,11 @@ export const CommentListItem = ({
 
   const notUnderEditing = editingActive && !commentIsUnderEditing;
   const contextMenuList = isOwner
-    ? [{title: 'Edit comment'}, {title: 'Delete comment', destructive: true}]
-    : [{title: 'Report comment'}];
+    ? [
+        {title: 'Edit comment', titleColor: colors.text},
+        {title: 'Delete comment', destructive: true},
+      ]
+    : [{title: 'Report comment', destructive: true}];
 
   return (
     <ContextMenu
@@ -150,7 +152,7 @@ export const CommentListItem = ({
           </OpacityPressable>
           {commentIsUnderEditing ? (
             <View style={styles.commentAndButton}>
-              <BottomSheetTextInput
+              <TextInput
                 ref={inputRef}
                 value={editedContent}
                 onChangeText={setEditedContent}

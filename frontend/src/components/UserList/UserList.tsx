@@ -1,21 +1,14 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {FlatList, StyleSheet, TextInput} from 'react-native';
+import {StyleSheet, TextInput} from 'react-native';
 
-import {
-  BottomSheetFlashList,
-  BottomSheetFlatList,
-  BottomSheetTextInput,
-} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
 import {FlashList} from '@shopify/flash-list';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-import {verticalScale} from '../../assets/styles/scaling';
 import {
   useCreateFollowMutation,
   useDeleteFollowMutation,
 } from '../../redux/api/endpoints/users';
-import {Spinner} from '../Spinner/Spinner';
 import {ThemedText} from '../ui/typography';
 import {UserListItem} from './UserListItem';
 
@@ -115,10 +108,8 @@ export const UserList = ({
     ],
   );
 
-  const SearchInput = onModal ? BottomSheetTextInput : TextInput;
-
   const renderListHeader = (
-    <SearchInput
+    <TextInput
       placeholder="Search"
       inputMode="search"
       autoCapitalize="none"
@@ -137,10 +128,8 @@ export const UserList = ({
     />
   );
 
-  const FlatListComponent = onModal ? BottomSheetFlashList : FlashList;
-
   return (
-    <FlatListComponent
+    <FlashList
       ListEmptyComponent={
         !isFetchingData ? (
           <ThemedText style={styles.listEmptyText}>No users found</ThemedText>
@@ -150,10 +139,6 @@ export const UserList = ({
       data={filteredList ?? []}
       keyExtractor={item => String(item.id)}
       renderItem={renderItem}
-      //extraData={{
-      //  togglingUserId,
-      //  isMutationLoading,
-      //}}
       keyboardDismissMode="on-drag"
       contentContainerStyle={onModal && {paddingBottom: insets.bottom}}
       refreshing={onModal ? undefined : isFetchingData}
@@ -161,9 +146,6 @@ export const UserList = ({
     />
   );
 };
-
-//TODO: check this value
-const ITEM_HEIGHT = verticalScale(50);
 
 const styles = StyleSheet.create({
   container: {
