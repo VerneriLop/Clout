@@ -67,7 +67,6 @@ export const PodiumView = ({
             <TouchableOpacity
               onPress={() => onImagePress(secondPlace.image_url)}>
               <View style={styles.imageShadow}>
-                {' '}
                 <Image
                   source={{
                     uri: secondPlace.image_url,
