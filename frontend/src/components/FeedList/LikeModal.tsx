@@ -2,6 +2,7 @@ import React, {Dispatch, SetStateAction} from 'react';
 import {Modal, ModalProps, StyleSheet, View} from 'react-native';
 
 import {useTheme} from '../../hooks/useTheme';
+import {useGetLikesQuery} from '../../redux/api/endpoints/posts';
 import {UserList} from '../UserList/UserList';
 
 import {LikeOwner} from '../../types/types';

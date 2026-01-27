@@ -53,7 +53,7 @@ export const CommentModal = ({
       }}
       allowSwipeDismissal
       presentationStyle="pageSheet">
-      {editingCommentId ? (
+      <View style={{flex: 1, backgroundColor: colors.card}}>
         <CommentList
           onItemPress={() => {}}
           editingCommentId={editingCommentId}
@@ -61,18 +61,8 @@ export const CommentModal = ({
           onStopEdit={() => setEditingCommentId(null)}
           editingActive={!!editingCommentId}
         />
-      ) : (
-        <View style={{flex: 1, backgroundColor: colors.card}}>
-          <CommentList
-            onItemPress={() => {}}
-            editingCommentId={editingCommentId}
-            onStartEdit={id => setEditingCommentId(id)}
-            onStopEdit={() => setEditingCommentId(null)}
-            editingActive={!!editingCommentId}
-          />
-          <Footer />
-        </View>
-      )}
+        {!editingCommentId && <Footer />}
+      </View>
     </Modal>
   );
 };

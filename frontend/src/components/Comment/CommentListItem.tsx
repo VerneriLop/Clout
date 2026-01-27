@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   Pressable,
@@ -60,15 +60,6 @@ export const CommentListItem = ({
 
   const user = comment.owner;
   const isOwner = user.id === loggedInUser?.id;
-  const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
-
-  useEffect(() => {
-    if (commentIsUnderEditing) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 50); // small delay ensures the input is rendered first
-    }
-  }, [commentIsUnderEditing]);
 
   const handlePress = () => {
     onItemPress?.();
@@ -153,7 +144,7 @@ export const CommentListItem = ({
           {commentIsUnderEditing ? (
             <View style={styles.commentAndButton}>
               <TextInput
-                ref={inputRef}
+                autoFocus
                 value={editedContent}
                 onChangeText={setEditedContent}
                 multiline

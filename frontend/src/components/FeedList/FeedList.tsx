@@ -13,7 +13,7 @@ import {useGetLikesQuery} from '../../redux/api/endpoints/posts';
 import {Spinner} from '../Spinner/Spinner';
 import {Title1Text} from '../ui/typography';
 import {CommentModal} from './CommentModal';
-import {FeedPost, IMAGE_HEIGHT} from './FeedPost';
+import {FeedPost} from './FeedPost';
 import {LikeModal} from './LikeModal';
 
 import {PostType} from '../../types/types';
@@ -38,9 +38,7 @@ export const FeedList = ({
   onRefresh,
 }: FeedListProps) => {
   const {selectedPost, setSelectedPost} = useSelectedFeedPost(); //useState<PostType | null>(null);
-  const [modalToRender, setModalToRender] = useState<
-    'likes' | 'comments' | null
-  >(null);
+  const [modalToRender, setModalToRender] = useState<'likes' | null>(null);
   const [commentModalVisible, setCommentModalVisible] =
     useState<boolean>(false);
   const [likeModalVisible, setLikeModalVisible] = useState<boolean>(false);
@@ -50,7 +48,6 @@ export const FeedList = ({
   // -> when scrolled to 18th image then download more from backend
 
   const shouldRenderLikesModal = modalToRender === 'likes';
-  const shouldRenderCommentsModal = modalToRender === 'comments';
 
   const {
     data: likes = {data: [], count: 0},
@@ -76,7 +73,7 @@ export const FeedList = ({
 
   const handleShowComments = (post: PostType) => {
     setSelectedPost(post);
-    setModalToRender('comments');
+    setModalToRender(null);
     setCommentModalVisible(true);
   };
 
@@ -90,8 +87,6 @@ export const FeedList = ({
     ),
     [],
   );
-
-  const itemSize = 60 + IMAGE_HEIGHT + 100; //topbar + image + bottombar
 
   const ThemeViewComponent =
     route.name === Routes.ProfileFeed ? ThemedView : ThemedSafeAreaView;
@@ -118,10 +113,8 @@ export const FeedList = ({
           isFetchingPosts ? <Spinner size={'small'} /> : null
         }
         refreshing={refreshing}
-        estimatedItemSize={itemSize}
         onRefresh={() => onRefresh()}
         key={refreshing ? 'refreshing' : 'stable'}
-        estimatedFirstItemOffset={0}
         ListEmptyComponent={!refreshing ? EmptyList() : null}
       />
 

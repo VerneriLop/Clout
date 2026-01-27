@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {StyleSheet, TextInput, View, ViewStyle} from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  TextInput,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 import {faCircleUp} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -34,21 +41,26 @@ export const CommentInputFooter = ({
   };
 
   return (
-    <View style={[styles.footerContainer, footerStyle]}>
-      <TextInput
-        style={[
-          styles.input,
-          {color: colors.text, backgroundColor: colors.border},
-        ]}
-        placeholder="Write a comment"
-        placeholderTextColor={colors.card}
-        value={input}
-        onChangeText={setInput}
-      />
-      <OpacityPressable disabled={input.length < 1} onPress={addComment}>
-        <FontAwesomeIcon icon={faCircleUp} color={colors.primary} size={25} />
-      </OpacityPressable>
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={insets.bottom}>
+      <View style={[styles.footerContainer, footerStyle]}>
+        <TextInput
+          style={[
+            styles.input,
+            {color: colors.text, backgroundColor: colors.border},
+          ]}
+          placeholder="Write a comment"
+          placeholderTextColor={colors.card}
+          value={input}
+          onChangeText={setInput}
+        />
+
+        <OpacityPressable disabled={input.length < 1} onPress={addComment}>
+          <FontAwesomeIcon icon={faCircleUp} color={colors.primary} size={25} />
+        </OpacityPressable>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 

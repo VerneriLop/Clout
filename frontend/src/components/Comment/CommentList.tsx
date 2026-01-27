@@ -85,6 +85,7 @@ export const CommentList = ({
           hasNextCommentPage ? () => fetchNextCommentPage() : undefined
         }
         onEndReachedThreshold={0.2}
+        contentContainerStyle={{paddingBottom: 200}}
       />
     </View>
   );
