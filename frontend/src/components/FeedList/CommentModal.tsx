@@ -1,8 +1,7 @@
 import React, {Dispatch, SetStateAction, useCallback, useState} from 'react';
-import {Modal, ModalProps, StyleSheet, View} from 'react-native';
+import {Modal, ModalProps, View} from 'react-native';
 
 import {useTheme} from '@react-navigation/native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {useSelectedFeedPost} from '../../hooks/useSelectedFeedPost';
 import {useCreateCommentMutation} from '../../redux/api/endpoints/posts';
@@ -19,7 +18,6 @@ export const CommentModal = ({
   setCommentModalVisible,
   ...props
 }: CommentModalProps & Omit<ModalProps, 'children'>) => {
-  const insets = useSafeAreaInsets();
   const {selectedPost} = useSelectedFeedPost();
   const {colors} = useTheme();
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
@@ -66,5 +64,3 @@ export const CommentModal = ({
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({});

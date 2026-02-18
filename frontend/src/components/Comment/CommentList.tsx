@@ -1,8 +1,8 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {StyleSheet, View} from 'react-native';
 
 import {skipToken} from '@reduxjs/toolkit/query/react';
-import {FlashList} from '@shopify/flash-list';
+import {FlashList, FlashListRef} from '@shopify/flash-list';
 
 import {useSelectedFeedPost} from '../../hooks/useSelectedFeedPost';
 import {useTheme} from '../../hooks/useTheme';
@@ -30,6 +30,7 @@ export const CommentList = ({
 }: CommentListType) => {
   const {selectedPost} = useSelectedFeedPost();
   const {colors} = useTheme();
+  const flashListRef = useRef<FlashListRef<CommentType> | null>(null);
 
   const {
     data: comments,
@@ -50,12 +51,18 @@ export const CommentList = ({
   );
 
   const renderItem = useCallback(
-    ({item}: {item: CommentType}) => (
+    ({item, index}: {item: CommentType; index: number}) => (
       <CommentListItem
         comment={item}
         onItemPress={onItemPress}
         commentIsUnderEditing={editingCommentId === item.id}
-        onStartEdit={() => onStartEdit?.(item.id)}
+        onStartEdit={() => {
+          onStartEdit?.(item.id);
+          flashListRef.current?.scrollToIndex({
+            index: Number(index),
+            animated: true,
+          });
+        }}
         onStopEdit={onStopEdit}
         blurred={!!editingCommentId && editingCommentId !== item.id}
         editingActive={editingActive}
@@ -63,6 +70,9 @@ export const CommentList = ({
     ),
     [onItemPress, editingCommentId, onStartEdit, onStopEdit, editingActive],
   );
+
+  //TODO: If start editing last comments in the list -> list wont scroll correctly.
+  // Thats why we put paddingBottom 700 so you can scroll while editing.
 
   return (
     <View style={[styles.container, {backgroundColor: colors.card}]}>
@@ -84,8 +94,9 @@ export const CommentList = ({
         onEndReached={
           hasNextCommentPage ? () => fetchNextCommentPage() : undefined
         }
+        ref={flashListRef}
         onEndReachedThreshold={0.2}
-        contentContainerStyle={{paddingBottom: 200}}
+        contentContainerStyle={{paddingBottom: editingActive ? 700 : 0}}
       />
     </View>
   );
