@@ -46,7 +46,38 @@ def init_db(session: Session) -> None:
         clear_all_data(session)
         create_mock_users(session, base_dir)
         create_mock_posts(session, base_dir)
-        create_mock_competition_posts(session, base_dir)
+        create_mock_competition_posts(
+            session,
+            base_dir,
+            "Nature",
+            "Capture the beauty of the natural world – from vast landscapes and dramatic skies to the smallest details of plants, animals, and seasons. Show us moments that highlight the power, peace, and diversity of nature.",
+            datetime.now(timezone.utc),
+            CompetitionStatus.VOTING,
+        )
+        create_mock_competition_posts(
+            session,
+            base_dir,
+            "Urban Life",
+            "Capture the rhythm of the city – from busy streets and hidden alleyways to architecture, night lights, and everyday moments. Show us the energy, contrast, and character of urban environments.",
+            datetime.now(timezone.utc) - timedelta(hours=24),
+            CompetitionStatus.FINISHED,
+        )
+        create_mock_competition_posts(
+            session,
+            base_dir,
+            "Portraits",
+            "Focus on people and emotions – candid expressions, powerful gazes, and authentic moments. Highlight personality, mood, and storytelling through faces and human connection.",
+            datetime.now(timezone.utc) - timedelta(hours=48),
+            CompetitionStatus.FINISHED,
+        )
+        create_mock_competition_posts(
+            session,
+            base_dir,
+            "Food & Drinks",
+            "Show us flavors through visuals – from colorful street food and fine dining plates to cozy coffee moments. Capture textures, colors, and the atmosphere that make food experiences memorable.",
+            datetime.now(timezone.utc) - timedelta(hours=72),
+            CompetitionStatus.FINISHED,
+        )
         create_mock_comments(session, base_dir)
         create_mock_likes(session)
         create_mock_follower_relations(session)
@@ -132,14 +163,16 @@ def create_mock_posts(session, base_dir):
             logger.info("No new posts to add from posts.json.")
 
 
-def create_mock_competition_posts(session: Session, base_dir):
+def create_mock_competition_posts(
+    session: Session, base_dir, category, description, start_time, status
+):
     competition = Competition(
-        category="Nature",
-        description="Capture the beauty of the natural world – from vast landscapes and dramatic skies to the smallest details of plants, animals, and seasons. Show us moments that highlight the power, peace, and diversity of nature.",
-        start_time=datetime.now(timezone.utc),
-        vote_start_time=datetime.now(timezone.utc) + timedelta(hours=24),
-        end_time=datetime.now(timezone.utc) + timedelta(hours=48),
-        status=CompetitionStatus.FINISHED,
+        category=category,
+        description=description,
+        start_time=start_time,
+        vote_start_time=start_time + timedelta(hours=24),
+        end_time=start_time + timedelta(hours=48),
+        status=status,
     )
     session.add(competition)
     session.commit()
@@ -149,26 +182,35 @@ def create_mock_competition_posts(session: Session, base_dir):
 
     if not all_users:
         logger.warning("No users available to assign posts to.")
-    else:
-        posts_json_path = base_dir / "posts.json"
-        with open(posts_json_path) as f:
-            posts_data = json.load(f)
+        return
 
-        for idx, assigned_user in enumerate(all_users):
-            post_to_add = Post(**posts_data[idx], owner_id=assigned_user.id)
-            session.add(post_to_add)
-            session.commit()
-            session.refresh(post_to_add)
+    posts_json_path = base_dir / "posts.json"
+    with open(posts_json_path) as f:
+        posts_data = json.load(f)
 
-            comp_entry = CompetitionEntry(
-                competition_id=competition.id,
-                post_id=post_to_add.id,
-                owner_id=assigned_user.id,
-            )
-            session.add(comp_entry)
-            session.commit()
+    users = list(all_users)
+    random.shuffle(users)
 
-        logger.info("Added post/entry to each user in the competition")
+    n = min(len(users), len(posts_data))
+
+    random.shuffle(posts_data)
+
+    for idx in range(n):
+        assigned_user = users[idx]
+
+        post_to_add = Post(**posts_data[idx], owner_id=assigned_user.id)
+        session.add(post_to_add)
+        session.flush()
+
+        comp_entry = CompetitionEntry(
+            competition_id=competition.id,
+            post_id=post_to_add.id,
+            owner_id=assigned_user.id,
+        )
+        session.add(comp_entry)
+
+    session.commit()
+    logger.info("Added post/entry to each user in the competition")
 
 
 def create_mock_follower_relations(session, max_relations_per_user: int = 10):
