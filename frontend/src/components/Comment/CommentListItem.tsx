@@ -1,9 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   Pressable,
   StyleProp,
   StyleSheet,
+  TextInput,
   View,
   ViewStyle,
 } from 'react-native';
@@ -11,11 +12,11 @@ import type {NativeSyntheticEvent} from 'react-native';
 
 import {faCircleUp} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {BottomSheetTextInput} from '@gorhom/bottom-sheet';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import ContextMenu from 'react-native-context-menu-view';
 import type {ContextMenuOnPressNativeEvent} from 'react-native-context-menu-view';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {RootStackParamList, Routes} from '../../navigation/Routes';
 import {
@@ -57,19 +58,10 @@ export const CommentListItem = ({
   const [deleteComment] = useDeleteCommentMutation();
   const {colors} = useTheme() as ExtendedTheme;
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const insets = useSafeAreaInsets();
 
   const user = comment.owner;
   const isOwner = user.id === loggedInUser?.id;
-  const inputRef =
-    useRef<React.ComponentRef<typeof BottomSheetTextInput>>(null);
-
-  useEffect(() => {
-    if (commentIsUnderEditing) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 50); // small delay ensures the input is rendered first
-    }
-  }, [commentIsUnderEditing]);
 
   const handlePress = () => {
     onItemPress?.();
@@ -129,8 +121,11 @@ export const CommentListItem = ({
 
   const notUnderEditing = editingActive && !commentIsUnderEditing;
   const contextMenuList = isOwner
-    ? [{title: 'Edit comment'}, {title: 'Delete comment', destructive: true}]
-    : [{title: 'Report comment'}];
+    ? [
+        {title: 'Edit comment', titleColor: colors.text},
+        {title: 'Delete comment', destructive: true},
+      ]
+    : [{title: 'Report comment', destructive: true}];
 
   return (
     <ContextMenu
@@ -150,8 +145,8 @@ export const CommentListItem = ({
           </OpacityPressable>
           {commentIsUnderEditing ? (
             <View style={styles.commentAndButton}>
-              <BottomSheetTextInput
-                ref={inputRef}
+              <TextInput
+                autoFocus
                 value={editedContent}
                 onChangeText={setEditedContent}
                 multiline

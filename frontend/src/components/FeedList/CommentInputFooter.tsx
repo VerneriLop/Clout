@@ -1,19 +1,21 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, ViewStyle} from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  TextInput,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 import {faCircleUp} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {
-  BottomSheetFooter,
-  BottomSheetFooterProps,
-  BottomSheetTextInput,
-} from '@gorhom/bottom-sheet';
 import {useTheme} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 import {OpacityPressable} from '../OpacityPressable/OpacityPressable';
 
-type CommentFooterType = BottomSheetFooterProps & {
+type CommentFooterType = {
   handleAddComment: (input: string) => void;
   blurred?: boolean;
 };
@@ -39,9 +41,11 @@ export const CommentInputFooter = ({
   };
 
   return (
-    <BottomSheetFooter {...props} style={footerStyle}>
-      <View style={[styles.footerContainer, {backgroundColor: colors.card}]}>
-        <BottomSheetTextInput
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={insets.bottom}>
+      <View style={[styles.footerContainer, footerStyle]}>
+        <TextInput
           style={[
             styles.input,
             {color: colors.text, backgroundColor: colors.border},
@@ -51,11 +55,12 @@ export const CommentInputFooter = ({
           value={input}
           onChangeText={setInput}
         />
+
         <OpacityPressable disabled={input.length < 1} onPress={addComment}>
           <FontAwesomeIcon icon={faCircleUp} color={colors.primary} size={25} />
         </OpacityPressable>
       </View>
-    </BottomSheetFooter>
+    </KeyboardAvoidingView>
   );
 };
 
