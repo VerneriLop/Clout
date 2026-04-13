@@ -1,44 +1,213 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  Alert,
-  Image,
+  Button,
   StyleSheet,
   Text,
+  TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
 
+import Ionicons from '@expo/vector-icons/Ionicons';
+import {useNavigation} from '@react-navigation/native';
 import {
-  faArrowLeft,
-  faBolt,
-  faCamera,
-  faCheck,
-  faSlash,
-  faSync,
-  faTimes,
-} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import Reanimated, {
-  Extrapolation,
-  interpolate,
-  useAnimatedProps,
-  useSharedValue,
-} from 'react-native-reanimated';
+  CameraType,
+  CameraView,
+  FlashMode,
+  useCameraPermissions,
+} from 'expo-camera';
+import {Image} from 'expo-image';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-import Input from '../../components/Input/Input';
-import {Spinner} from '../../components/Spinner/Spinner';
+import {OpacityPressable} from '../../components/OpacityPressable/OpacityPressable';
 import {ThemedSafeAreaView} from '../../components/ui/themed-view';
 import {ThemedText} from '../../components/ui/typography';
-import {useCreatePostMutation} from '../../redux/api/endpoints/posts';
-import {setNotification} from '../../redux/slices/dispatchers/notificationDispatcher';
-import {Style} from './style';
+import {useTheme} from '../../hooks/useTheme';
+import {ConfirmView} from './ConfirmView';
 
 export const CameraScreen = () => {
-  return <View></View>;
+  const insets = useSafeAreaInsets();
+  const {colors} = useTheme();
+  const ref = useRef<CameraView>(null);
+  const [uri, setUri] = useState<string | null>(null);
+  const [facing, setFacing] = useState<CameraType>('back');
+  const [flashMode, setFlashMode] = useState<FlashMode>('off');
+  const [permission, requestPermission] = useCameraPermissions();
+  const navigation = useNavigation();
+
+  if (!permission) {
+    // Camera permissions are still loading.
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet.
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>
+          We need your permission to show the camera
+        </Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
+
+  const takePicture = async () => {
+    const photo = await ref.current?.takePictureAsync();
+    if (photo?.uri) setUri(photo.uri);
+  };
+
+  const toggleCameraFacing = () => {
+    setFacing(current => (current === 'back' ? 'front' : 'back'));
+  };
+
+  const toggleFlashMode = () => {
+    setFlashMode(current => (current === 'off' ? 'on' : 'off'));
+  };
+
+  const renderCamera = () => {
+    return (
+      <ThemedSafeAreaView style={{flex: 1}}>
+        <View style={styles.cameraWrapper}>
+          <CameraView
+            style={styles.camera}
+            ref={ref}
+            mode={'picture'}
+            facing={facing}
+            flash={flashMode}
+            ratio="4:3"
+          />
+
+          <View style={styles.controls}>
+            <TouchableOpacity style={styles.button} onPress={toggleFlashMode}>
+              <Ionicons
+                name={
+                  flashMode === 'off' ? 'flash-off-outline' : 'flash-outline'
+                }
+                size={24}
+                color="white"
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.backButton}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.goBack()}>
+              <Ionicons name={'close'} size={24} color="white" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.bottomButtonContainer}>
+          <View style={{flex: 1}} />
+
+          <TouchableOpacity onPress={takePicture}>
+            <View style={styles.shutterButton} />
+          </TouchableOpacity>
+
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+            }}>
+            <TouchableOpacity
+              style={styles.orientationButton}
+              onPress={toggleCameraFacing}>
+              <Ionicons name="sync" size={36} color={colors.textSecondary} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ThemedSafeAreaView>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      {uri ? (
+        <ConfirmView
+          uri={uri}
+          onCancel={() => setUri(null)}
+          onSubmit={() => null}
+        />
+      ) : (
+        renderCamera()
+      )}
+    </View>
+  );
 };
 
+const SHUTTER_SIZE = 84;
+
+const styles = StyleSheet.create({
+  orientationButton: {
+    //backgroundColor: 'rgba(0,0,0,0.25)',
+    padding: 4,
+    borderRadius: 99,
+
+    //elevation: 0.5,
+  },
+  backButton: {
+    position: 'absolute',
+    left: 6,
+    top: 18,
+  },
+  controls: {
+    position: 'absolute',
+    right: 6,
+    top: 18,
+  },
+  cameraWrapper: {
+    width: '100%',
+    aspectRatio: 3 / 4,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  message: {
+    textAlign: 'center',
+    paddingBottom: 10,
+  },
+  camera: {
+    flex: 1,
+  },
+  buttonContainer: {
+    backgroundColor: 'red',
+    elevation: 2,
+  },
+  bottomButtonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    //paddingBottom: 16,
+    //elevation: 2,
+    //maxHeight: 120,
+    //backgroundColor: 'black',
+  },
+  button: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 8,
+    borderRadius: 99,
+    elevation: 18,
+  },
+  shutterButton: {
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    width: SHUTTER_SIZE,
+    height: SHUTTER_SIZE,
+    borderRadius: SHUTTER_SIZE,
+    borderWidth: 8,
+    borderColor: 'white',
+    elevation: 0.9,
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+});
 /*Reanimated.addWhitelistedNativeProps({zoom: true});
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera);
 
@@ -269,41 +438,3 @@ export const CameraScreen = () => {
     </View>
   );
 };*/
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    width: '90%',
-    marginTop: 15,
-    //backgroundColor: 'blue',
-  },
-  input: {
-    height: 40,
-    borderWidth: 1,
-    borderRadius: 10,
-    color: 'white',
-  },
-  previewContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginTop: 50,
-  },
-  previewImage: {
-    width: '90%',
-    height: '70%',
-    borderRadius: 10,
-  },
-  previewControls: {
-    flex: 1,
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    //backgroundColor: 'red',
-  },
-  hasVoted: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

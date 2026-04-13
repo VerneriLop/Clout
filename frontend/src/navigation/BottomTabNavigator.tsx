@@ -14,11 +14,12 @@ import {
   BottomTabBarButtonProps,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-import {RouteProp, useTheme} from '@react-navigation/native';
+import {RouteProp, useNavigation, useTheme} from '@react-navigation/native';
 
 import {CameraScreen} from '../screens/Camera/CameraScreen';
 import {LeaderboardScreen} from '../screens/LeaderboardScreen/LeaderboardScreen';
 import {VoteScreen} from '../screens/Vote/VoteScreen';
+import {CameraStackNavigator} from './CameraStackNavigator';
 import {FeedStackNavigator} from './FeedStackNavigator';
 import {LeaderboardStackNavigator} from './LeaderboardStackNavigator';
 import {ProfileStackNavigator} from './ProfileStackNavigator';
@@ -76,6 +77,7 @@ const Tab = createBottomTabNavigator<RootStackParamList>();
 
 export const BottomTabNavigator = () => {
   const theme = useTheme();
+
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -98,7 +100,7 @@ export const BottomTabNavigator = () => {
       />
       <Tab.Screen
         name={Routes.Camera}
-        component={CameraScreen}
+        component={CameraStackNavigator}
         //options={{tabBarStyle: {display: 'none'}}}
       />
       <Tab.Screen name={Routes.FeedStack} component={FeedStackNavigator} />

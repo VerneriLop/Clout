@@ -45,6 +45,12 @@ export type LeaderboardStackParamList = {
   ProfileStack: NavigatorScreenParams<ProfileStackParamList>;
 };
 
+export type CameraStackParamList = {
+  Camera: undefined;
+  Overview: undefined;
+  Submit: undefined;
+};
+
 export const Routes = {
   Login: 'Login',
   Register: 'Register',
@@ -68,4 +74,6 @@ export const Routes = {
   About: 'About',
   VoteStack: 'VoteStack',
   Info: 'Info',
+  Overview: 'Overview',
+  Submit: 'Submit',
 } as const;
